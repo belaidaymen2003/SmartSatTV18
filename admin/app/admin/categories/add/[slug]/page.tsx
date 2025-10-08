@@ -23,7 +23,6 @@ type data = {
   title: string;
   category: string;
   description: string;
-
 };
 const formData = new FormData();
 export default function CategoryPage({ params }: { params: { slug: string } }) {
@@ -35,43 +34,57 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
     category: "",
     description: "",
   });
-  const [gift, setGift] = useState({ title: "", description: "" })
+  const [gift, setGift] = useState({ title: "", description: "" });
   const [loading, setLoading] = useState(false);
 
   const onFileImage = (file?: File) => {
     if (!file) return;
-    
     const urlLogo = URL.createObjectURL(file);
     setLocalUrl(urlLogo);
-
-  
     formData.append("file", file);
     formData.append("fileName", file.name);
   };
-  console.log(formData.get("file"));
+
   async function submitData() {
     setLoading(true);
     try {
-      if (params.slug === 'gift-cards') {
-        let uploaded: any = null
-        if (formData.get('file')) {
-          uploaded = await fetch('/api/admin/gift-cards/upload', { method: 'POST', body: formData }).then(r=>r.json())
+      if (params.slug === "gift-cards") {
+        let uploaded: any = null;
+        if (formData.get("file")) {
+          uploaded = await fetch("/api/admin/gift-cards/upload", {
+            method: "POST",
+            body: formData,
+          }).then((r) => r.json());
         }
-        await fetch('/api/admin/gift-cards', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title: gift.title, description: gift.description, coverUrl: uploaded?.url || null })
-        })
-      } else {
-        const response = await fetch("/api/admin/categories/upload", { method: "POST", body: formData }).then((res) => res.json())
-        await fetch(`/api/admin/categories/category?slug=${search.get("category")}`, {
+        await fetch("/api/admin/gift-cards", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({...data, logoUrl: response.logoUrl, fileId: response.fileId}),
-        }).then((res)=>res.json())
+          body: JSON.stringify({
+            title: gift.title,
+            description: gift.description,
+            coverUrl: uploaded?.url || null,
+          }),
+        });
+      } else {
+        const response = await fetch("/api/admin/categories/upload", {
+          method: "POST",
+          body: formData,
+        }).then((res) => res.json());
+        await fetch(
+          `/api/admin/categories/category?slug=${search.get("category")}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...data,
+              logoUrl: response.logoUrl,
+              fileId: response.fileId,
+            }),
+          }
+        ).then((res) => res.json());
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
   const videoRef = useRef(null);
@@ -79,77 +92,146 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   return (
     <div className="space-y-6">
       <div className="bg-black/20 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-        {params.slug === 'gift-cards' ? (
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-            <input value={gift.title} onChange={(e)=>setGift({ ...gift, title: e.target.value })} placeholder="Title" className="md:col-span-8 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30" />
-            <div className="md:col-span-2"></div>
-            <div className="md:col-span-2"></div>
-            <textarea value={gift.description} onChange={(e)=>setGift({ ...gift, description: e.target.value })} placeholder="Description" className="md:col-span-12 h-28 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30" />
-            <div className="md:col-span-12 flex w-full gap-3">
-              <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                <ImageIcon className="w-4 h-4 text-white/60" />
-                <label className="ml-2 cursor-pointer inline-flex items-center gap-1 text-white/70">
-                  <img src={localurl} alt="" className=" h-10 w-14 object-contain" />
-                  <Upload className="w-4 h-4" />
-                  <span>Browse</span>
-                  <input onChange={(e) => { onFileImage(e.target.files?.[0]); }} type="file" className="hidden" />
-                </label>
-              </label>
+        {params.slug === "gift-cards" ? (
+          <div className="grid grid-cols-1 gap-5">
+            <div>
+              <label className="block text-sm text-white/70 mb-1">Title</label>
+              <input
+                value={gift.title}
+                onChange={(e) => setGift({ ...gift, title: e.target.value })}
+                placeholder="Enter gift card title"
+                className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+              />
             </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-            <input
-              value={data.title}
-              onChange={(e) => setData({ ...data, title: e.target.value.trim() })}
-              placeholder="Title"
-              className="col-span-12 md:col-span-8 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30"
-            />
-            <select
-              value={data.category}
-              onChange={(e) => setData({ ...data, category: e.target.value.trim() })}
-              className="col-span-12 sm:col-span-2 md:col-span-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white"
-            >
-              {categories.map((q) => (
-                <option key={q}>{q}</option>
-              ))}
-            </select>
-            <div className="md:col-span-12 flex w-full gap-3">
-              <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                
-               <label className=" cursor-pointer inline-flex items-center gap-1 text-white/70">
-                  { localurl ? <img src={localurl} alt="" className=" h-10 w-14 object-contain" /> :<ImageIcon className="w-4 h-4 text-white/60" />}
+            <div>
+              <label className="block text-sm text-white/70 mb-1">Description</label>
+              <textarea
+                value={gift.description}
+                onChange={(e) =>
+                  setGift({ ...gift, description: e.target.value })
+                }
+                placeholder="Short description"
+                className="h-32 w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/70 mb-2">Cover</label>
+              <div className="flex items-center gap-4">
+                <div className="h-16 w-24 rounded-lg bg-white/5 border border-white/10 grid place-items-center overflow-hidden">
+                  {localurl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={localurl}
+                      alt="Cover preview"
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <ImageIcon className="w-6 h-6 text-white/40" />
+                  )}
+                </div>
+                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10 text-white/80 hover:bg-white/10 cursor-pointer">
                   <Upload className="w-4 h-4" />
-                  <span>Browse</span>
+                  <span>Upload cover</span>
                   <input
                     onChange={(e) => {
                       onFileImage(e.target.files?.[0]);
                     }}
                     type="file"
+                    accept="image/*"
                     className="hidden"
                   />
                 </label>
-              </label>
-
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <div className="md:col-span-7">
+              <label className="block text-sm text-white/70 mb-1">Title</label>
+              <input
+                value={data.title}
+                onChange={(e) =>
+                  setData({ ...data, title: e.target.value.trim() })
+                }
+                placeholder="Enter channel title"
+                className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+              />
+            </div>
+            <div className="md:col-span-5">
+              <label className="block text-sm text-white/70 mb-1">Category</label>
+              <select
+                value={data.category}
+                onChange={(e) =>
+                  setData({ ...data, category: e.target.value.trim() })
+                }
+                className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+              >
+                <option value="">Select a category</option>
+                {categories.map((q) => (
+                  <option key={q} value={q}>
+                    {q}
+                  </option>
+                ))}
+              </select>
             </div>
 
+            <div className="md:col-span-12">
+              <label className="block text-sm text-white/70 mb-2">Logo</label>
+              <div className="flex items-center gap-4">
+                <div className="h-16 w-24 rounded-lg bg-white/5 border border-white/10 grid place-items-center overflow-hidden">
+                  {localurl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={localurl}
+                      alt="Logo preview"
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <ImageIcon className="w-6 h-6 text-white/40" />
+                  )}
+                </div>
+                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10 text-white/80 hover:bg-white/10 cursor-pointer">
+                  <Upload className="w-4 h-4" />
+                  <span>Upload logo</span>
+                  <input
+                    onChange={(e) => {
+                      onFileImage(e.target.files?.[0]);
+                    }}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
 
-
-            <textarea
-              value={data.description}
-              onChange={(e) => setData({ ...data, description: e.target.value.trim() })}
-              placeholder="Description"
-              className="md:col-span-12 h-28 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30"
-            />
+            <div className="md:col-span-12">
+              <label className="block text-sm text-white/70 mb-1">Description</label>
+              <textarea
+                value={data.description}
+                onChange={(e) =>
+                  setData({ ...data, description: e.target.value.trim() })
+                }
+                placeholder="Describe the channel"
+                className="h-32 w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+              />
+            </div>
           </div>
         )}
 
         <div className="mt-6">
           <button
-            disabled={loading || (params.slug === 'gift-cards' ? !gift.title.trim() : !data.title.trim())} onClick={submitData} className="px-5 py-2 rounded-lg border border-orange-500 text-orange-400 hover:bg-orange-500/10 disabled:opacity-60 inline-flex items-center gap-2"
+            disabled={
+              loading ||
+              (params.slug === "gift-cards"
+                ? !gift.title.trim()
+                : !data.title.trim())
+            }
+            onClick={submitData}
+            className="px-5 py-2 rounded-lg border border-orange-500 text-orange-400 hover:bg-orange-500/10 disabled:opacity-60 inline-flex items-center gap-2"
           >
             <Film className="w-4 h-4" />
-            {loading ? 'Publishing...' : 'Publish'}
+            {loading ? "Publishing..." : "Publish"}
           </button>
         </div>
       </div>
