@@ -30,6 +30,23 @@ export default function GiftCardsPage() {
 
   useEffect(() => { fetchGiftCards() }, [])
 
+  const removeItem = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/gift-cards?id=${id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const d = await res.json().catch(()=>({error:'Failed to delete'}))
+        setToast({ message: d?.error || 'Failed to delete', type: 'error' })
+        return
+      }
+      setToast({ message: 'Deleted', type: 'success' })
+      fetchGiftCards()
+    } catch (e:any) {
+      setToast({ message: e?.message || 'Unexpected error while deleting', type: 'error' })
+    } finally {
+      setConfirmDeleteId(null)
+    }
+  }
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return items.filter((g) => !q || g.title.toLowerCase().includes(q))
