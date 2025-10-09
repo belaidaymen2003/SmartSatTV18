@@ -108,7 +108,7 @@ export default function CategorySubscriptionPage() {
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs text-white/70 mb-1">Credit</label>
-                <input type="number" value={row.credit} onChange={(e)=>updateRow(i, { credit: Number(e.target.value) })} placeholder="0" className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40" />
+                <input type="number" inputMode="numeric" pattern="[0-9]*" min={0} step={1} onWheel={(e)=> (e.currentTarget as HTMLInputElement).blur()} value={row.credit} onChange={(e)=>updateRow(i, { credit: Number(e.target.value) })} placeholder="0" className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40" />
               </div>
               <div className="sm:col-span-1 flex sm:justify-end">
                 <button onClick={()=>removeRow(i)} className="px-3 py-2 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10">Remove</button>
@@ -134,7 +134,7 @@ export default function CategorySubscriptionPage() {
                     <option value={6}>6 months</option>
                     <option value={12}>12 months</option>
                   </select>
-                  <input type="number" value={editing.credit} onChange={(e)=>setEditing({...editing, credit: Number(e.target.value)})} className="sm:col-span-2 bg-black/40 border border-white/10 rounded px-2 py-1 text-white" />
+                  <input type="number" inputMode="numeric" pattern="[0-9]*" min={0} step={1} onWheel={(e)=> (e.currentTarget as HTMLInputElement).blur()} value={editing.credit} onChange={(e)=>setEditing({...editing, credit: Number(e.target.value)})} className="sm:col-span-2 bg-black/40 border border-white/10 rounded px-2 py-1 text-white" />
                   <div className="sm:col-span-2 flex gap-2">
                     <button onClick={saveEditRow} className="px-3 py-1 rounded border border-green-500 text-green-400">Save</button>
                     <button onClick={()=>setEditing(null)} className="px-3 py-1 rounded border border-white/10">Cancel</button>

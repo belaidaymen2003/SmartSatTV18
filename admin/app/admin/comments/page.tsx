@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Search, Filter, Eye, CheckCircle2, EyeOff, Trash2, X } from 'lucide-react'
 import AdminStore from '../../../lib/adminStore'
 import type { AdminComment } from '../../../lib/adminStore'
+import ConfirmModal from '@/components/UI/ConfirmModal'
+import Toast from '@/components/UI/Toast'
 
 export default function AdminCommentsPage() {
   const [query, setQuery] = useState('')
@@ -12,6 +14,8 @@ export default function AdminCommentsPage() {
   const [version, setVersion] = useState(0)
   const [active, setActive] = useState<AdminComment | null>(null)
   const pageSize = 10
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number|null>(null)
+  const [toast, setToast] = useState<{message: string; type?: 'success'|'error'|'info'|'warning'}|null>(null)
 
   useEffect(() => { AdminStore.subscribe(() => setVersion((v) => v + 1)) }, [])
 
@@ -27,9 +31,10 @@ export default function AdminCommentsPage() {
   const start = (page - 1) * pageSize
   const rows = filtered.slice(start, start + pageSize)
 
-  const approve = (id: number) => AdminStore.setCommentStatus(id, 'Approved')
-  const hide = (id: number) => AdminStore.setCommentStatus(id, 'Hidden')
-  const remove = (id: number) => { if (confirm('Delete comment?')) AdminStore.deleteComment(id) }
+  const approve = (id: number) => { AdminStore.setCommentStatus(id, 'Approved'); setToast({ message: 'Approved', type: 'success' }) }
+  const hide = (id: number) => { AdminStore.setCommentStatus(id, 'Hidden'); setToast({ message: 'Hidden', type: 'info' }) }
+  const remove = (id: number) => { setConfirmDeleteId(id) }
+  const confirmRemove = () => { if (confirmDeleteId===null) return; AdminStore.deleteComment(confirmDeleteId); setToast({ message: 'Deleted', type: 'success' }); setConfirmDeleteId(null) }
 
   const formatDate = (iso: string) => {
     const [y, m, d] = iso.split('-').map(Number)
@@ -107,7 +112,7 @@ export default function AdminCommentsPage() {
 
       {active && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => setActive(null)}>
-          <div className="w-full max-w-md bg-black/30 border border-white/10 rounded-xl p-5 backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-md bg-black/30 border border-white/10 rounded-xl p-5 backdrop-blur-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-white font-semibold">{active.itemTitle}</h3>
               <button className="p-1 hover:bg-white/10 rounded-md" onClick={() => setActive(null)}><X className="w-4 h-4 text-white/70" /></button>
@@ -121,6 +126,16 @@ export default function AdminCommentsPage() {
           </div>
         </div>
       )}
+      {confirmDeleteId !== null && (
+        <ConfirmModal
+          title="Delete Comment"
+          message="Are you sure you want to delete this comment?"
+          confirmText="Delete"
+          onConfirm={confirmRemove}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
+      {toast && (<Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />)}
     </div>
   )
 }

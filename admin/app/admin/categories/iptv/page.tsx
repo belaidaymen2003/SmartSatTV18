@@ -131,8 +131,8 @@ export default function IPTVPage() {
           setEditingId(null);
           fetchSubscriptions(channelId);
         } else {
-          const d = await res.json();
-          alert(d?.error || "Failed to update");
+          const d = await res.json().catch(()=>({error:'Failed to update'}));
+          setMessage(d?.error || "Failed to update");
         }
       } catch (e) {
         console.log(e);
