@@ -10,14 +10,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Hls from "hls.js";
-const categories = [
-  "Movie",
-  "TV Series",
-  "Anime",
-  "Cartoon",
-  "Live TV",
-  "Streaming",
-] as const;
+import { CATEGORIES as categories } from "@/lib/constants";
 type Props = { params: { category: string } };
 type data = {
   title: string;
