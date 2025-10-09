@@ -77,11 +77,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // fallback: return data URL and store minimal record in mock DB
-    const dataUrl = `data:image/png;base64,${fileData}`
+
+
 
     // no tracking of files for now
-    return NextResponse.json({ message: 'Uploaded (mock)', logoUrl: dataUrl, fileId: null })
+   
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -127,14 +127,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // fallback: store data URL in mock DB and update channel record in mock
-    const dataUrl = `data:image/png;base64,${fileData}`
-    try {
-      const updated = await prisma.iPTVChannel.update({ where: { id: channelId }, data: { logo: dataUrl } })
-      return NextResponse.json({ message: 'Logo updated (db)', logoUrl: dataUrl, fileId: null, channel: updated })
-    } catch (err: any) {
- 
-      return NextResponse.json({ error: err.message }, { status: 500 })
-    }
+
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

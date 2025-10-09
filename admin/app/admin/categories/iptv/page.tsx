@@ -58,6 +58,13 @@ export default function IPTVPage() {
       duration?: number;
       credit?: number;
     }>({});
+    const [q, setQ] = useState("");
+    const [sort, setSort] = useState<"code" | "duration" | "credit">(
+      "code"
+    );
+    const [asc, setAsc] = useState(true);
+    const [pageSub, setPageSub] = useState(1);
+    const perPage = 10;
 
     const toMonths = (d: any) =>
       typeof d === "number"
@@ -71,10 +78,6 @@ export default function IPTVPage() {
         : 1;
 
     if (!channelId) return null;
-    if (sipinner1) return <Spinner size={6} />;
-
-    if (!subs || subs.length === 0)
-      return <div className="text-white/60">No subscriptions</div>;
 
     const getAuthHeader = () => {
       try {
@@ -131,10 +134,8 @@ export default function IPTVPage() {
     };
 
     const removeSubWithAuth = async (idOrCode: number | string) => {
-      const q =
-        typeof idOrCode === "number"
-          ? `id=${idOrCode}`
-          : `code=${encodeURIComponent(String(idOrCode))}`;
+      const q = `id=${Number(idOrCode)}`
+        
       await fetch(`/api/admin/categories/category/subscription?${q}`, {
         method: "DELETE",
         headers: { ...getAuthHeader() },
@@ -142,118 +143,243 @@ export default function IPTVPage() {
       fetchSubscriptions(channelId);
     };
 
+    const filteredSubs = useMemo(() => {
+      const qq = q.trim().toLowerCase();
+      const base = (subs || []).filter((s: any) =>
+        !qq || String(s.code).toLowerCase().includes(qq)
+      );
+      const sorted = [...base].sort((a: any, b: any) => {
+        const av =
+          sort === "code"
+            ? String(a.code)
+            : sort === "duration"
+            ? toMonths(a.duration)
+            : Number(a.credit ?? 0);
+        const bv =
+          sort === "code"
+            ? String(b.code)
+            : sort === "duration"
+            ? toMonths(b.duration)
+            : Number(b.credit ?? 0);
+        if (av < bv) return asc ? -1 : 1;
+        if (av > bv) return asc ? 1 : -1;
+        return 0;
+      });
+      return sorted;
+    }, [q, subs, sort, asc]);
+
+    const total = filteredSubs.length;
+    const start = (pageSub - 1) * perPage;
+    const pageRows = filteredSubs.slice(start, start + perPage);
+
+    const stats = useMemo(() => {
+      const totalCredit = filteredSubs.reduce(
+        (acc: number, s: any) => acc + Number(s.credit ?? 0),
+        0
+      );
+      return { count: filteredSubs.length, totalCredit };
+    }, [filteredSubs]);
+
+    const copyCode = async (code: string) => {
+      try {
+        await navigator.clipboard.writeText(code);
+        setMessage(`Copied: ${code}`);
+        setTimeout(() => setMessage(null), 1500);
+      } catch {}
+    };
+
     return (
-      <div className="overflow-auto">
-        <table className="min-w-full text-left border-collapse">
-          <thead>
-            <tr className="text-white/70 text-sm">
-              <th className="px-3 py-2">Code</th>
-              <th className="px-3 py-2">Duration</th>
-              <th className="px-3 py-2">Credits</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {subs.map((s: any) => (
-              <tr
-                key={s.id || s.code}
-                className="bg-black/30 border border-white/10 rounded"
-              >
-                <td className="px-3 py-2 align-middle">
-                  {editingId === s.id ? (
-                    <input
-                      value={editValues.code || ""}
-                      onChange={(e) =>
-                        setEditValues((ev) => ({ ...ev, code: e.target.value }))
-                      }
-                      className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                    />
-                  ) : (
-                    <div className="text-white">{s.code}</div>
-                  )}
-                </td>
-                <td className="px-3 py-2 align-middle text-white/80">
-                  {editingId === s.id ? (
-                    <select
-                      value={String(
-                        editValues.duration ?? toMonths(s.duration)
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center gap-3 justify-between">
+          <div className="flex items-center gap-2 bg-black/30 border border-white/10 rounded px-2 py-1 w-full sm:w-64">
+            <Search className="w-4 h-4 text-white/60" />
+            <input
+              className="bg-transparent text-white/80 text-sm w-full placeholder-white/40 focus:outline-none"
+              placeholder="Search codes..."
+              value={q}
+              onChange={(e) => {
+                setPageSub(1);
+                setQ(e.target.value);
+              }}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <select
+              className="bg-black/30 border border-white/10 rounded px-2 py-1 text-white/80"
+              value={sort}
+              onChange={(e) => setSort(e.target.value as any)}
+            >
+              <option value="code">Code</option>
+              <option value="duration">Duration</option>
+              <option value="credit">Credits</option>
+            </select>
+            <button
+              className="px-2 py-1 rounded border border-white/10 text-white/80 hover:bg-white/10"
+              onClick={() => setAsc((v) => !v)}
+              aria-label="Toggle sort order"
+            >
+              {asc ? "Asc" : "Desc"}
+            </button>
+          </div>
+          <div className="ml-auto text-xs text-white/60">
+            {stats.count} items • Total credits {stats.totalCredit}
+          </div>
+        </div>
+
+        {sipinner1 ? (
+          <div className="py-6"><Spinner size={6} /></div>
+        ) : !subs || subs.length === 0 ? (
+          <div className="text-white/60 bg-white/5 border border-white/10 rounded p-4">
+            No subscriptions yet. <a className="underline" href="#">Add some</a> to get started.
+          </div>
+        ) : (
+          <div className="overflow-auto">
+            <table className="min-w-full text-left border-collapse">
+              <thead>
+                <tr className="text-white/70 text-sm">
+                  <th className="px-3 py-2">Code</th>
+                  <th className="px-3 py-2">Duration</th>
+                  <th className="px-3 py-2">Credits</th>
+                  <th className="px-3 py-2">Status</th>
+                  <th className="px-3 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pageRows.map((s: any) => (
+                  <tr
+                    key={s.id || s.code}
+                    className="bg-black/30 border border-white/10 rounded"
+                  >
+                    <td className="px-3 py-2 align-middle">
+                      {editingId === s.id ? (
+                        <input
+                          value={editValues.code || ""}
+                          onChange={(e) =>
+                            setEditValues((ev) => ({ ...ev, code: e.target.value }))
+                          }
+                          className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+                        />
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => copyCode(s.code)}
+                            className="text-white hover:underline"
+                            title="Copy code"
+                          >
+                            {s.code}
+                          </button>
+                        </div>
                       )}
-                      onChange={(e) => {
-                        setEditValues((ev) => ({
-                          ...ev,
-                          duration: Number(e.target.value),
-                        }));
-                      }}
-                      className=" border border-white/10 rounded px-2 py-1 disabled:bg-transparent text-black"
-                    >
-                      <option value={1}>1 month</option>
-                      <option value={6}>6 months</option>
-                      <option value={12}>12 months</option>
-                    </select>
-                  ) : (
-                    `${toMonths(s.duration)}m`
-                  )}
-                </td>
-                <td className="px-3 py-2 align-middle">
-                  {editingId === s.id ? (
-                    <input
-                      type="number"
-                      value={String(editValues.credit ?? s.credit)}
-                      onChange={(e) =>
-                        setEditValues((ev) => ({
-                          ...ev,
-                          credit: Number(e.target.value),
-                        }))
-                      }
-                      className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                    />
-                  ) : (
-                    <div className="text-white">{s.credit ?? 0}</div>
-                  )}
-                </td>
-                <td className="px-3 py-2 text-white/60">
-                  {s.status || "ACTIVE"}
-                </td>
-                <td className="px-3 py-2">
-                  <div className="flex gap-2">
-                    {editingId === s.id ? (
-                      <>
-                        <button
-                          onClick={() => saveEdit(s.id)}
-                          className="px-2 py-1 rounded border border-green-500 text-green-400"
+                    </td>
+                    <td className="px-3 py-2 align-middle text-white/80">
+                      {editingId === s.id ? (
+                        <select
+                          value={String(
+                            editValues.duration ?? toMonths(s.duration)
+                          )}
+                          onChange={(e) => {
+                            setEditValues((ev) => ({
+                              ...ev,
+                              duration: Number(e.target.value),
+                            }));
+                          }}
+                          className=" border border-white/10 rounded px-2 py-1 disabled:bg-transparent text-black"
                         >
-                          Save
-                        </button>
-                        <button
-                          onClick={cancelEdit}
-                          className="px-2 py-1 rounded border border-white/10"
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => startEdit(s)}
-                          className="px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => removeSubWithAuth(s.id ?? s.code)}
-                          className="px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10"
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                          <option value={1}>1 month</option>
+                          <option value={6}>6 months</option>
+                          <option value={12}>12 months</option>
+                        </select>
+                      ) : (
+                        `${toMonths(s.duration)}m`
+                      )}
+                    </td>
+                    <td className="px-3 py-2 align-middle">
+                      {editingId === s.id ? (
+                        <input
+                          type="number"
+                          value={String(editValues.credit ?? s.credit)}
+                          onChange={(e) =>
+                            setEditValues((ev) => ({
+                              ...ev,
+                              credit: Number(e.target.value),
+                            }))
+                          }
+                          className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+                        />
+                      ) : (
+                        <div className="text-white">{s.credit ?? 0}</div>
+                      )}
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded border text-xs border-emerald-500/30 text-emerald-400">
+                        {s.status || "ACTIVE"}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex gap-2">
+                        {editingId === s.id ? (
+                          <>
+                            <button
+                              onClick={() => saveEdit(s.id)}
+                              className="px-2 py-1 rounded border border-green-500 text-green-400"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={cancelEdit}
+                              className="px-2 py-1 rounded border border-white/10"
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => startEdit(s)}
+                              className="px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => removeSubWithAuth(s.id)}
+                              className="px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10"
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {total > perPage && (
+          <div className="flex items-center justify-between text-xs text-white/60">
+            <div>
+              Page {pageSub} of {Math.max(1, Math.ceil(total / perPage))}
+            </div>
+            <div className="flex gap-2">
+              <button
+                disabled={pageSub <= 1}
+                onClick={() => setPageSub((p) => Math.max(1, p - 1))}
+                className="px-3 py-1 rounded border border-white/10 disabled:opacity-50"
+              >
+                Prev
+              </button>
+              <button
+                disabled={start + perPage >= total}
+                onClick={() => setPageSub((p) => p + 1)}
+                className="px-3 py-1 rounded border border-white/10 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -273,43 +399,52 @@ export default function IPTVPage() {
         onClick={onClose}
       >
         <div
-          className="w-full max-w-3xl bg-black/40 border border-white/10 rounded-xl p-5 backdrop-blur-md"
+          className="w-full max-w-4xl bg-black/40 border border-white/10 rounded-xl p-5 backdrop-blur-md shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               {channel.logo ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={channel.logo}
                   alt={channel.name}
-                  className="h-8 w-8 rounded bg-white/10 object-contain"
+                  className="h-10 w-10 rounded bg-white/10 object-contain"
                 />
               ) : (
-                <div className="h-8 w-8 rounded bg-white/10 grid place-items-center">
-                  <ImageIcon className="w-4 h-4 text-white/40" />
+                <div className="h-10 w-10 rounded bg-white/10 grid place-items-center">
+                  <ImageIcon className="w-5 h-5 text-white/40" />
                 </div>
               )}
-              <div>
-                <div className="text-white font-semibold">{channel.name}</div>
-                <div className="text-white/60 text-xs">
+              <div className="truncate">
+                <div className="text-white font-semibold truncate">{channel.name}</div>
+                <div className="text-white/60 text-xs truncate">
                   {channel.category || "Live TV"}
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-1 rounded hover:bg-white/10">
-              <X className="w-5 h-5 text-white/70" />
-            </button>
+            <div className="flex items-center gap-2">
+              <a
+                href={`/admin/categories/add/iptv/subscription/${channel.id}`}
+                rel="noreferrer"
+              >
+                <button className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">
+                  <Edit2 className="w-4 h-4" /> Add Subscription
+                </button>
+              </a>
+              <button onClick={onClose} className="p-1 rounded hover:bg-white/10" aria-label="Close">
+                <X className="w-5 h-5 text-white/70" />
+              </button>
+            </div>
           </div>
+
+          {message && (
+            <div className="mb-3 text-xs rounded border border-emerald-500/30 text-emerald-300 bg-emerald-500/10 px-3 py-2">
+              {message}
+            </div>
+          )}
+
           <SubscriptionTable channelId={channelId} />
-          <a
-            href={`/admin/categories/add/iptv/subscription/${channel.id}`}
-            rel="noreferrer"
-          >
-            <button className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">
-              <Edit2 className="w-4 h-4" /> Add Subscription
-            </button>
-          </a>
         </div>
       </div>
     );
