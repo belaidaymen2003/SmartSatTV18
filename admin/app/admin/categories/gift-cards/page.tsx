@@ -156,6 +156,17 @@ export default function GiftCardsPage() {
           </div>
         </div>
       )}
+
+      {confirmDeleteId !== null && (
+        <ConfirmModal
+          title="Delete Gift Card"
+          message="Are you sure you want to delete this item? This action cannot be undone."
+          confirmText="Delete"
+          onConfirm={() => removeItem(confirmDeleteId!)}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
+      {toast && (<Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />)}
     </div>
   )
 }
