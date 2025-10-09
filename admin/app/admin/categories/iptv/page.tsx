@@ -134,10 +134,8 @@ export default function IPTVPage() {
     };
 
     const removeSubWithAuth = async (idOrCode: number | string) => {
-      const q =
-        typeof idOrCode === "number"
-          ? `id=${idOrCode}`
-          : `code=${encodeURIComponent(String(idOrCode))}`;
+      const q = `id=${Number(idOrCode)}`
+        
       await fetch(`/api/admin/categories/category/subscription?${q}`, {
         method: "DELETE",
         headers: { ...getAuthHeader() },
@@ -343,7 +341,7 @@ export default function IPTVPage() {
                               Edit
                             </button>
                             <button
-                              onClick={() => removeSubWithAuth(s.id ?? s.code)}
+                              onClick={() => removeSubWithAuth(s.id)}
                               className="px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10"
                             >
                               Delete

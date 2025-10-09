@@ -105,21 +105,16 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const idParam = searchParams.get("id");
-    let channelId: number | null = idParam ? Number(idParam) : null;
+    const channelId =  Number(idParam) ;
+//console.log("channelId",channelId,idParam ,searchParams)
 
-    if (!channelId) {
-      try {
-        const body = await request.json();
-        if (body && body.id) channelId = Number(body.id);
-      } catch {}
-    }
 
     if (!channelId || !Number.isFinite(channelId)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
 
     try {
-      await prisma.iPTVChannel.delete({ where: { id: channelId } });
+     const deleted = await prisma.iPTVChannel.delete({ where: { id: Number(channelId) } as any });
       return NextResponse.json({ message: "Deleted" });
     } catch (err) {
       return NextResponse.json({ error: "Database error" }, { status: 500 });
