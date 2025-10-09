@@ -151,7 +151,7 @@ export default function GiftCardsPage() {
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <button onClick={() => setEdit(null)} className="px-4 py-2 rounded border border-white/20 text-white/80 hover:bg-white/10">Cancel</button>
-              <button onClick={async()=>{ if(!edit) return; await fetch('/api/admin/gift-cards', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: edit.id, ...form }) }); setEdit(null); setForm({ title: '', description: '', coverUrl: '' }); fetchGiftCards(); }} className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10">Save</button>
+              <button onClick={async()=>{ if(!edit) return; try { const res = await fetch('/api/admin/gift-cards', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: edit.id, ...form }) }); if (!res.ok) { const d = await res.json().catch(()=>({error:'Failed to save'})); setToast({ message: d?.error || 'Failed to save changes', type: 'error' }); return; } setToast({ message: 'Saved', type: 'success' }); setEdit(null); setForm({ title: '', description: '', coverUrl: '' }); fetchGiftCards(); } catch(err:any) { setToast({ message: err?.message || 'Unexpected error while saving', type: 'error' }) } }} className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10">Save</button>
             </div>
           </div>
         </div>
