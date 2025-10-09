@@ -13,6 +13,9 @@ import {
 import { useRouter } from "next/navigation";
 import Hls from "hls.js";
 import Spinner from "@/components/UI/Spinner";
+import Toast from "@/components/UI/Toast";
+import ConfirmModal from "@/components/UI/ConfirmModal";
+import { CATEGORIES } from "@/lib/constants";
 
 // IPTV model
 type IPTVChannel = {
@@ -32,6 +35,9 @@ export default function IPTVPage() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [channels, setChannels] = useState<IPTVChannel[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string>("All");
+  const [toast, setToast] = useState<{message: string; type?: "success"|"error"|"info"|"warning"}|null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number|null>(null);
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState<IPTVChannel | null>(null);
   const [channelId, setChannelId] = useState<number | null>(null);
@@ -297,6 +303,11 @@ export default function IPTVPage() {
                       {editingId === s.id ? (
                         <input
                           type="number"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          min={0}
+                          step={1}
+                          onWheel={(e)=> (e.currentTarget as HTMLInputElement).blur()}
                           value={String(editValues.credit ?? s.credit)}
                           onChange={(e) =>
                             setEditValues((ev) => ({
@@ -399,7 +410,7 @@ export default function IPTVPage() {
         onClick={onClose}
       >
         <div
-          className="w-full max-w-4xl bg-black/40 border border-white/10 rounded-xl p-5 backdrop-blur-md shadow-2xl"
+          className="w-full max-w-4xl bg-black/40 border border-white/10 rounded-xl p-5 backdrop-blur-md shadow-2xl max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-4">
@@ -505,8 +516,12 @@ export default function IPTVPage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return channels.filter((c) => !q || c.name.toLowerCase().includes(q));
-  }, [channels, query]);
+    return channels.filter((c) => {
+      const matchesQuery = !q || c.name.toLowerCase().includes(q);
+      const matchesCategory = categoryFilter === "All" || (c.category || "Live TV") === categoryFilter;
+      return matchesQuery && matchesCategory;
+    });
+  }, [channels, query, categoryFilter]);
 
   const total = filtered.length;
   const start = (page - 1) * pageSize;
@@ -524,23 +539,43 @@ export default function IPTVPage() {
 
   const saveEdit = async () => {
     if (!edit) return;
-    const newlogourl = await replaceLogo();
-    const payload = { id: edit.id, ...form, logo: newlogourl.logoUrl };
-    await fetch("/api/admin/categories/category", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    setEdit(null);
-    fetchChannels();
+    try {
+      const newlogourl = await replaceLogo();
+      const payload: any = { id: edit.id, ...form };
+      if (newlogourl?.logoUrl) payload.logo = newlogourl.logoUrl;
+      const res = await fetch("/api/admin/categories/category", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(()=>({error: 'Failed to save'}));
+        setToast({ message: d?.error || "Failed to save changes", type: "error" });
+        return;
+      }
+      setToast({ message: "Channel updated successfully", type: "success" });
+      setEdit(null);
+      fetchChannels();
+    } catch (e:any) {
+      setToast({ message: e?.message || "Unexpected error while saving", type: "error" });
+    }
   };
 
   const removeChannel = async (id: number) => {
-    if (!confirm("Delete this channel?")) return;
-    await fetch(`/api/admin/categories/category?id=${id}`, {
-      method: "DELETE",
-    });
-    fetchChannels();
+    try {
+      const res = await fetch(`/api/admin/categories/category?id=${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const d = await res.json().catch(()=>({error:'Failed to delete'}));
+        setToast({ message: d?.error || "Failed to delete channel", type: "error" });
+        return;
+      }
+      setToast({ message: "Channel deleted", type: "success" });
+      fetchChannels();
+    } catch (e:any) {
+      setToast({ message: e?.message || "Unexpected error while deleting", type: "error" });
+    } finally {
+      setConfirmDeleteId(null);
+    }
   };
 
   const replaceLogo = async () => {
@@ -594,6 +629,16 @@ export default function IPTVPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
+        <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 flex items-center gap-2 w-full md:w-48">
+          <select
+            className="w-full bg-transparent text-white/80 text-sm focus:outline-none"
+            value={categoryFilter}
+            onChange={(e)=>{ setPage(1); setCategoryFilter(e.target.value); }}
+          >
+            <option>All</option>
+            {CATEGORIES.map(c => (<option key={c} value={c}>{c}</option>))}
+          </select>
+        </div>
         <div className="ml-auto bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 flex items-center gap-2 w-full md:w-80">
           <Search className="w-4 h-4 text-white/60" />
           <input
@@ -604,6 +649,20 @@ export default function IPTVPage() {
           />
         </div>
       </div>
+
+      {confirmDeleteId !== null && (
+        <ConfirmModal
+          title="Delete Channel"
+          message="Are you sure you want to delete this channel? This action cannot be undone."
+          confirmText="Delete"
+          onConfirm={() => removeChannel(confirmDeleteId)}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
+
+      {toast && (
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+      )}
 
       <div className="space-y-4">
         {loading ? (
@@ -660,7 +719,7 @@ export default function IPTVPage() {
                       <Edit2 className="w-4 h-4" /> Edit
                     </button>
                     <button
-                      onClick={() => removeChannel(ch.id)}
+                      onClick={() => setConfirmDeleteId(ch.id)}
                       className="inline-flex items-center gap-1 px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10"
                     >
                       <Trash2 className="w-4 h-4" /> Delete
@@ -709,7 +768,7 @@ export default function IPTVPage() {
           onClick={() => setEdit(null)}
         >
           <div
-            className="w-full max-w-2xl bg-black/30 border border-white/10 rounded-xl p-6 backdrop-blur-md shadow-xl"
+            className="w-full max-w-2xl bg-black/30 border border-white/10 rounded-xl p-6 backdrop-blur-md shadow-xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -780,21 +839,15 @@ export default function IPTVPage() {
                 </div>
                 <div className="sm:col-span-1">
                   <label className="block text-sm text-white/70 mb-1">Category</label>
-                  <input
-                    list="iptv-categories"
-                    className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+                  <select
+                    className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    placeholder="e.g. Live TV"
-                  />
-                  <datalist id="iptv-categories">
-                    <option value="Movie" />
-                    <option value="TV Series" />
-                    <option value="Anime" />
-                    <option value="Cartoon" />
-                    <option value="Live TV" />
-                    <option value="Streaming" />
-                  </datalist>
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-sm text-white/70 mb-1">Description</label>
