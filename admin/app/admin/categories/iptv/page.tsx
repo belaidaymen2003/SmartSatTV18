@@ -378,8 +378,6 @@ export default function IPTVPage() {
   const rows = filtered.slice(start, start + pageSize);
 
   const openEdit = (ch: IPTVChannel) => {
-    console.log(ch);
-    console.log(form);
     setEdit(ch);
     setForm({
       name: ch.name || "",
@@ -576,7 +574,7 @@ export default function IPTVPage() {
           onClick={() => setEdit(null)}
         >
           <div
-            className="w-full max-w-lg bg-black/30 border border-white/10 rounded-xl p-5 backdrop-blur-md"
+            className="w-full max-w-2xl bg-black/30 border border-white/10 rounded-xl p-6 backdrop-blur-md shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -597,6 +595,7 @@ export default function IPTVPage() {
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="Channel name"
                 />
+                <p className="mt-1 text-xs text-white/50">Display name shown across the app.</p>
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-sm text-white/70 mb-1">Description</label>
@@ -606,15 +605,26 @@ export default function IPTVPage() {
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   placeholder="Short description"
                 />
+                <p className="mt-1 text-xs text-white/50">Optional. Keep it concise for better readability.</p>
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-sm text-white/70 mb-1">Category</label>
                 <input
+                  list="iptv-categories"
                   className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                   placeholder="e.g. Live TV"
                 />
+                <datalist id="iptv-categories">
+                  <option value="Movie" />
+                  <option value="TV Series" />
+                  <option value="Anime" />
+                  <option value="Cartoon" />
+                  <option value="Live TV" />
+                  <option value="Streaming" />
+                </datalist>
+                <p className="mt-1 text-xs text-white/50">Choose a category or type your own.</p>
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-sm text-white/70 mb-2">Logo</label>
@@ -657,6 +667,7 @@ export default function IPTVPage() {
                     </button>
                   )}
                 </div>
+                <p className="mt-1 text-xs text-white/50">PNG/SVG recommended. Square images look best.</p>
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-5">
