@@ -42,9 +42,7 @@ export default function CategorySubscriptionPage() {
     setMessage(null)
     try {
       const payloads = rows.map(r => ({ channelId, code: r.code.trim(), durationMonths: r.duration, credit: Number(r.credit || 0) })).filter(r => r.code)
-      
-        await fetch('/api/admin/categories/category/subscription', { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify(payloads) })
-      
+      await fetch('/api/admin/categories/category/subscription', { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify(payloads) })
       setMessage('Subscription codes added')
       setRows([{ code: '', duration: 1, credit: 0 }])
       fetchSubscriptions()
@@ -89,60 +87,44 @@ export default function CategorySubscriptionPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-white">Add Subscription codes for Channel {channel?.name ? `- ${channel.name}` : ''}</h1>
+        <h1 className="text-2xl font-semibold text-white">Add Subscription Codes {channel?.name ? `for ${channel.name}` : ''}</h1>
       </div>
 
       <div className="bg-black/20 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-        <div className="grid gap-3">
+        <div className="grid gap-4">
           {rows.map((row, i) => (
-            <div key={i} className="grid grid-cols-12 gap-2 items-center">
-              <input value={row.code} onChange={(e)=>updateRow(i, { code: e.target.value })} placeholder="Code" className="col-span-12 sm:col-span-5 bg-black/30 border border-white/10 rounded px-3 py-2 text-white" />
-              <select value={String(row.duration)} onChange={(e)=>updateRow(i, { duration: Number(e.target.value) })} className="col-span-6 sm:col-span-3 bg-black/30 border border-white/10 rounded px-3 py-2 text-white">
-                <option value={1}>1 month</option>
-                <option value={6}>6 months</option>
-                <option value={12}>12 months</option>
-              </select>
-              <input type="number" value={row.credit} onChange={(e)=>updateRow(i, { credit: Number(e.target.value) })} placeholder="Credit" className="col-span-6 sm:col-span-3 bg-black/30 border border-white/10 rounded px-3 py-2 text-white" />
-              <div className="col-span-12 sm:col-span-1">
-                <button onClick={()=>removeRow(i)} className="px-3 py-2 rounded border border-red-500/30 text-red-400">Remove</button>
+            <div key={i} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end bg-white/5 border border-white/10 rounded-lg p-3">
+              <div className="sm:col-span-6">
+                <label className="block text-xs text-white/70 mb-1">Code</label>
+                <input value={row.code} onChange={(e)=>updateRow(i, { code: e.target.value })} placeholder="Enter unique code" className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40" />
+              </div>
+              <div className="sm:col-span-3">
+                <label className="block text-xs text-white/70 mb-1">Duration</label>
+                <select value={String(row.duration)} onChange={(e)=>updateRow(i, { duration: Number(e.target.value) })} className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40">
+                  <option value={1}>1 month</option>
+                  <option value={6}>6 months</option>
+                  <option value={12}>12 months</option>
+                </select>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-xs text-white/70 mb-1">Credit</label>
+                <input type="number" value={row.credit} onChange={(e)=>updateRow(i, { credit: Number(e.target.value) })} placeholder="0" className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40" />
+              </div>
+              <div className="sm:col-span-1 flex sm:justify-end">
+                <button onClick={()=>removeRow(i)} className="px-3 py-2 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10">Remove</button>
               </div>
             </div>
           ))}
 
-          <div className="flex gap-2">
-            <button onClick={addRow} className="px-4 py-2 rounded border border-white/10 text-white/80">Add row</button>
+          <div className="flex flex-wrap gap-2">
+            <button onClick={addRow} className="px-4 py-2 rounded border border-white/10 text-white/80 hover:bg-white/10">Add another row</button>
             <button onClick={submit} disabled={loading} className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10 disabled:opacity-60">{loading ? 'Adding...' : 'Add Codes'}</button>
           </div>
 
-          {message && <div className="text-sm text-white/70">{message}</div>}
+          {message && <div className="text-sm text-white/80 bg-white/5 border border-white/10 rounded px-3 py-2">{message}</div>}
 
           <div>
-            {/* <h3 className="text-white font-semibold mb-2">Existing codes</h3>
-            {subs.length === 0 ? <div className="text-white/60">No subscriptions</div> : (
-              <div className="overflow-auto">
-                <table className="min-w-full text-left border-collapse">
-                  <thead>
-                    <tr className="text-white/70 text-sm"><th className="px-3 py-2">Code</th><th className="px-3 py-2">Duration</th><th className="px-3 py-2">Credits</th><th className="px-3 py-2">Actions</th></tr>
-                  </thead>
-                  <tbody>
-                    {subs.map(s => (
-                      <tr key={s.id || s.code} className="bg-black/30 border border-white/10 rounded">
-                        <td className="px-3 py-2 align-middle">{s.code}</td>
-                        <td className="px-3 py-2 align-middle">{s.duration}m</td>
-                        <td className="px-3 py-2 align-middle">{s.credit ?? 0}</td>
-                        <td className="px-3 py-2">
-                          <div className="flex gap-2">
-                            <button onClick={()=>editRow(s)} className="px-2 py-1 rounded border border-white/10">Edit</button>
-                            <button onClick={()=>removeSub(s.id ?? s.code)} className="px-2 py-1 rounded border border-red-500/30 text-red-400">Delete</button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )} */}
-
+            {/* Existing table and inline editor remain below for reference / use */}
             {editing && (
               <div className="bg-black/20 border border-white/10 rounded p-3 mt-3">
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
