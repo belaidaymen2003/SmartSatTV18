@@ -401,43 +401,52 @@ export default function IPTVPage() {
         onClick={onClose}
       >
         <div
-          className="w-full max-w-3xl bg-black/40 border border-white/10 rounded-xl p-5 backdrop-blur-md"
+          className="w-full max-w-4xl bg-black/40 border border-white/10 rounded-xl p-5 backdrop-blur-md shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               {channel.logo ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={channel.logo}
                   alt={channel.name}
-                  className="h-8 w-8 rounded bg-white/10 object-contain"
+                  className="h-10 w-10 rounded bg-white/10 object-contain"
                 />
               ) : (
-                <div className="h-8 w-8 rounded bg-white/10 grid place-items-center">
-                  <ImageIcon className="w-4 h-4 text-white/40" />
+                <div className="h-10 w-10 rounded bg-white/10 grid place-items-center">
+                  <ImageIcon className="w-5 h-5 text-white/40" />
                 </div>
               )}
-              <div>
-                <div className="text-white font-semibold">{channel.name}</div>
-                <div className="text-white/60 text-xs">
+              <div className="truncate">
+                <div className="text-white font-semibold truncate">{channel.name}</div>
+                <div className="text-white/60 text-xs truncate">
                   {channel.category || "Live TV"}
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-1 rounded hover:bg-white/10">
-              <X className="w-5 h-5 text-white/70" />
-            </button>
+            <div className="flex items-center gap-2">
+              <a
+                href={`/admin/categories/add/iptv/subscription/${channel.id}`}
+                rel="noreferrer"
+              >
+                <button className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">
+                  <Edit2 className="w-4 h-4" /> Add Subscription
+                </button>
+              </a>
+              <button onClick={onClose} className="p-1 rounded hover:bg-white/10" aria-label="Close">
+                <X className="w-5 h-5 text-white/70" />
+              </button>
+            </div>
           </div>
+
+          {message && (
+            <div className="mb-3 text-xs rounded border border-emerald-500/30 text-emerald-300 bg-emerald-500/10 px-3 py-2">
+              {message}
+            </div>
+          )}
+
           <SubscriptionTable channelId={channelId} />
-          <a
-            href={`/admin/categories/add/iptv/subscription/${channel.id}`}
-            rel="noreferrer"
-          >
-            <button className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">
-              <Edit2 className="w-4 h-4" /> Add Subscription
-            </button>
-          </a>
         </div>
       </div>
     );
