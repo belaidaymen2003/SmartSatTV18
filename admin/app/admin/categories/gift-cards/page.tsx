@@ -15,6 +15,8 @@ export default function GiftCardsPage() {
   const [form, setForm] = useState({ title: '', description: '', coverUrl: '' })
   const pageSize = 12
   const [page, setPage] = useState(1)
+  const [toast, setToast] = useState<{message: string; type?: 'success'|'error'|'info'|'warning'}|null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number|null>(null)
 
   const fetchGiftCards = async () => {
     setLoading(true)
