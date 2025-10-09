@@ -86,10 +86,8 @@ export async function PUT(request: NextRequest) {
         where: { id: channelId },
         data: {
           ...(name || title ? { name: name ?? title } : {}),
-          ...(typeof url === "string" ? { url } : {}),
           ...(typeof description === "string" ? { description } : {}),
           ...(typeof category === "string" ? { category } : {}),
-          ...(typeof cost !== "undefined" ? { cost: Number(cost) } : {}),
           ...(logo || logoUrl ? { logo: logo ?? logoUrl } : {}),
         },
       });
