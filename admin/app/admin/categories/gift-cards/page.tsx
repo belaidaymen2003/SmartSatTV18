@@ -101,7 +101,7 @@ export default function GiftCardsPage() {
                     <button onClick={() => setEdit(g)} className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">
                       <Edit2 className="w-4 h-4" /> Edit
                     </button>
-                    <button onClick={async () => { if(confirm('Delete?')) { await fetch(`/api/admin/gift-cards?id=${g.id}`, { method: 'DELETE' }); fetchGiftCards() } }} className="inline-flex items-center gap-1 px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10">
+                    <button onClick={() => setConfirmDeleteId(g.id)} className="inline-flex items-center gap-1 px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10">
                       <Trash2 className="w-4 h-4" /> Delete
                     </button>
                   </div>
