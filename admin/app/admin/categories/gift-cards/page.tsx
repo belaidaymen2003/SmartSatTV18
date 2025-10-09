@@ -122,7 +122,7 @@ export default function GiftCardsPage() {
 
       {edit && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => setEdit(null)}>
-          <div className="w-full max-w-lg bg-black/30 border border-white/10 rounded-xl p-5 backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-lg bg-black/30 border border-white/10 rounded-xl p-5 backdrop-blur-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-white font-semibold">Edit Gift Card</h3>
               <button onClick={() => setEdit(null)} className="p-1 rounded hover:bg-white/10"><X className="w-5 h-5 text-white/70" /></button>
