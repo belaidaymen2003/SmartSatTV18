@@ -586,88 +586,90 @@ export default function IPTVPage() {
                 <X className="w-5 h-5 text-white/70" />
               </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="sm:col-span-2">
-                <label className="block text-sm text-white/70 mb-1">Name</label>
-                <input
-                  className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="Channel name"
-                />
-                <p className="mt-1 text-xs text-white/50">Display name shown across the app.</p>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm text-white/70 mb-1">Description</label>
-                <textarea
-                  className="h-28 w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Short description"
-                />
-                <p className="mt-1 text-xs text-white/50">Optional. Keep it concise for better readability.</p>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm text-white/70 mb-1">Category</label>
-                <input
-                  list="iptv-categories"
-                  className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  placeholder="e.g. Live TV"
-                />
-                <datalist id="iptv-categories">
-                  <option value="Movie" />
-                  <option value="TV Series" />
-                  <option value="Anime" />
-                  <option value="Cartoon" />
-                  <option value="Live TV" />
-                  <option value="Streaming" />
-                </datalist>
-                <p className="mt-1 text-xs text-white/50">Choose a category or type your own.</p>
-              </div>
-              <div className="sm:col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="sm:col-span-1">
                 <label className="block text-sm text-white/70 mb-2">Logo</label>
-                <div className="flex items-center gap-3">
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4 flex flex-col items-center">
                   {form.logo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={logo.logourl !== "" ? logo.logourl : form.logo}
+                      src={logo.logourl !== '' ? logo.logourl : form.logo}
                       alt={form.name}
-                      className="h-12 w-12 rounded bg-white/10 object-contain"
+                      className="h-28 w-28 rounded-lg bg-white/10 object-contain"
                     />
                   ) : (
-                    <div className="h-12 w-12 rounded bg-white/10 grid place-items-center">
-                      <ImageIcon className="w-5 h-5 text-white/40" />
+                    <div className="h-28 w-28 rounded-lg bg-white/10 grid place-items-center">
+                      <ImageIcon className="w-7 h-7 text-white/40" />
                     </div>
                   )}
-                  <label className="px-3 py-2 border border-white/10 rounded cursor-pointer hover:bg-white/10 text-white/80 inline-flex items-center gap-2">
-                    Replace
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (f)
-                          setLogo({
-                            logofile: f,
-                            logourl: URL.createObjectURL(f),
-                          });
-                      }}
-                    />
-                  </label>
-                  {form.logo && (
-                    <button
-                      type="button"
-                      onClick={deleteLogo}
-                      className="px-3 py-2 border border-red-500/30 text-red-400 rounded hover:bg-red-500/10"
-                    >
-                      Remove
-                    </button>
-                  )}
+                  <div className="mt-3 flex items-center gap-2">
+                    <label className="px-3 py-2 border border-white/10 rounded cursor-pointer hover:bg-white/10 text-white/80 inline-flex items-center gap-2">
+                      Replace
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f)
+                            setLogo({
+                              logofile: f,
+                              logourl: URL.createObjectURL(f),
+                            });
+                        }}
+                      />
+                    </label>
+                    {form.logo && (
+                      <button
+                        type="button"
+                        onClick={deleteLogo}
+                        className="px-3 py-2 border border-red-500/30 text-red-400 rounded hover:bg-red-500/10"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                  <p className="mt-2 text-xs text-white/50 text-center">PNG/SVG recommended. Square images look best.</p>
                 </div>
-                <p className="mt-1 text-xs text-white/50">PNG/SVG recommended. Square images look best.</p>
+              </div>
+
+              <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <label className="block text-sm text-white/70 mb-1">Name</label>
+                  <input
+                    className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="Channel name"
+                  />
+                </div>
+                <div className="sm:col-span-1">
+                  <label className="block text-sm text-white/70 mb-1">Category</label>
+                  <input
+                    list="iptv-categories"
+                    className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    placeholder="e.g. Live TV"
+                  />
+                  <datalist id="iptv-categories">
+                    <option value="Movie" />
+                    <option value="TV Series" />
+                    <option value="Anime" />
+                    <option value="Cartoon" />
+                    <option value="Live TV" />
+                    <option value="Streaming" />
+                  </datalist>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm text-white/70 mb-1">Description</label>
+                  <textarea
+                    className="h-32 w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    placeholder="Short description"
+                  />
+                </div>
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-5">
