@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import ImageKit from "imagekit";
 import { PrismaClient } from "@/lib/generated/prisma";
-import { NextRequest, NextResponse } from "next/server";
 
 
 const hasImagekit = Boolean(process.env.IMAGEKIT_PRIVATE_KEY && process.env.IMAGEKIT_PUBLIC_KEY && process.env.IMAGEKIT_URL_ENDPOINT)
