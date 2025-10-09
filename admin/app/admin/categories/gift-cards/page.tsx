@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Search, Plus, Edit2, Trash2, X, Image as ImageIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Toast from '@/components/UI/Toast'
+import ConfirmModal from '@/components/UI/ConfirmModal'
 
 export default function GiftCardsPage() {
   const router = useRouter()
