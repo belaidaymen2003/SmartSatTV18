@@ -643,7 +643,7 @@ export default function IPTVPage() {
           <Search className="w-4 h-4 text-white/60" />
           <input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setPage(1); setQuery(e.target.value) }}
             placeholder={`Search in IPTV...`}
             className="bg-transparent text-white/80 text-sm w-full placeholder-white/40 focus:outline-none"
           />
