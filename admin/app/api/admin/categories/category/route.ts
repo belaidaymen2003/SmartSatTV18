@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { PrismaClient } from "@/lib/generated/prisma";
-import { NextRequest, NextResponse } from "next/server";
+enum Category {
+  IPTV,
+  STREAMING
+}
 const prisma = new PrismaClient();
 
 // Helper to map known slugs to categories
@@ -36,26 +39,26 @@ export async function GET(request: NextRequest) {
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const pageSize = Math.min(100, Math.max(1, Number(searchParams.get("pageSize") || 12)));
 
-    const and: any[] = [];
-    const slugCat = categoryFromSlug(slug);
-    if (slugCat) and.push({ category: slugCat });
-    if (category && category !== "All") and.push({ category });
-    if (q) and.push({ name: { contains: q, mode: "insensitive" } });
-    const where = and.length ? { AND: and } : {};
+    // const and: any[] = [];
+    // const slugCat = categoryFromSlug(slug);
+    // if (slugCat) and.push({ category: slugCat });
+    // if (category && category !== "All") and.push({ category });
+    // if (q) and.push({ name: { contains: q, mode: "insensitive" } });
+    // const where = and.length ? { AND: and } : {};
 
     try {
       const [total, channels] = await Promise.all([
-        prisma.iPTVChannel.count({ where }),
+        prisma.iPTVChannel.count({  }),
         prisma.iPTVChannel.findMany({
-          where,
+          
           orderBy: { createdAt: "desc" },
           skip: (page - 1) * pageSize,
           take: pageSize,
         }),
       ]);
       return NextResponse.json({ channels, total, page, pageSize });
-    } catch {
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    } catch (err:any){
+      return NextResponse.json({ error: err.message }, { status: 500 });
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -64,7 +67,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { title, category, cost, description, url, logoUrl } =
+    const { title, category, description,  logoUrl } =
       await request.json();
 
     try {
@@ -105,10 +108,10 @@ export async function PUT(request: NextRequest) {
       const updated = await prisma.iPTVChannel.update({
         where: { id: channelId },
         data: {
-          ...(name || title ? { name: name ?? title } : {}),
-          ...(typeof description === "string" ? { description } : {}),
-          ...(typeof category === "string" ? { category } : {}),
-          ...(logo || logoUrl ? { logo: logo ?? logoUrl } : {}),
+           name: name ?? title ,
+           description ,
+           category ,
+           logo: logo ?? logoUrl ,
         },
       });
 
@@ -134,10 +137,17 @@ export async function DELETE(request: NextRequest) {
     }
 
     try {
-     const deleted = await prisma.iPTVChannel.delete({ where: { id: Number(channelId) } as any });
+      await prisma.subscription.deleteMany({ where: { 
+        channelId: Number(channelId) } as any 
+      }
+      );
+
+     await prisma.iPTVChannel.delete({ where: { id: Number(channelId) } as any });
+
       return NextResponse.json({ message: "Deleted" });
-    } catch (err) {
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    } catch (err:any) {
+      console.log(err.message);
+      return NextResponse.json({ error: err.message }, { status: 500 });
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

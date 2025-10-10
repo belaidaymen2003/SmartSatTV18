@@ -75,6 +75,11 @@ enum Status {
   CANCELLED
 }
 
+enum Category {
+  IPTV
+  STREAMING
+}
+
 model User {
   id           Int                   @id @default(autoincrement())
   email        String                @unique
@@ -216,7 +221,7 @@ model IPTVChannel {
   name        String           // Stream URL (.m3u8, etc.)
   logo        String?
   description String?
-  category    String?          // Price of subscription
+  category    Category          // Price of subscription
   createdAt   DateTime          @default(now())
   updatedAt   DateTime         @updatedAt
   subscriptions Subscription[]  // All users who subscribed

@@ -35,7 +35,6 @@ export default function IPTVPage() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [channels, setChannels] = useState<IPTVChannel[]>([]);
-  const [total, setTotal] = useState(0);
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
   const [toast, setToast] = useState<{message: string; type?: "success"|"error"|"info"|"warning"}|null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number|null>(null);
@@ -51,10 +50,9 @@ export default function IPTVPage() {
     name: "",
     logo: "",
     description: "",
-    category: "Live TV",
+    category: "IPTV",
   });
   const [preview, setPreview] = useState<IPTVChannel | null>(null);
-  const [saving, setSaving] = useState(false);
   const pageSize = 12;
   const [page, setPage] = useState(1);
   const [logo, setLogo] = useState<logo>({ logourl: "", logofile: null });
@@ -432,7 +430,7 @@ export default function IPTVPage() {
               <div className="truncate">
                 <div className="text-white font-semibold truncate">{channel.name}</div>
                 <div className="text-white/60 text-xs truncate">
-                  {channel.category || "Live TV"}
+                  {channel.category}
                 </div>
               </div>
             </div>
@@ -495,19 +493,18 @@ export default function IPTVPage() {
   };
   const fetchChannels = async () => {
     setLoading(true);
+    console.log("fetchChannels");
     try {
-      const params = new URLSearchParams();
-      params.set("slug", "iptv");
-      if (query.trim()) params.set("q", query.trim());
-      if (categoryFilter && categoryFilter !== "All") params.set("category", categoryFilter);
-      params.set("page", String(page));
-      params.set("pageSize", String(pageSize));
-      const res = await fetch(`/api/admin/categories/category?${params.toString()}`, { cache: "no-store" });
-      const data = await res.json();
-      setChannels(Array.isArray(data.channels) ? data.channels : []);
-      setTotal(Number(data.total || 0));
-    } catch (e) {
-      setChannels([]); setTotal(0);
+      const res = await fetch(`/api/admin/categories/category?slug=iptv&page=${page}&pageSize=${pageSize}`, {
+        cache: "no-store",
+      });
+      let data: any = {};
+      try {
+        data = await res.clone().json();
+      } catch (e) {
+        console.log(e);
+      }
+      setChannels( data.channels ?? []);
     } finally {
       setLoading(false);
     }
@@ -518,11 +515,20 @@ export default function IPTVPage() {
   }, [channelId]);
   useEffect(() => {
     fetchChannels();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, pageSize, query, categoryFilter]);
+  }, []);
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return channels.filter((c) => {
+      const matchesQuery = !q || c.name.toLowerCase().includes(q);
+      const matchesCategory = categoryFilter === "All" || (c.category ) === categoryFilter;
+      return matchesQuery && matchesCategory;
+    });
+  }, [channels, query, categoryFilter]);
+
+  const total = filtered.length;
   const start = (page - 1) * pageSize;
-  const rows = channels;
+  const rows = filtered.slice(start, start + pageSize);
 
   const openEdit = (ch: IPTVChannel) => {
     setEdit(ch);
@@ -530,13 +536,12 @@ export default function IPTVPage() {
       name: ch.name || "",
       logo: ch.logo || "",
       description: ch.description || "",
-      category: ch.category || "Live TV",
+      category: ch.category || "IPTV",
     });
   };
 
   const saveEdit = async () => {
     if (!edit) return;
-    setSaving(true);
     try {
       const newlogourl = await replaceLogo();
       const payload: any = { id: edit.id, ...form };
@@ -556,8 +561,6 @@ export default function IPTVPage() {
       fetchChannels();
     } catch (e:any) {
       setToast({ message: e?.message || "Unexpected error while saving", type: "error" });
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -643,7 +646,7 @@ export default function IPTVPage() {
           <Search className="w-4 h-4 text-white/60" />
           <input
             value={query}
-            onChange={(e) => { setPage(1); setQuery(e.target.value) }}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder={`Search in IPTV...`}
             className="bg-transparent text-white/80 text-sm w-full placeholder-white/40 focus:outline-none"
           />
@@ -698,7 +701,7 @@ export default function IPTVPage() {
                       {ch.name}
                     </div>
                     <div className="text-xs text-white/60 mt-0.5">
-                      {ch.category || "Live TV"}
+                      {ch.category}
                     </div>
                     {ch.description && (
                       <div className="text-xs text-white/50 mt-1 line-clamp-2">
@@ -869,10 +872,9 @@ export default function IPTVPage() {
               </button>
               <button
                 onClick={saveEdit}
-                disabled={saving}
-                className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10 disabled:opacity-60"
+                className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10"
               >
-                {saving ? 'Saving...' : 'Save'}
+                Save
               </button>
             </div>
           </div>

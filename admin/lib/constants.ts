@@ -1,10 +1,6 @@
 export const CATEGORIES = [
-  "Movie",
-  "TV Series",
-  "Anime",
-  "Cartoon",
-  "Live TV",
-  "Streaming",
+  "IPTV",
+  "STREAMING",
 ] as const;
 
 export type Category = typeof CATEGORIES[number];
