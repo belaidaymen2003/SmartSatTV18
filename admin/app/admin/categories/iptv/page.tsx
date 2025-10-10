@@ -493,7 +493,6 @@ export default function IPTVPage() {
   };
   const fetchChannels = async () => {
     setLoading(true);
-    console.log("fetchChannels");
     try {
       const res = await fetch(`/api/admin/categories/category?slug=iptv&page=${page}&pageSize=${pageSize}`, {
         cache: "no-store",
