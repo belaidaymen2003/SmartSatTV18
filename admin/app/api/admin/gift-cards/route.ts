@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
-    const q = searchParams.get("q") || undefined;
+    const q = (searchParams.get("q") || "").trim() || undefined;
 
     if (id) {
       const item = await prisma.catalogItem.findUnique({ where: { id: Number(id) }, include: { tags: { include: { tag: true } } } });
@@ -26,16 +26,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ item });
     }
 
-    const items = await prisma.catalogItem.findMany({
-      where: {
-        ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
-        tags: { some: { tag: { name: GIFT_TAG } } },
-      },
-      orderBy: { createdAt: "desc" },
-      select: { id: true, title: true, description: true, coverUrl: true, createdAt: true },
-    });
+    const page = Math.max(1, Number(searchParams.get("page") || 1));
+    const pageSize = Math.min(100, Math.max(1, Number(searchParams.get("pageSize") || 12)));
 
-    return NextResponse.json({ items });
+    const where = {
+      ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
+      tags: { some: { tag: { name: GIFT_TAG } } },
+    } as const;
+
+    const [total, items] = await Promise.all([
+      prisma.catalogItem.count({ where }),
+      prisma.catalogItem.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        select: { id: true, title: true, description: true, coverUrl: true, createdAt: true },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+
+    return NextResponse.json({ items, total, page, pageSize });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

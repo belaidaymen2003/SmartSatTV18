@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Search, Plus, Edit2, Trash2, X, Image as ImageIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Toast from '@/components/UI/Toast'
+import ConfirmModal from '@/components/UI/ConfirmModal'
 
 export default function GiftCardsPage() {
   const router = useRouter()
@@ -13,27 +15,45 @@ export default function GiftCardsPage() {
   const [form, setForm] = useState({ title: '', description: '', coverUrl: '' })
   const pageSize = 12
   const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
+  const [toast, setToast] = useState<{message: string; type?: 'success'|'error'|'info'|'warning'}|null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number|null>(null)
 
   const fetchGiftCards = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/gift-cards', { cache: 'no-store' })
-      let data: any = {}
-      try { data = await res.clone().json() } catch {}
+      const params = new URLSearchParams()
+      if (query.trim()) params.set('q', query.trim())
+      params.set('page', String(page))
+      params.set('pageSize', String(pageSize))
+      const res = await fetch(`/api/admin/gift-cards?${params.toString()}`, { cache: 'no-store' })
+      const data = await res.json()
       setItems(Array.isArray(data.items) ? data.items : [])
+      setTotal(Number(data.total || 0))
     } finally { setLoading(false) }
   }
 
-  useEffect(() => { fetchGiftCards() }, [])
+  useEffect(() => { fetchGiftCards() }, [page, pageSize, query])
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return items.filter((g) => !q || g.title.toLowerCase().includes(q))
-  }, [items, query])
+  const removeItem = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/gift-cards?id=${id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const d = await res.json().catch(()=>({error:'Failed to delete'}))
+        setToast({ message: d?.error || 'Failed to delete', type: 'error' })
+        return
+      }
+      setToast({ message: 'Deleted', type: 'success' })
+      fetchGiftCards()
+    } catch (e:any) {
+      setToast({ message: e?.message || 'Unexpected error while deleting', type: 'error' })
+    } finally {
+      setConfirmDeleteId(null)
+    }
+  }
 
-  const total = filtered.length
   const start = (page - 1) * pageSize
-  const rows = filtered.slice(start, start + pageSize)
+  const rows = items
 
   return (
     <div className="space-y-6">
@@ -48,7 +68,7 @@ export default function GiftCardsPage() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="ml-auto bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 flex items-center gap-2 w-full md:w-80">
           <Search className="w-4 h-4 text-white/60" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={`Search in GIFT CARDS...`} className="bg-transparent text-white/80 text-sm w-full placeholder-white/40 focus:outline-none" />
+          <input value={query} onChange={(e) => { setPage(1); setQuery(e.target.value) }} placeholder={`Search in GIFT CARDS...`} className="bg-transparent text-white/80 text-sm w-full placeholder-white/40 focus:outline-none" />
         </div>
       </div>
 
@@ -80,7 +100,7 @@ export default function GiftCardsPage() {
                     <button onClick={() => setEdit(g)} className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">
                       <Edit2 className="w-4 h-4" /> Edit
                     </button>
-                    <button onClick={async () => { if(confirm('Delete?')) { await fetch(`/api/admin/gift-cards?id=${g.id}`, { method: 'DELETE' }); fetchGiftCards() } }} className="inline-flex items-center gap-1 px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10">
+                    <button onClick={() => setConfirmDeleteId(g.id)} className="inline-flex items-center gap-1 px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10">
                       <Trash2 className="w-4 h-4" /> Delete
                     </button>
                   </div>
@@ -101,7 +121,7 @@ export default function GiftCardsPage() {
 
       {edit && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => setEdit(null)}>
-          <div className="w-full max-w-lg bg-black/30 border border-white/10 rounded-xl p-5 backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-lg bg-black/30 border border-white/10 rounded-xl p-5 backdrop-blur-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-white font-semibold">Edit Gift Card</h3>
               <button onClick={() => setEdit(null)} className="p-1 rounded hover:bg-white/10"><X className="w-5 h-5 text-white/70" /></button>
@@ -120,21 +140,32 @@ export default function GiftCardsPage() {
                   )}
                   <label className="px-3 py-1.5 border border-white/10 rounded cursor-pointer hover:bg-white/10 text-white/80">
                     Replace
-                    <input type="file" accept="image/*" className="hidden" onChange={async (e)=>{ const f=e.target.files?.[0]; if(!f||!edit) return; const fd = new FormData(); fd.append('itemId', String(edit.id)); fd.append('file', f); fd.append('fileName', f.name); if (edit.coverUrl) fd.append('oldUrl', edit.coverUrl); await fetch('/api/admin/gift-cards/upload', { method: 'PUT', body: fd }); fetchGiftCards(); }} />
+                    <input type="file" accept="image/*" className="hidden" onChange={async (e)=>{ const f=e.target.files?.[0]; if(!f||!edit) return; try { const fd = new FormData(); fd.append('itemId', String(edit.id)); fd.append('file', f); fd.append('fileName', f.name); if (edit.coverUrl) fd.append('oldUrl', edit.coverUrl); const res = await fetch('/api/admin/gift-cards/upload', { method: 'PUT', body: fd }); if (!res.ok) { const d = await res.json().catch(()=>({error:'Upload failed'})); setToast({ message: d?.error || 'Upload failed', type: 'error' }); return; } setToast({ message: 'Image updated', type: 'success' }); fetchGiftCards(); } catch(err:any) { setToast({ message: err?.message || 'Unexpected error uploading', type: 'error' }) } }} />
                   </label>
                   {edit.coverUrl && (
-                    <button type="button" onClick={async()=>{ if(!edit) return; await fetch('/api/admin/gift-cards/upload', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ itemId: edit.id }) }); fetchGiftCards(); }} className="px-3 py-1.5 border border-red-500/30 text-red-400 rounded hover:bg-red-500/10">Remove</button>
+                    <button type="button" onClick={async()=>{ if(!edit) return; try { const res = await fetch('/api/admin/gift-cards/upload', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ itemId: edit.id }) }); if (!res.ok) { const d = await res.json().catch(()=>({error:'Delete failed'})); setToast({ message: d?.error || 'Delete failed', type: 'error' }); return; } setToast({ message: 'Image removed', type: 'success' }); fetchGiftCards(); } catch(err:any) { setToast({ message: err?.message || 'Unexpected error', type: 'error' }) } }} className="px-3 py-1.5 border border-red-500/30 text-red-400 rounded hover:bg-red-500/10">Remove</button>
                   )}
                 </div>
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <button onClick={() => setEdit(null)} className="px-4 py-2 rounded border border-white/20 text-white/80 hover:bg-white/10">Cancel</button>
-              <button onClick={async()=>{ if(!edit) return; await fetch('/api/admin/gift-cards', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: edit.id, ...form }) }); setEdit(null); setForm({ title: '', description: '', coverUrl: '' }); fetchGiftCards(); }} className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10">Save</button>
+              <button onClick={async()=>{ if(!edit) return; try { const res = await fetch('/api/admin/gift-cards', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: edit.id, ...form }) }); if (!res.ok) { const d = await res.json().catch(()=>({error:'Failed to save'})); setToast({ message: d?.error || 'Failed to save changes', type: 'error' }); return; } setToast({ message: 'Saved', type: 'success' }); setEdit(null); setForm({ title: '', description: '', coverUrl: '' }); fetchGiftCards(); } catch(err:any) { setToast({ message: err?.message || 'Unexpected error while saving', type: 'error' }) } }} className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10">Save</button>
             </div>
           </div>
         </div>
       )}
+
+      {confirmDeleteId !== null && (
+        <ConfirmModal
+          title="Delete Gift Card"
+          message="Are you sure you want to delete this item? This action cannot be undone."
+          confirmText="Delete"
+          onConfirm={() => removeItem(confirmDeleteId!)}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
+      {toast && (<Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />)}
     </div>
   )
 }

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { PrismaClient } from "@/lib/generated/prisma";
+enum Category {
+  IPTV,
+  STREAMING
+}
 const prisma = new PrismaClient();
 
 // Helper to map known slugs to categories
@@ -15,27 +19,46 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     const slug = searchParams.get("slug");
+
     if (id) {
       const channelId = Number(id);
       if (!Number.isFinite(channelId)) {
         return NextResponse.json({ error: "Invalid id" }, { status: 400 });
       }
       try {
-        const channel = await prisma.iPTVChannel.findUnique({
-          where: { id: channelId },
-        });
+        const channel = await prisma.iPTVChannel.findUnique({ where: { id: channelId } });
         if (!channel) return NextResponse.json({ error: "Not found" }, { status: 404 });
         return NextResponse.json({ channel });
-      } catch (err) {
+      } catch {
         return NextResponse.json({ error: "Database error" }, { status: 500 });
       }
     }
 
+    const q = (searchParams.get("q") || "").trim();
+    const category = (searchParams.get("category") || "").trim();
+    const page = Math.max(1, Number(searchParams.get("page") || 1));
+    const pageSize = Math.min(100, Math.max(1, Number(searchParams.get("pageSize") || 12)));
+
+    // const and: any[] = [];
+    // const slugCat = categoryFromSlug(slug);
+    // if (slugCat) and.push({ category: slugCat });
+    // if (category && category !== "All") and.push({ category });
+    // if (q) and.push({ name: { contains: q, mode: "insensitive" } });
+    // const where = and.length ? { AND: and } : {};
+
     try {
-      const channels = await prisma.iPTVChannel.findMany()
-      return NextResponse.json({ channels });
-    } catch (err) {
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+      const [total, channels] = await Promise.all([
+        prisma.iPTVChannel.count({  }),
+        prisma.iPTVChannel.findMany({
+          
+          orderBy: { createdAt: "desc" },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+        }),
+      ]);
+      return NextResponse.json({ channels, total, page, pageSize });
+    } catch (err:any){
+      return NextResponse.json({ error: err.message }, { status: 500 });
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -44,7 +67,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { title, category, cost, description, url, logoUrl } =
+    const { title, category, description,  logoUrl } =
       await request.json();
 
     try {
@@ -85,10 +108,10 @@ export async function PUT(request: NextRequest) {
       const updated = await prisma.iPTVChannel.update({
         where: { id: channelId },
         data: {
-          ...(name || title ? { name: name ?? title } : {}),
-          ...(typeof description === "string" ? { description } : {}),
-          ...(typeof category === "string" ? { category } : {}),
-          ...(logo || logoUrl ? { logo: logo ?? logoUrl } : {}),
+           name: name ?? title ,
+           description ,
+           category ,
+           logo: logo ?? logoUrl ,
         },
       });
 
@@ -114,10 +137,17 @@ export async function DELETE(request: NextRequest) {
     }
 
     try {
-     const deleted = await prisma.iPTVChannel.delete({ where: { id: Number(channelId) } as any });
+      await prisma.subscription.deleteMany({ where: { 
+        channelId: Number(channelId) } as any 
+      }
+      );
+
+     await prisma.iPTVChannel.delete({ where: { id: Number(channelId) } as any });
+
       return NextResponse.json({ message: "Deleted" });
-    } catch (err) {
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    } catch (err:any) {
+      console.log(err.message);
+      return NextResponse.json({ error: err.message }, { status: 500 });
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

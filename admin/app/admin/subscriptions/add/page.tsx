@@ -107,7 +107,7 @@ export default function AddSubscriptionPage() {
 
           <div className="md:col-span-4">
             <label className="text-sm text-white/70">Price / Credit
-              <input type="number" value={form.credit} onChange={(e)=>setForm({...form, credit: Number(e.target.value)})} className="mt-1 w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
+              <input type="number" inputMode="numeric" pattern="[0-9]*" min={0} step={1} onWheel={(e)=> (e.currentTarget as HTMLInputElement).blur()} value={form.credit} onChange={(e)=>setForm({...form, credit: Number(e.target.value)})} className="mt-1 w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
             </label>
           </div>
 
