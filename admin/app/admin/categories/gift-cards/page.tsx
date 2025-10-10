@@ -15,20 +15,25 @@ export default function GiftCardsPage() {
   const [form, setForm] = useState({ title: '', description: '', coverUrl: '' })
   const pageSize = 12
   const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
   const [toast, setToast] = useState<{message: string; type?: 'success'|'error'|'info'|'warning'}|null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<number|null>(null)
 
   const fetchGiftCards = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/gift-cards', { cache: 'no-store' })
-      let data: any = {}
-      try { data = await res.clone().json() } catch {}
+      const params = new URLSearchParams()
+      if (query.trim()) params.set('q', query.trim())
+      params.set('page', String(page))
+      params.set('pageSize', String(pageSize))
+      const res = await fetch(`/api/admin/gift-cards?${params.toString()}`, { cache: 'no-store' })
+      const data = await res.json()
       setItems(Array.isArray(data.items) ? data.items : [])
+      setTotal(Number(data.total || 0))
     } finally { setLoading(false) }
   }
 
-  useEffect(() => { fetchGiftCards() }, [])
+  useEffect(() => { fetchGiftCards() }, [page, pageSize, query])
 
   const removeItem = async (id: number) => {
     try {
@@ -47,14 +52,8 @@ export default function GiftCardsPage() {
     }
   }
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return items.filter((g) => !q || g.title.toLowerCase().includes(q))
-  }, [items, query])
-
-  const total = filtered.length
   const start = (page - 1) * pageSize
-  const rows = filtered.slice(start, start + pageSize)
+  const rows = items
 
   return (
     <div className="space-y-6">
@@ -69,7 +68,7 @@ export default function GiftCardsPage() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="ml-auto bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 flex items-center gap-2 w-full md:w-80">
           <Search className="w-4 h-4 text-white/60" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={`Search in GIFT CARDS...`} className="bg-transparent text-white/80 text-sm w-full placeholder-white/40 focus:outline-none" />
+          <input value={query} onChange={(e) => { setPage(1); setQuery(e.target.value) }} placeholder={`Search in GIFT CARDS...`} className="bg-transparent text-white/80 text-sm w-full placeholder-white/40 focus:outline-none" />
         </div>
       </div>
 
