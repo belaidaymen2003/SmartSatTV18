@@ -610,7 +610,7 @@ export default function IPTVPage() {
         <h1 className="text-2xl font-semibold text-white">
           IPTV{" "}
           <span className="text-white/50 text-sm ml-2" suppressHydrationWarning>
-            {total} Total
+            {totalCount} Total
           </span>
         </h1>
         <button
