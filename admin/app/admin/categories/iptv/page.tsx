@@ -738,7 +738,7 @@ export default function IPTVPage() {
               Prev
             </button>
             <button
-              disabled={start + pageSize >= total}
+              disabled={start + pageSize >= totalCount}
               onClick={() => setPage((p) => p + 1)}
               className="px-3 py-1 rounded border border-white/10 disabled:opacity-50"
             >
