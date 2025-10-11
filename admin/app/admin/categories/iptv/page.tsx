@@ -60,6 +60,7 @@ export default function IPTVPage() {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [logo, setLogo] = useState<logo>({ logourl: "", logofile: null });
+  const [savingEdit, setSavingEdit] = useState(false);
 
   function SubscriptionTable({ channelId }: { channelId: number | null }) {
     const [editingId, setEditingId] = useState<number | null>(null);
@@ -507,8 +508,13 @@ export default function IPTVPage() {
       if (categoryFilter && categoryFilter !== "All") params.set("category", categoryFilter);
       const res = await fetch(`/api/admin/categories/category?${params.toString()}`, { cache: "no-store" });
       const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setToast({ message: data?.error || "Failed to load channels", type: "error" });
+      }
       setChannels(Array.isArray(data.channels) ? data.channels : []);
       setTotalCount(Number(data.total) || 0);
+    } catch (e: any) {
+      setToast({ message: e?.message || "Network error while loading channels", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -536,6 +542,7 @@ export default function IPTVPage() {
 
   const saveEdit = async () => {
     if (!edit) return;
+    setSavingEdit(true);
     try {
       const newlogourl = await replaceLogo();
       const payload: any = { id: edit.id, ...form };
@@ -555,6 +562,8 @@ export default function IPTVPage() {
       fetchChannels();
     } catch (e:any) {
       setToast({ message: e?.message || "Unexpected error while saving", type: "error" });
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -781,9 +790,10 @@ export default function IPTVPage() {
               </button>
               <button
                 onClick={saveEdit}
-                className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10"
+                disabled={savingEdit}
+                className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10 disabled:opacity-60"
               >
-                Save
+                {savingEdit ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
