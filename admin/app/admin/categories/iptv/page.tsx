@@ -518,18 +518,8 @@ export default function IPTVPage() {
     fetchChannels();
   }, [page, pageSize, query, categoryFilter]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return channels.filter((c) => {
-      const matchesQuery = !q || c.name.toLowerCase().includes(q);
-      const matchesCategory = categoryFilter === "All" || (c.category ) === categoryFilter;
-      return matchesQuery && matchesCategory;
-    });
-  }, [channels, query, categoryFilter]);
-
-  const total = filtered.length;
   const start = (page - 1) * pageSize;
-  const rows = filtered.slice(start, start + pageSize);
+  const rows = channels;
 
   const openEdit = (ch: IPTVChannel) => {
     setEdit(ch);
