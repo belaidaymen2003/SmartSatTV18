@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
+import Toast from '@/components/UI/Toast'
 
 type Row = { code: string; duration: number; credit: number }
 
@@ -12,6 +13,7 @@ export default function CategorySubscriptionPage() {
   const [rows, setRows] = useState<Row[]>([{ code: '', duration: 1, credit: 0 }])
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; type?: 'success'|'error'|'info'|'warning' }|null>(null)
   const [subs, setSubs] = useState<any[]>([])
   const [editing, setEditing] = useState<any | null>(null)
 
@@ -42,12 +44,14 @@ export default function CategorySubscriptionPage() {
     setMessage(null)
     try {
       const payloads = rows.map(r => ({ channelId, code: r.code.trim(), durationMonths: r.duration, credit: Number(r.credit || 0) })).filter(r => r.code)
-      await fetch('/api/admin/categories/category/subscription', { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify(payloads) })
-      setMessage('Subscription codes added')
+      const res = await fetch('/api/admin/categories/category/subscription', { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify(payloads) })
+      const d = await res.json().catch(()=>({}))
+      if (!res.ok) throw new Error(d?.error || 'Failed to add subscription codes')
+      setToast({ message: 'Subscription codes added', type: 'success' })
       setRows([{ code: '', duration: 1, credit: 0 }])
       fetchSubscriptions()
     } catch (err: any) {
-      setMessage(String(err?.message || err))
+      setToast({ message: String(err?.message || err), type: 'error' })
     } finally { setLoading(false) }
   }
 
@@ -60,7 +64,10 @@ export default function CategorySubscriptionPage() {
 
   const removeSub = async (idOrCode: number | string) => {
     const q = typeof idOrCode === 'number' ? `id=${idOrCode}` : `code=${encodeURIComponent(String(idOrCode))}`
-    await fetch(`/api/admin/categories/category/subscription?${q}`, { method: 'DELETE', headers: { ...getAuthHeader() } })
+    const res = await fetch(`/api/admin/categories/category/subscription?${q}`, { method: 'DELETE', headers: { ...getAuthHeader() } })
+    const d = await res.json().catch(()=>({}))
+    if (!res.ok) setToast({ message: d?.error || 'Failed to delete', type: 'error' })
+    else setToast({ message: 'Deleted', type: 'success' })
     fetchSubscriptions()
   }
 
@@ -75,12 +82,13 @@ export default function CategorySubscriptionPage() {
     if (typeof editing.duration !== 'undefined') payload.durationMonths = Number(editing.duration)
     if (typeof editing.credit !== 'undefined') payload.credit = Number(editing.credit)
     const res = await fetch('/api/admin/categories/category/subscription', { method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify(payload) })
+    const d = await res.json().catch(()=>({}))
     if (res.ok) {
       setEditing(null)
+      setToast({ message: 'Updated', type: 'success' })
       fetchSubscriptions()
     } else {
-      const d = await res.json()
-      alert(d?.error || 'Failed to update')
+      setToast({ message: d?.error || 'Failed to update', type: 'error' })
     }
   }
 
@@ -147,6 +155,9 @@ export default function CategorySubscriptionPage() {
 
         </div>
       </div>
+      {toast && (
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+      )}
     </div>
   )
 }
