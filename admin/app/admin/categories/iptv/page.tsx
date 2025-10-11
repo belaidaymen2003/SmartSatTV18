@@ -727,7 +727,7 @@ export default function IPTVPage() {
 
         <div className="flex items-center justify-between p-1">
           <div className="text-white/60 text-xs">
-            Page {page} of {Math.max(1, Math.ceil(total / pageSize))}
+            Page {page} of {Math.max(1, Math.ceil(totalCount / pageSize))}
           </div>
           <div className="flex gap-2">
             <button
