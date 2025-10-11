@@ -658,25 +658,8 @@ export default function IPTVPage() {
         )}
 
         <div className="flex items-center justify-between p-1">
-          <div className="text-white/60 text-xs">
-            Page {page} of {Math.max(1, Math.ceil(totalCount / pageSize))}
-          </div>
-          <div className="flex gap-2">
-            <button
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="px-3 py-1 rounded border border-white/10 disabled:opacity-50"
-            >
-              Prev
-            </button>
-            <button
-              disabled={start + pageSize >= totalCount}
-              onClick={() => setPage((p) => p + 1)}
-              className="px-3 py-1 rounded border border-white/10 disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+          <div />
+          <Pagination total={totalCount} pageSize={pageSize} page={page} onPageChange={setPage} />
         </div>
       </div>
 
