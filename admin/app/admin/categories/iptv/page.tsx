@@ -15,6 +15,9 @@ import Hls from "hls.js";
 import Spinner from "@/components/UI/Spinner";
 import Toast from "@/components/UI/Toast";
 import ConfirmModal from "@/components/UI/ConfirmModal";
+import Pagination from "@/components/Admin/Pagination";
+import FiltersBar from "@/components/Categories/FiltersBar";
+import ChannelCard from "@/components/Categories/ChannelCard";
 import { CATEGORIES } from "@/lib/constants";
 
 // IPTV model
