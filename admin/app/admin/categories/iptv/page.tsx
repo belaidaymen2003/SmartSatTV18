@@ -495,16 +495,17 @@ export default function IPTVPage() {
   const fetchChannels = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/categories/category?slug=iptv&page=${page}&pageSize=${pageSize}`, {
-        cache: "no-store",
-      });
-      let data: any = {};
-      try {
-        data = await res.clone().json();
-      } catch (e) {
-        console.log(e);
-      }
-      setChannels( data.channels ?? []);
+      const params = new URLSearchParams();
+      params.set("slug", "iptv");
+      params.set("page", String(page));
+      params.set("pageSize", String(pageSize));
+      const q = query.trim();
+      if (q) params.set("q", q);
+      if (categoryFilter && categoryFilter !== "All") params.set("category", categoryFilter);
+      const res = await fetch(`/api/admin/categories/category?${params.toString()}`, { cache: "no-store" });
+      const data = await res.json().catch(() => ({}));
+      setChannels(Array.isArray(data.channels) ? data.channels : []);
+      setTotalCount(Number(data.total) || 0);
     } finally {
       setLoading(false);
     }
