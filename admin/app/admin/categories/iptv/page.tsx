@@ -516,7 +516,7 @@ export default function IPTVPage() {
   }, [channelId]);
   useEffect(() => {
     fetchChannels();
-  }, []);
+  }, [page, pageSize, query, categoryFilter]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
