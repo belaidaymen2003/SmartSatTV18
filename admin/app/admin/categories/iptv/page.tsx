@@ -55,6 +55,7 @@ export default function IPTVPage() {
   const [preview, setPreview] = useState<IPTVChannel | null>(null);
   const pageSize = 12;
   const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [logo, setLogo] = useState<logo>({ logourl: "", logofile: null });
 
   function SubscriptionTable({ channelId }: { channelId: number | null }) {
