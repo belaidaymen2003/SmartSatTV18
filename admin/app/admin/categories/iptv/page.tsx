@@ -646,61 +646,13 @@ export default function IPTVPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {rows.map((ch) => (
-              <div
+              <ChannelCard
                 key={ch.id}
-                className="bg-black/30 border border-white/10 rounded-xl p-4 hover:border-white/20 transition-colors cursor-pointer"
-                onClick={() => {
-                  setPreview(ch);
-                  setChannelId(ch.id);
-                }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="h-12 w-12 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
-                    {ch.logo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={ch.logo}
-                        alt={ch.name}
-                        className="h-full w-full object-contain"
-                      />
-                    ) : (
-                      <ImageIcon className="w-6 h-6 text-white/40" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-white font-medium truncate">
-                      {ch.name}
-                    </div>
-                    <div className="text-xs text-white/60 mt-0.5">
-                      {ch.category}
-                    </div>
-                    {ch.description && (
-                      <div className="text-xs text-white/50 mt-1 line-clamp-2">
-                        {ch.description}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  <div
-                    className="flex gap-2"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      onClick={() => openEdit(ch)}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80"
-                    >
-                      <Edit2 className="w-4 h-4" /> Edit
-                    </button>
-                    <button
-                      onClick={() => setConfirmDeleteId(ch.id)}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10"
-                    >
-                      <Trash2 className="w-4 h-4" /> Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
+                channel={ch}
+                onPreview={(c) => { setPreview(c as any); setChannelId(c.id); }}
+                onEdit={(c) => openEdit(c as any)}
+                onDelete={(id) => setConfirmDeleteId(id)}
+              />
             ))}
           </div>
         )}
