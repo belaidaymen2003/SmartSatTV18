@@ -11,6 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Hls from "hls.js";
 import { CATEGORIES as categories } from "@/lib/constants";
+import Toast from "@/components/UI/Toast";
 type Props = { params: { category: string } };
 type data = {
   title: string;
@@ -29,6 +30,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   });
   const [gift, setGift] = useState({ title: "", description: "" });
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type?: "success"|"error"|"info"|"warning" }|null>(null);
 
   const onFileImage = (file?: File) => {
     if (!file) return;
@@ -44,12 +46,12 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
       if (params.slug === "gift-cards") {
         let uploaded: any = null;
         if (formData.get("file")) {
-          uploaded = await fetch("/api/admin/gift-cards/upload", {
-            method: "POST",
-            body: formData,
-          }).then((r) => r.json());
+          const up = await fetch("/api/admin/gift-cards/upload", { method: "POST", body: formData });
+          const upData = await up.json().catch(()=>({}));
+          if (!up.ok) throw new Error(upData?.error || "Failed to upload cover");
+          uploaded = upData;
         }
-        await fetch("/api/admin/gift-cards", {
+        const create = await fetch("/api/admin/gift-cards", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -58,12 +60,14 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
             coverUrl: uploaded?.url || null,
           }),
         });
+        const cd = await create.json().catch(()=>({}));
+        if (!create.ok) throw new Error(cd?.error || "Failed to create gift card");
+        setToast({ message: "Gift card created", type: "success" });
       } else {
-        const response = await fetch("/api/admin/categories/upload", {
-          method: "POST",
-          body: formData,
-        }).then((res) => res.json());
-        await fetch(
+        const up = await fetch("/api/admin/categories/upload", { method: "POST", body: formData });
+        const response = await up.json().catch(()=>({}));
+        if (!up.ok) throw new Error(response?.error || "Failed to upload logo");
+        const create = await fetch(
           `/api/admin/categories/category?slug=${search.get("category")}`,
           {
             method: "POST",
@@ -74,8 +78,13 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
               fileId: response.fileId,
             }),
           }
-        ).then((res) => res.json());
+        );
+        const cd = await create.json().catch(()=>({}));
+        if (!create.ok) throw new Error(cd?.error || "Failed to create channel");
+        setToast({ message: "Channel created", type: "success" });
       }
+    } catch (e:any) {
+      setToast({ message: e?.message || "Unexpected error", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -228,6 +237,9 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
           </button>
         </div>
       </div>
+      {toast && (
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+      )}
     </div>
   );
 }

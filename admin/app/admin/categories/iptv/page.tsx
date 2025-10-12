@@ -15,6 +15,9 @@ import Hls from "hls.js";
 import Spinner from "@/components/UI/Spinner";
 import Toast from "@/components/UI/Toast";
 import ConfirmModal from "@/components/UI/ConfirmModal";
+import Pagination from "@/components/Admin/Pagination";
+import FiltersBar from "@/components/Categories/FiltersBar";
+import ChannelCard from "@/components/Categories/ChannelCard";
 import { CATEGORIES } from "@/lib/constants";
 
 // IPTV model
@@ -55,7 +58,9 @@ export default function IPTVPage() {
   const [preview, setPreview] = useState<IPTVChannel | null>(null);
   const pageSize = 12;
   const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [logo, setLogo] = useState<logo>({ logourl: "", logofile: null });
+  const [savingEdit, setSavingEdit] = useState(false);
 
   function SubscriptionTable({ channelId }: { channelId: number | null }) {
     const [editingId, setEditingId] = useState<number | null>(null);
@@ -494,16 +499,22 @@ export default function IPTVPage() {
   const fetchChannels = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/categories/category?slug=iptv&page=${page}&pageSize=${pageSize}`, {
-        cache: "no-store",
-      });
-      let data: any = {};
-      try {
-        data = await res.clone().json();
-      } catch (e) {
-        console.log(e);
+      const params = new URLSearchParams();
+      params.set("slug", "iptv");
+      params.set("page", String(page));
+      params.set("pageSize", String(pageSize));
+      const q = query.trim();
+      if (q) params.set("q", q);
+      if (categoryFilter && categoryFilter !== "All") params.set("category", categoryFilter);
+      const res = await fetch(`/api/admin/categories/category?${params.toString()}`, { cache: "no-store" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setToast({ message: data?.error || "Failed to load channels", type: "error" });
       }
-      setChannels( data.channels ?? []);
+      setChannels(Array.isArray(data.channels) ? data.channels : []);
+      setTotalCount(Number(data.total) || 0);
+    } catch (e: any) {
+      setToast({ message: e?.message || "Network error while loading channels", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -514,20 +525,10 @@ export default function IPTVPage() {
   }, [channelId]);
   useEffect(() => {
     fetchChannels();
-  }, []);
+  }, [page, pageSize, query, categoryFilter]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return channels.filter((c) => {
-      const matchesQuery = !q || c.name.toLowerCase().includes(q);
-      const matchesCategory = categoryFilter === "All" || (c.category ) === categoryFilter;
-      return matchesQuery && matchesCategory;
-    });
-  }, [channels, query, categoryFilter]);
-
-  const total = filtered.length;
   const start = (page - 1) * pageSize;
-  const rows = filtered.slice(start, start + pageSize);
+  const rows = channels;
 
   const openEdit = (ch: IPTVChannel) => {
     setEdit(ch);
@@ -541,6 +542,7 @@ export default function IPTVPage() {
 
   const saveEdit = async () => {
     if (!edit) return;
+    setSavingEdit(true);
     try {
       const newlogourl = await replaceLogo();
       const payload: any = { id: edit.id, ...form };
@@ -560,6 +562,8 @@ export default function IPTVPage() {
       fetchChannels();
     } catch (e:any) {
       setToast({ message: e?.message || "Unexpected error while saving", type: "error" });
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -616,41 +620,21 @@ export default function IPTVPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-white">
-          IPTV{" "}
+          IPTV
           <span className="text-white/50 text-sm ml-2" suppressHydrationWarning>
-            {total} Total
+            {totalCount} Total
           </span>
         </h1>
-        <button
-          onClick={() => router.push("/admin/categories/add/iptv")}
-          className="px-4 py-2 rounded-lg border border-orange-500 text-orange-400 hover:bg-orange-500/10 transition-colors flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          ADD ITEM
-        </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 flex items-center gap-2 w-full md:w-48">
-          <select
-            className="w-full bg-transparent text-white/80 text-sm focus:outline-none"
-            value={categoryFilter}
-            onChange={(e)=>{ setPage(1); setCategoryFilter(e.target.value); }}
-          >
-            <option>All</option>
-            {CATEGORIES.map(c => (<option key={c} value={c}>{c}</option>))}
-          </select>
-        </div>
-        <div className="ml-auto bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 flex items-center gap-2 w-full md:w-80">
-          <Search className="w-4 h-4 text-white/60" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Search in IPTV...`}
-            className="bg-transparent text-white/80 text-sm w-full placeholder-white/40 focus:outline-none"
-          />
-        </div>
-      </div>
+      <FiltersBar
+        categories={CATEGORIES}
+        category={categoryFilter}
+        onCategoryChange={(v) => { setPage(1); setCategoryFilter(v); }}
+        query={query}
+        onQueryChange={(v) => { setPage(1); setQuery(v); }}
+        onAdd={() => router.push("/admin/categories/add/iptv")}
+      />
 
       {confirmDeleteId !== null && (
         <ConfirmModal
@@ -674,85 +658,20 @@ export default function IPTVPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {rows.map((ch) => (
-              <div
+              <ChannelCard
                 key={ch.id}
-                className="bg-black/30 border border-white/10 rounded-xl p-4 hover:border-white/20 transition-colors cursor-pointer"
-                onClick={() => {
-                  setPreview(ch);
-                  setChannelId(ch.id);
-                }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="h-12 w-12 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
-                    {ch.logo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={ch.logo}
-                        alt={ch.name}
-                        className="h-full w-full object-contain"
-                      />
-                    ) : (
-                      <ImageIcon className="w-6 h-6 text-white/40" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-white font-medium truncate">
-                      {ch.name}
-                    </div>
-                    <div className="text-xs text-white/60 mt-0.5">
-                      {ch.category}
-                    </div>
-                    {ch.description && (
-                      <div className="text-xs text-white/50 mt-1 line-clamp-2">
-                        {ch.description}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  <div
-                    className="flex gap-2"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      onClick={() => openEdit(ch)}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80"
-                    >
-                      <Edit2 className="w-4 h-4" /> Edit
-                    </button>
-                    <button
-                      onClick={() => setConfirmDeleteId(ch.id)}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10"
-                    >
-                      <Trash2 className="w-4 h-4" /> Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
+                channel={ch}
+                onPreview={(c) => { setPreview(c as any); setChannelId(c.id); }}
+                onEdit={(c) => openEdit(c as any)}
+                onDelete={(id) => setConfirmDeleteId(id)}
+              />
             ))}
           </div>
         )}
 
         <div className="flex items-center justify-between p-1">
-          <div className="text-white/60 text-xs">
-            Page {page} of {Math.max(1, Math.ceil(total / pageSize))}
-          </div>
-          <div className="flex gap-2">
-            <button
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="px-3 py-1 rounded border border-white/10 disabled:opacity-50"
-            >
-              Prev
-            </button>
-            <button
-              disabled={start + pageSize >= total}
-              onClick={() => setPage((p) => p + 1)}
-              className="px-3 py-1 rounded border border-white/10 disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+          <div />
+          <Pagination total={totalCount} pageSize={pageSize} page={page} onPageChange={setPage} />
         </div>
       </div>
 
@@ -871,9 +790,10 @@ export default function IPTVPage() {
               </button>
               <button
                 onClick={saveEdit}
-                className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10"
+                disabled={savingEdit}
+                className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10 disabled:opacity-60"
               >
-                Save
+                {savingEdit ? "Saving..." : "Save"}
               </button>
             </div>
           </div>

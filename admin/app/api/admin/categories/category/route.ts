@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 // Helper to map known slugs to categories
 function categoryFromSlug(slug?: string | null): string | undefined {
   if (!slug) return undefined;
-  if (slug.toLowerCase() === "iptv") return "Live TV";
+  if (slug.toLowerCase() === "iptv") return "IPTV";
   return undefined;
 }
 
@@ -39,18 +39,18 @@ export async function GET(request: NextRequest) {
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const pageSize = Math.min(100, Math.max(1, Number(searchParams.get("pageSize") || 12)));
 
-    // const and: any[] = [];
-    // const slugCat = categoryFromSlug(slug);
-    // if (slugCat) and.push({ category: slugCat });
-    // if (category && category !== "All") and.push({ category });
-    // if (q) and.push({ name: { contains: q, mode: "insensitive" } });
-    // const where = and.length ? { AND: and } : {};
+    const and: any[] = [];
+    const slugCat = categoryFromSlug(slug);
+    if (slugCat) and.push({ category: slugCat as any });
+    if (category && category !== "All") and.push({ category: category as any });
+    if (q) and.push({ name: { contains: q, mode: "insensitive" } });
+    const where = and.length ? { AND: and } : {};
 
     try {
       const [total, channels] = await Promise.all([
-        prisma.iPTVChannel.count({  }),
+        prisma.iPTVChannel.count({ where }),
         prisma.iPTVChannel.findMany({
-          
+          where,
           orderBy: { createdAt: "desc" },
           skip: (page - 1) * pageSize,
           take: pageSize,
@@ -74,9 +74,9 @@ export async function POST(request: NextRequest) {
       const created = await prisma.iPTVChannel.create({
         data: {
           name: title,
-          category,
+          category: category,
 
-          description,
+          description: description,
 
           logo: logoUrl,
         },
@@ -86,8 +86,8 @@ export async function POST(request: NextRequest) {
         { message: "Created", channel: created },
         { status: 201 }
       );
-    } catch (err) {
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    } catch (err:any) {
+      return NextResponse.json({ error: err.message }, { status: 500 });
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
