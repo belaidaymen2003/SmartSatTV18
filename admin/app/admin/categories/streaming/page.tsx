@@ -529,6 +529,40 @@ export default function StreamingPage() {
         </ConfirmModal>
       )}
 
+      <EditChannelModal
+        open={!!edit}
+        onClose={() => setEdit(null)}
+        initialData={{ id: edit?.id, name: form.name, description: form.description, category: form.category, logo: form.logo }}
+        categories={CATEGORIES as any}
+        saving={savingEdit}
+        onDeleteLogo={async () => { if (edit) await replaceLogo(); }}
+        onSave={async (d, file) => {
+          if (!edit) return;
+          setSavingEdit(true);
+          try {
+            if (file) {
+              const fd = new FormData();
+              fd.append("channelId", String(edit.id));
+              fd.append("file", file);
+              fd.append("fileName", file.name);
+              if (edit.logo) fd.append("oldLogoUrl", edit.logo);
+              await fetch("/api/admin/categories/upload", { method: "PUT", body: fd });
+            }
+            const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category };
+            const res = await fetch("/api/admin/categories/category", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+            if (!res.ok) {
+              const dd = await res.json().catch(()=>({}));
+              throw new Error(dd?.error || 'Failed');
+            }
+            setToast({ message: 'Channel updated successfully', type: 'success' });
+            setEdit(null);
+            fetchChannels(page);
+          } catch (e:any) {
+            setToast({ message: String(e?.message || e), type: 'error' });
+          } finally { setSavingEdit(false); }
+        }}
+      />
+
     </div>
   );
 }
