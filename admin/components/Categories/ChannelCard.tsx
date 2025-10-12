@@ -1,5 +1,3 @@
-import { Edit2, Image as ImageIcon, Trash2 } from "lucide-react";
-
 import { Edit2, Trash2, Image as ImageIcon } from "lucide-react";
 import React from "react";
 
