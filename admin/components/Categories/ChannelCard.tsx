@@ -1,5 +1,8 @@
 import { Edit2, Image as ImageIcon, Trash2 } from "lucide-react";
 
+import { Edit2, Trash2, Image as ImageIcon } from "lucide-react";
+import React from "react";
+
 export type Channel = {
   id: number;
   name: string;
@@ -18,8 +21,11 @@ interface Props {
 export default function ChannelCard({ channel, onPreview, onEdit, onDelete }: Props) {
   return (
     <div
+      role="button"
+      tabIndex={0}
       className="bg-black/30 border border-white/10 rounded-xl p-4 hover:border-white/20 transition-colors cursor-pointer"
       onClick={() => onPreview(channel)}
+      onKeyDown={(e) => { if (e.key === 'Enter') onPreview(channel); }}
     >
       <div className="flex items-start gap-3">
         <div className="h-12 w-12 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
@@ -43,12 +49,14 @@ export default function ChannelCard({ channel, onPreview, onEdit, onDelete }: Pr
           <button
             onClick={() => onEdit(channel)}
             className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80"
+            aria-label={`Edit ${channel.name}`}
           >
             <Edit2 className="w-4 h-4" /> Edit
           </button>
           <button
             onClick={() => onDelete(channel.id)}
             className="inline-flex items-center gap-1 px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10"
+            aria-label={`Delete ${channel.name}`}
           >
             <Trash2 className="w-4 h-4" /> Delete
           </button>
