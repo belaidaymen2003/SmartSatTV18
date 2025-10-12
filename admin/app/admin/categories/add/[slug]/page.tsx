@@ -68,7 +68,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
         const response = await up.json().catch(()=>({}));
         if (!up.ok) throw new Error(response?.error || "Failed to upload logo");
         const create = await fetch(
-          `/api/admin/categories/category?slug=${search.get("category")}`,
+          `/api/admin/categories/category?slug=${params.slug}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
