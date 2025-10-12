@@ -514,7 +514,7 @@ export default function StreamingPage() {
                 <div className="text-sm text-white/60 mt-2">{preview.description}</div>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <a
                 href={`/admin/categories/add/streaming/subscription/${preview.id}`}
                 rel="noreferrer"
