@@ -484,7 +484,7 @@ export default function StreamingPage() {
         categories={CATEGORIES as any}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {loading ? (
           <div className="col-span-full"><Spinner /></div>
         ) : (
@@ -503,8 +503,8 @@ export default function StreamingPage() {
       {preview && (
         <ConfirmModal onClose={() => setPreview(null)}>
           <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="h-16 w-28 bg-white/5 rounded overflow-hidden">
+            <div className="flex flex-col sm:flex-row items-start gap-4">
+              <div className="h-24 w-full sm:w-28 md:h-28 md:w-36 bg-white/5 rounded overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={preview.logo || ''} alt={preview.name} className="h-full w-full object-contain" />
               </div>
