@@ -17,6 +17,7 @@ import ConfirmModal from "@/components/UI/ConfirmModal";
 import Pagination from "@/components/Admin/Pagination";
 import FiltersBar from "@/components/Categories/FiltersBar";
 import ChannelCard from "@/components/Categories/ChannelCard";
+import EditChannelModal from "@/components/Categories/EditChannelModal";
 import { CATEGORIES } from "@/lib/constants";
 
 // Streaming model
