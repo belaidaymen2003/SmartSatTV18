@@ -74,9 +74,9 @@ export async function POST(request: NextRequest) {
       const created = await prisma.iPTVChannel.create({
         data: {
           name: title,
-          category,
+          category: category,
 
-          description,
+          description: description,
 
           logo: logoUrl,
         },
@@ -86,8 +86,8 @@ export async function POST(request: NextRequest) {
         { message: "Created", channel: created },
         { status: 201 }
       );
-    } catch (err) {
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    } catch (err:any) {
+      return NextResponse.json({ error: err.message }, { status: 500 });
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
