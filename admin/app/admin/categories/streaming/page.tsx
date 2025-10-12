@@ -1,3 +1,4 @@
+"use client";
 import { use, useEffect, useMemo, useRef, useState } from "react";
 import {
   Search,
