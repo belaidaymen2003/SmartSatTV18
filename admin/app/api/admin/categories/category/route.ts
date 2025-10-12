@@ -10,7 +10,9 @@ const prisma = new PrismaClient();
 // Helper to map known slugs to categories
 function categoryFromSlug(slug?: string | null): string | undefined {
   if (!slug) return undefined;
-  if (slug.toLowerCase() === "iptv") return "IPTV";
+  const s = slug.toLowerCase();
+  if (s === "iptv") return "IPTV";
+  if (s === "streaming") return "STREAMING";
   return undefined;
 }
 
