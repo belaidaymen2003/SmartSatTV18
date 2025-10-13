@@ -365,7 +365,43 @@ export default function StreamingPage() {
         <ConfirmModal title="Delete Channel" message="Are you sure you want to delete this channel? This action cannot be undone." confirmText="Delete" onConfirm={() => removeChannel(confirmDeleteId)} onCancel={() => setConfirmDeleteId(null)} />
       )}
 
-      {edit && <EditChannelModal open={!!edit} channel={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); fetchChannels(page); }} />}
+      {edit && (
+        <EditChannelModal
+          open={!!edit}
+          onClose={() => setEdit(null)}
+          initialData={{ id: edit?.id, name: form.name, description: form.description, category: form.category, logo: form.logo }}
+          categories={CATEGORIES}
+          saving={savingEdit}
+          onDeleteLogo={async () => {
+            await deleteLogo();
+          }}
+          onSave={async (d, file) => {
+            if (!edit) return;
+            setSavingEdit(true);
+            try {
+              if (file) {
+                const fd = new FormData();
+                fd.append("channelId", String(edit.id));
+                fd.append("file", file);
+                fd.append("fileName", file.name);
+                if (edit.logo) fd.append("oldLogoUrl", edit.logo);
+                await fetch("/api/admin/categories/upload", { method: "PUT", body: fd });
+              }
+              const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category };
+              const res = await fetch("/api/admin/categories/category", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+              if (!res.ok) {
+                const cd = await res.json().catch(()=>({}));
+                throw new Error(cd?.error || "Failed to save");
+              }
+              setToast({ message: "Channel updated successfully", type: "success" });
+              setEdit(null);
+              fetchChannels(page);
+            } catch (e:any) {
+              setToast({ message: e?.message || "Unexpected error while saving", type: "error" });
+            } finally { setSavingEdit(false); }
+          }}
+        />
+      )}
     </div>
   );
 }
