@@ -1,7 +1,5 @@
 'use client'
-
 import { Play, Tv, Film, Radio, Gamepad2, Wifi } from 'lucide-react'
-
 export default function Loading3D() {
   return (
     <div className="loader-3d loader-center" aria-hidden>

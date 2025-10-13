@@ -13,7 +13,7 @@ export default function FiltersBar({ categories, category, onCategoryChange, que
   return (
     <div className="flex flex-wrap items-center gap-3">
       <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2 flex items-center gap-2 w-full md:w-48">
-        <select
+        <select disabled
           className="w-full bg-transparent text-white/80 text-sm focus:outline-none"
           value={category}
           onChange={(e) => onCategoryChange(e.target.value)}

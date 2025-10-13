@@ -1,5 +1,4 @@
-"use client";
-
+'use client'
 import { use, useEffect, useMemo, useRef, useState } from "react";
 import {
   Search,
@@ -18,6 +17,8 @@ import ConfirmModal from "@/components/UI/ConfirmModal";
 import Pagination from "@/components/Admin/Pagination";
 import FiltersBar from "@/components/Categories/FiltersBar";
 import ChannelCard from "@/components/Categories/ChannelCard";
+import EditChannelModal from "@/components/Categories/EditChannelModal";
+import SubscriptionModal from "@/components/Categories/SubscriptionModal";
 import { CATEGORIES } from "@/lib/constants";
 
 // IPTV model
@@ -215,157 +216,38 @@ export default function IPTVPage() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <select
-              className="bg-black/30 border border-white/10 rounded px-2 py-1 text-white/80"
-              value={sort}
-              onChange={(e) => setSort(e.target.value as any)}
-            >
+            <select className="bg-black/30 border border-white/10 rounded px-2 py-1 text-white/80" value={sort} onChange={(e) => setSort(e.target.value as any)}>
               <option value="code">Code</option>
               <option value="duration">Duration</option>
               <option value="credit">Credits</option>
             </select>
-            <button
-              className="px-2 py-1 rounded border border-white/10 text-white/80 hover:bg-white/10"
-              onClick={() => setAsc((v) => !v)}
-              aria-label="Toggle sort order"
-            >
-              {asc ? "Asc" : "Desc"}
-            </button>
+            <button className="px-2 py-1 rounded border border-white/10 text-white/80 hover:bg-white/10" onClick={() => setAsc((v) => !v)} aria-label="Toggle sort order">{asc?"Asc":"Desc"}</button>
           </div>
-          <div className="ml-auto text-xs text-white/60">
-            {stats.count} items • Total credits {stats.totalCredit}
-          </div>
+          <div className="ml-auto text-xs text-white/60">{stats.count} items • Total credits {stats.totalCredit}</div>
         </div>
 
         {sipinner1 ? (
           <div className="py-6"><Spinner size={6} /></div>
         ) : !subs || subs.length === 0 ? (
-          <div className="text-white/60 bg-white/5 border border-white/10 rounded p-4">
-            No subscriptions yet. <a className="underline" href="#">Add some</a> to get started.
-          </div>
+          <div className="text-white/60 bg-white/5 border border-white/10 rounded p-4">No subscriptions yet. <a className="underline" href="#">Add some</a> to get started.</div>
         ) : (
           <div className="overflow-auto">
             <table className="min-w-full text-left border-collapse">
               <thead>
-                <tr className="text-white/70 text-sm">
-                  <th className="px-3 py-2">Code</th>
-                  <th className="px-3 py-2">Duration</th>
-                  <th className="px-3 py-2">Credits</th>
-                  <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2">Actions</th>
-                </tr>
+                <tr className="text-white/70 text-sm"><th className="px-3 py-2">Code</th><th className="px-3 py-2">Duration</th><th className="px-3 py-2">Credits</th><th className="px-3 py-2">Status</th><th className="px-3 py-2">Actions</th></tr>
               </thead>
               <tbody>
                 {pageRows.map((s: any) => (
-                  <tr
-                    key={s.id || s.code}
-                    className="bg-black/30 border border-white/10 rounded"
-                  >
-                    <td className="px-3 py-2 align-middle">
-                      {editingId === s.id ? (
-                        <input
-                          value={editValues.code || ""}
-                          onChange={(e) =>
-                            setEditValues((ev) => ({ ...ev, code: e.target.value }))
-                          }
-                          className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                        />
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => copyCode(s.code)}
-                            className="text-white hover:underline"
-                            title="Copy code"
-                          >
-                            {s.code}
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-3 py-2 align-middle text-white/80">
-                      {editingId === s.id ? (
-                        <select
-                          value={String(
-                            editValues.duration ?? toMonths(s.duration)
-                          )}
-                          onChange={(e) => {
-                            setEditValues((ev) => ({
-                              ...ev,
-                              duration: Number(e.target.value),
-                            }));
-                          }}
-                          className=" border border-white/10 rounded px-2 py-1 disabled:bg-transparent text-black"
-                        >
-                          <option value={1}>1 month</option>
-                          <option value={6}>6 months</option>
-                          <option value={12}>12 months</option>
-                        </select>
-                      ) : (
-                        `${toMonths(s.duration)}m`
-                      )}
-                    </td>
-                    <td className="px-3 py-2 align-middle">
-                      {editingId === s.id ? (
-                        <input
-                          type="number"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          min={0}
-                          step={1}
-                          onWheel={(e)=> (e.currentTarget as HTMLInputElement).blur()}
-                          value={String(editValues.credit ?? s.credit)}
-                          onChange={(e) =>
-                            setEditValues((ev) => ({
-                              ...ev,
-                              credit: Number(e.target.value),
-                            }))
-                          }
-                          className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                        />
-                      ) : (
-                        <div className="text-white">{s.credit ?? 0}</div>
-                      )}
-                    </td>
-                    <td className="px-3 py-2">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded border text-xs border-emerald-500/30 text-emerald-400">
-                        {s.status || "ACTIVE"}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2">
-                      <div className="flex gap-2">
-                        {editingId === s.id ? (
-                          <>
-                            <button
-                              onClick={() => saveEdit(s.id)}
-                              className="px-2 py-1 rounded border border-green-500 text-green-400"
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              className="px-2 py-1 rounded border border-white/10"
-                            >
-                              Cancel
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => startEdit(s)}
-                              className="px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => removeSubWithAuth(s.id)}
-                              className="px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10"
-                            >
-                              Delete
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </td>
+                  <tr key={s.id||s.code} className="bg-black/30 border border-white/10 rounded">
+                    <td className="px-3 py-2 align-middle">{editingId===s.id? (
+                      <input value={editValues.code||""} onChange={(e)=>setEditValues(ev=>({...ev, code: e.target.value}))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40" />
+                    ):(<div className="flex items-center gap-2"><button onClick={()=>copyCode(s.code)} className="text-white hover:underline" title="Copy code">{s.code}</button></div>)}</td>
+                    <td className="px-3 py-2 align-middle text-white/80">{editingId===s.id? (
+                      <select value={String(editValues.duration ?? toMonths(s.duration))} onChange={(e)=>setEditValues(ev=>({...ev, duration: Number(e.target.value)}))} className=" border border-white/10 rounded px-2 py-1 disabled:bg-transparent text-black"><option value={1}>1 month</option><option value={6}>6 months</option><option value={12}>12 months</option></select>
+                    ):(`${toMonths(s.duration)}m`)}</td>
+                    <td className="px-3 py-2 align-middle">{editingId===s.id? (<input type="number" inputMode="numeric" pattern="[0-9]*" min={0} step={1} onWheel={(e)=>(e.currentTarget as HTMLInputElement).blur()} value={String(editValues.credit ?? s.credit)} onChange={(e)=>setEditValues(ev=>({...ev, credit: Number(e.target.value)}))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none" />):(<div className="text-white">{s.credit??0}</div>)}</td>
+                    <td className="px-3 py-2"><span className="inline-flex items-center px-2 py-0.5 rounded border text-xs border-emerald-500/30 text-emerald-400">{s.status||"ACTIVE"}</span></td>
+                    <td className="px-3 py-2"><div className="flex gap-2">{editingId===s.id? (<><button onClick={()=>saveEdit(s.id)} className="px-2 py-1 rounded border border-green-500 text-green-400">Save</button><button onClick={cancelEdit} className="px-2 py-1 rounded border border-white/10">Cancel</button></>) : (<><button onClick={()=>startEdit(s)} className="px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">Edit</button><button onClick={()=>removeSubWithAuth(s.id)} className="px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10">Delete</button></>)}</div></td>
                   </tr>
                 ))}
               </tbody>
@@ -374,27 +256,7 @@ export default function IPTVPage() {
         )}
 
         {total > perPage && (
-          <div className="flex items-center justify-between text-xs text-white/60">
-            <div>
-              Page {pageSub} of {Math.max(1, Math.ceil(total / perPage))}
-            </div>
-            <div className="flex gap-2">
-              <button
-                disabled={pageSub <= 1}
-                onClick={() => setPageSub((p) => Math.max(1, p - 1))}
-                className="px-3 py-1 rounded border border-white/10 disabled:opacity-50"
-              >
-                Prev
-              </button>
-              <button
-                disabled={start + perPage >= total}
-                onClick={() => setPageSub((p) => p + 1)}
-                className="px-3 py-1 rounded border border-white/10 disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-          </div>
+          <div className="flex items-center justify-between text-xs text-white/60"><div>Page {pageSub} of {Math.max(1, Math.ceil(total / perPage))}</div><div className="flex gap-2"><button disabled={pageSub<=1} onClick={()=>setPageSub(p=>Math.max(1,p-1))} className="px-3 py-1 rounded border border-white/10 disabled:opacity-50">Prev</button><button disabled={start+perPage>=total} onClick={()=>setPageSub(p=>p+1)} className="px-3 py-1 rounded border border-white/10 disabled:opacity-50">Next</button></div></div>
         )}
       </div>
     );
@@ -460,7 +322,7 @@ export default function IPTVPage() {
             </div>
           )}
 
-          <SubscriptionTable channelId={channelId} />
+          <SubscriptionModal channelId={channelId} />
         </div>
       </div>
     );
@@ -683,122 +545,43 @@ export default function IPTVPage() {
         />
       )}
 
-      {edit && (
-        <div
-          className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4"
-          onClick={() => setEdit(null)}
-        >
-          <div
-            className="w-full max-w-2xl bg-black/30 border border-white/10 rounded-xl p-6 backdrop-blur-md shadow-xl max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-semibold">Edit Channel</h3>
-              <button
-                onClick={() => setEdit(null)}
-                className="p-1 rounded hover:bg-white/10"
-              >
-                <X className="w-5 h-5 text-white/70" />
-              </button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="sm:col-span-1">
-                <label className="block text-sm text-white/70 mb-2">Logo</label>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4 flex flex-col items-center">
-                  {form.logo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={logo.logourl !== '' ? logo.logourl : form.logo}
-                      alt={form.name}
-                      className="h-28 w-28 rounded-lg bg-white/10 object-contain"
-                    />
-                  ) : (
-                    <div className="h-28 w-28 rounded-lg bg-white/10 grid place-items-center">
-                      <ImageIcon className="w-7 h-7 text-white/40" />
-                    </div>
-                  )}
-                  <div className="mt-3 flex items-center gap-2">
-                    <label className="px-3 py-2 border border-white/10 rounded cursor-pointer hover:bg-white/10 text-white/80 inline-flex items-center gap-2">
-                      Replace
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (f)
-                            setLogo({
-                              logofile: f,
-                              logourl: URL.createObjectURL(f),
-                            });
-                        }}
-                      />
-                    </label>
-                    {form.logo && (
-                      <button
-                        type="button"
-                        onClick={deleteLogo}
-                        className="px-3 py-2 border border-red-500/30 text-red-400 rounded hover:bg-red-500/10"
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                  <p className="mt-2 text-xs text-white/50 text-center">PNG/SVG recommended. Square images look best.</p>
-                </div>
-              </div>
-
-              <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="sm:col-span-2">
-                  <label className="block text-sm text-white/70 mb-1">Name</label>
-                  <input
-                    className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Channel name"
-                  />
-                </div>
-                <div className="sm:col-span-1">
-                  <label className="block text-sm text-white/70 mb-1">Category</label>
-                  <select
-                    className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                    value={form.category}
-                    onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-sm text-white/70 mb-1">Description</label>
-                  <textarea
-                    className="h-32 w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
-                    value={form.description}
-                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    placeholder="Short description"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 mt-5">
-              <button
-                onClick={() => setEdit(null)}
-                className="px-4 py-2 rounded border border-white/20 text-white/80 hover:bg-white/10"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={saveEdit}
-                disabled={savingEdit}
-                className="px-4 py-2 rounded border border-orange-500 text-orange-400 hover:bg-orange-500/10 disabled:opacity-60"
-              >
-                {savingEdit ? "Saving..." : "Save"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <EditChannelModal
+        open={!!edit}
+        onClose={() => setEdit(null)}
+        initialData={{ id: edit?.id, name: form.name, description: form.description, category: form.category, logo: form.logo }}
+        categories={CATEGORIES}
+        saving={savingEdit}
+        onDeleteLogo={async () => {
+          await deleteLogo();
+        }}
+        onSave={async (d, file) => {
+          if (!edit) return;
+          setSavingEdit(true);
+          try {
+            // upload file if present
+            let fileUrl: any = null; 
+            if (file) {
+              const fd = new FormData();
+              fd.append("channelId", String(edit.id));
+              fd.append("file", file);
+              fd.append("fileName", file.name);
+              if (edit.logo) fd.append("oldLogoUrl", edit.logo);
+              fileUrl = await fetch("/api/admin/categories/upload", { method: "PUT", body: fd }).then((res) => res.json());
+            }
+            const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category, logo: fileUrl?.logoUrl };
+            const res = await fetch("/api/admin/categories/category", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+            if (!res.ok) {
+              const cd = await res.json().catch(()=>({}));
+              throw new Error(cd?.error || "Failed to save");
+            }
+            setToast({ message: "Channel updated successfully", type: "success" });
+            setEdit(null);
+            fetchChannels();
+          } catch (e:any) {
+            setToast({ message: e?.message || "Unexpected error while saving", type: "error" });
+          } finally { setSavingEdit(false); }
+        }}
+      />
     </div>
   );
 }

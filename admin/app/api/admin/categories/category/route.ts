@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { PrismaClient } from "@/lib/generated/prisma";
 enum Category {
   IPTV,
@@ -10,7 +9,9 @@ const prisma = new PrismaClient();
 // Helper to map known slugs to categories
 function categoryFromSlug(slug?: string | null): string | undefined {
   if (!slug) return undefined;
-  if (slug.toLowerCase() === "iptv") return "IPTV";
+  const s = slug.toLowerCase();
+  if (s === "iptv") return "IPTV";
+  if (s === "streaming") return "STREAMING";
   return undefined;
 }
 
@@ -75,9 +76,7 @@ export async function POST(request: NextRequest) {
         data: {
           name: title,
           category: category,
-
           description: description,
-
           logo: logoUrl,
         },
       });
