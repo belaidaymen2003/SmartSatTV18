@@ -1,3 +1,4 @@
+'use client'
 import { use, useEffect, useMemo, useRef, useState } from "react";
 import {
   Search,
@@ -558,15 +559,16 @@ export default function IPTVPage() {
           setSavingEdit(true);
           try {
             // upload file if present
+            let fileUrl: any = null; 
             if (file) {
               const fd = new FormData();
               fd.append("channelId", String(edit.id));
               fd.append("file", file);
               fd.append("fileName", file.name);
               if (edit.logo) fd.append("oldLogoUrl", edit.logo);
-              await fetch("/api/admin/categories/upload", { method: "PUT", body: fd });
+              fileUrl = await fetch("/api/admin/categories/upload", { method: "PUT", body: fd }).then((res) => res.json());
             }
-            const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category };
+            const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category, logo: fileUrl?.logoUrl };
             const res = await fetch("/api/admin/categories/category", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
             if (!res.ok) {
               const cd = await res.json().catch(()=>({}));

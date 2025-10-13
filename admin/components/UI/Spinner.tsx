@@ -1,5 +1,3 @@
-
-
 export default function Spinner({ size = 20 }: { size?: number }) {
     return (
         

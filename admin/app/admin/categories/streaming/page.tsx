@@ -160,15 +160,15 @@ export default function StreamingPage() {
                 {pageRows.map((s: any) => (
                   <tr key={s.id || s.code} className="bg-black/30 border border-white/10 rounded">
                     <td className="px-3 py-2 align-middle">{editingId === s.id ? (
-                      <input value={editValues.code || ""} onChange={(e) => setEditValues((ev) => ({ ...ev, code: e.target.value }))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none" />
+                      <input value={editValues.code || ""} onChange={(e) => setEditValues((ev: any) => ({ ...ev, code: e.target.value }))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none" />
                     ) : (
                       <div className="flex items-center gap-2"><button onClick={() => copyCode(s.code)} className="text-white hover:underline" title="Copy code">{s.code}</button></div>
                     )}</td>
                     <td className="px-3 py-2 align-middle text-white/80">{editingId === s.id ? (
-                      <select value={String(editValues.duration ?? toMonths(s.duration))} onChange={(e) => setEditValues((ev) => ({ ...ev, duration: Number(e.target.value) }))} className=" border border-white/10 rounded px-2 py-1 disabled:bg-transparent text-black"><option value={1}>1 month</option><option value={6}>6 months</option><option value={12}>12 months</option></select>
+                      <select value={String(editValues.duration ?? toMonths(s.duration))} onChange={(e) => setEditValues((ev: any) => ({ ...ev, duration: Number(e.target.value) }))} className=" border border-white/10 rounded px-2 py-1 disabled:bg-transparent text-black"><option value={1}>1 month</option><option value={6}>6 months</option><option value={12}>12 months</option></select>
                     ) : (`${toMonths(s.duration)}m`)}</td>
                     <td className="px-3 py-2 align-middle">{editingId === s.id ? (
-                      <input type="number" inputMode="numeric" pattern="[0-9]*" min={0} step={1} onWheel={(e) => (e.currentTarget as HTMLInputElement).blur()} value={String(editValues.credit ?? s.credit)} onChange={(e) => setEditValues((ev) => ({ ...ev, credit: Number(e.target.value) }))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none" />
+                      <input type="number" inputMode="numeric" pattern="[0-9]*" min={0} step={1} onWheel={(e) => (e.currentTarget as HTMLInputElement).blur()} value={String(editValues.credit ?? s.credit)} onChange={(e) => setEditValues((ev: any) => ({ ...ev, credit: Number(e.target.value) }))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none" />
                     ) : (
                       <div className="text-white">{s.credit ?? 0}</div>
                     )}</td>
@@ -340,13 +340,15 @@ export default function StreamingPage() {
         </h1>
       </div>
 
-      <FiltersBar onQueryChange={(v) => { setPage(1); setQuery(v); }} onAdd={() => router.push("/admin/categories/add/streaming")} category={categoryFilter} onCategoryChange={setCategoryFilter} categories={CATEGORIES as any} />
+      <FiltersBar query={query} onQueryChange={(v) => { setPage(1); setQuery(v); }} onAdd={() => router.push("/admin/categories/add/streaming")} category={categoryFilter} onCategoryChange={setCategoryFilter} categories={CATEGORIES as any} />
 
       {toast && <Toast message={toast.message} type={toast.type as any} onClose={() => setToast(null)} />}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {loading ? (
-          <div className="col-span-full"><Spinner /></div>
+          <div className="text-white/60">Loading...</div>
+        ) : channels.length === 0 ? (
+          <div className="text-white/60">No channels</div>
         ) : (
           channels.map((ch) => (
             <ChannelCard key={ch.id} channel={{ id: ch.id, name: ch.name, logo: ch.logo, description: ch.description, category: ch.category }} onPreview={(c) => { setPreview(c as any); setChannelId((c as any).id); }} onEdit={(c) => openEdit(c as any)} onDelete={(id) => setConfirmDeleteId(id)} />
@@ -379,15 +381,16 @@ export default function StreamingPage() {
             if (!edit) return;
             setSavingEdit(true);
             try {
+              let fileUrl: any = null;
               if (file) {
                 const fd = new FormData();
                 fd.append("channelId", String(edit.id));
                 fd.append("file", file);
                 fd.append("fileName", file.name);
                 if (edit.logo) fd.append("oldLogoUrl", edit.logo);
-                await fetch("/api/admin/categories/upload", { method: "PUT", body: fd });
+               fileUrl= await fetch("/api/admin/categories/upload", { method: "PUT", body: fd }).then((res) => res.json());
               }
-              const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category };
+              const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category, logo: fileUrl?.logoUrl };
               const res = await fetch("/api/admin/categories/category", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
               if (!res.ok) {
                 const cd = await res.json().catch(()=>({}));

@@ -76,9 +76,7 @@ export async function POST(request: NextRequest) {
         data: {
           name: title,
           category: category,
-
           description: description,
-
           logo: logoUrl,
         },
       });

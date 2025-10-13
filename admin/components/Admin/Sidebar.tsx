@@ -91,7 +91,7 @@ export default function Sidebar({ className = '' }: { className?: string }) {
           {categoriesOpen && (
             <div className="mt-1 pl-6 flex flex-col gap-1">
               <Link href="/admin/categories/iptv" className="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-white/10 text-sm">IPTV</Link>
-              <Link href="/admin/categories/gift-cards" className="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-white/10 text-sm">GIFT CARDS</Link>
+              <Link href="/admin/categories/streaming" className="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-white/10 text-sm">STREAMING</Link>
             </div>
           )}
         </div>

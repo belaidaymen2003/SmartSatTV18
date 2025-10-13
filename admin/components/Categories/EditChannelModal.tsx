@@ -32,7 +32,7 @@ type NewProps = {
   onClose: () => void;
   initialData: ChannelData;
   categories?: string[];
-  onSave?: (data: { id?: number; name: string; description: string; category: string }, logoFile?: File | null) => Promise<void>;
+  onSave?: (data: { id?: number; name: string; description: string; category: string, logo: string }, logoFile?: File | null) => Promise<void>;
   onDeleteLogo?: () => Promise<void>;
   saving?: boolean;
 };
@@ -77,7 +77,7 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
     // reset toast when opening
     if (!open) setToast(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialData, open]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -137,7 +137,7 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
       if (externalOnSave) {
         setSaving(true);
         try {
-          await externalOnSave({ id: initialData?.id, name: form.name.trim(), description: form.description.trim(), category: form.category || "" }, logoFile);
+          await externalOnSave({ id: initialData?.id, name: form.name.trim(), description: form.description.trim(), category: form.category || "", logo: logoPreview }, logoFile);
           onClose();
         } catch (e: any) {
           setToast({ message: e?.message || "Failed to save", type: "error" });
