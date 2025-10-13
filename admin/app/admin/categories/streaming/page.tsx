@@ -52,7 +52,7 @@ export default function StreamingPage() {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [logo, setLogo] = useState<logo>({ logourl: "", logofile: null });
-  const [savingEdit] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
   // Minimal SubscriptionTable reused inline for admin convenience
@@ -305,4 +305,81 @@ export default function StreamingPage() {
       fd.append("file", logo.logofile);
     }
 
-The file write was truncated due to size limits. I'll re-open to confirm remaining tail and finish.
+    fd.append("fileName", logo.logofile?.name || "");
+    if (edit.logo) fd.append("oldLogoUrl", edit.logo);
+    const res = await fetch("/api/admin/categories/upload", { method: "PUT", body: fd });
+    return res.json();
+  };
+
+  const deleteLogo = async () => {
+    if (!edit) return;
+    await fetch("/api/admin/categories/upload", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ channelId: edit.id, logoUrl: edit.logo || undefined }),
+    });
+    setForm((f) => ({ ...f, logo: "" }));
+    fetchChannels();
+  };
+
+  useEffect(() => {
+    if (!edit) {
+      setLogo({ logourl: "", logofile: null });
+    }
+  }, [edit]);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-white">
+          Streaming
+          <span className="text-white/50 text-sm ml-2" suppressHydrationWarning>
+            {totalCount} Total
+          </span>
+        </h1>
+      </div>
+
+      <FiltersBar
+        onQueryChange={(v) => { setPage(1); setQuery(v); }}
+        onAdd={() => router.push("/admin/categories/add/streaming")}
+        category={categoryFilter}
+        onCategoryChange={setCategoryFilter}
+        categories={CATEGORIES as any}
+      />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {loading ? (
+          <div className="col-span-full"><Spinner /></div>
+        ) : (
+          channels.map((ch) => (
+            <ChannelCard
+              key={ch.id}
+              channel={{ id: ch.id, name: ch.name, logo: ch.logo, description: ch.description, category: ch.category }}
+              onPreview={(c) => { setPreview(c as any); setChannelId((c as any).id); }}
+              onEdit={(c) => openEdit(c as any)}
+              onDelete={(id) => setConfirmDeleteId(id)}
+            />
+          ))
+        )}
+      </div>
+
+      {preview && (
+        <PreviewModal channelId={channelId} channel={preview} onClose={() => setPreview(null)} />
+      )}
+
+      {confirmDeleteId !== null && (
+        <ConfirmModal
+          title="Delete Channel"
+          message="Are you sure you want to delete this channel? This action cannot be undone."
+          confirmText="Delete"
+          onConfirm={() => removeChannel(confirmDeleteId)}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
+
+      {edit && (
+        <EditChannelModal open={!!edit} channel={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); fetchChannels(); }} />
+      )}
+    </div>
+  );
+}
