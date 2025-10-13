@@ -530,6 +530,10 @@ export default function StreamingPage() {
         </ConfirmModal>
       )}
 
+      {edit && (
+        <EditChannelModal open={!!edit} channel={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); fetchChannels(); }} />
+      )}
+
     </div>
   );
 }
