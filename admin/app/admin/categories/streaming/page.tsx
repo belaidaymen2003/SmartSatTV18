@@ -1,12 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Search,
-  Plus,
-  Edit2,
-  Image as ImageIcon,
-  X,
-} from "lucide-react";
+import { Search, Plus, Edit2, Image as ImageIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/UI/Spinner";
 import Toast from "@/components/UI/Toast";
@@ -18,7 +12,6 @@ import EditChannelModal from "@/components/Categories/EditChannelModal";
 import SubscriptionModal from "@/components/Categories/SubscriptionModal";
 import { CATEGORIES } from "@/lib/constants";
 
-// Streaming model
 type IPTVChannel = {
   id: number;
   name: string;
@@ -29,22 +22,19 @@ type IPTVChannel = {
   updatedAt: string;
 };
 
-type logo = {
-  logourl: string;
-  logofile: File | null;
-};
+type logo = { logourl: string; logofile: File | null };
 
 export default function StreamingPage() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [channels, setChannels] = useState<IPTVChannel[]>([]);
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
-  const [toast, setToast] = useState<{ message: string; type?: "success" | "error" | "info" | "warning" } | null>(null);
+  const [toast, setToast] = useState<{ message: string; type?: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState<IPTVChannel | null>(null);
   const [channelId, setChannelId] = useState<number | null>(null);
-  const [sipinner1, setSipinner1] = useState<boolean>(false);
-  const [subs, setSubs] = useState<{ id?: number; code: string; duration: number; credit: number }[]>([{ id: undefined, code: "", duration: 1, credit: 0 }]);
+  const [spinner1, setSpinner1] = useState(false);
+  const [subs, setSubs] = useState<any[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", logo: "", description: "", category: "STREAMING" });
   const [preview, setPreview] = useState<IPTVChannel | null>(null);
@@ -55,10 +45,9 @@ export default function StreamingPage() {
   const [savingEdit, setSavingEdit] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
-  // Minimal SubscriptionTable reused inline for admin convenience
   function SubscriptionTable({ channelId }: { channelId: number | null }) {
     const [editingId, setEditingId] = useState<number | null>(null);
-    const [editValues, setEditValues] = useState<{ code?: string; duration?: number; credit?: number }>({});
+    const [editValues, setEditValues] = useState<any>({});
     const [q, setQ] = useState("");
     const [sort, setSort] = useState<"code" | "duration" | "credit">("code");
     const [asc, setAsc] = useState(true);
@@ -84,11 +73,6 @@ export default function StreamingPage() {
       setEditValues({ code: s.code, duration: toMonths(s.duration), credit: s.credit });
     };
 
-    const cancelEdit = () => {
-      setEditingId(null);
-      setEditValues({});
-    };
-
     const saveEdit = async (id: number) => {
       try {
         const payload: any = { id };
@@ -100,11 +84,11 @@ export default function StreamingPage() {
           setEditingId(null);
           fetchSubscriptions(channelId);
         } else {
-          const d = await res.json().catch(() => ({ error: "Failed to update" }));
+          const d = await res.json().catch(() => ({}));
           setMessage(d?.error || "Failed to update");
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     };
 
@@ -162,7 +146,11 @@ export default function StreamingPage() {
           <div className="ml-auto text-xs text-white/60">{stats.count} items • Total credits {stats.totalCredit}</div>
         </div>
 
-        {sipinner1 ? (<div className="py-6"><Spinner size={6} /></div>) : !subs || subs.length === 0 ? (<div className="text-white/60 bg-white/5 border border-white/10 rounded p-4">No subscriptions yet. <a className="underline" href="#">Add some</a> to get started.</div>) : (
+        {spinner1 ? (
+          <div className="py-6"><Spinner size={6} /></div>
+        ) : !subs || subs.length === 0 ? (
+          <div className="text-white/60 bg-white/5 border border-white/10 rounded p-4">No subscriptions yet.</div>
+        ) : (
           <div className="overflow-auto">
             <table className="min-w-full text-left border-collapse">
               <thead>
@@ -171,11 +159,31 @@ export default function StreamingPage() {
               <tbody>
                 {pageRows.map((s: any) => (
                   <tr key={s.id || s.code} className="bg-black/30 border border-white/10 rounded">
-                    <td className="px-3 py-2 align-middle">{editingId === s.id ? (<input value={editValues.code || ""} onChange={(e) => setEditValues((ev) => ({ ...ev, code: e.target.value }))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40" />) : (<div className="flex items-center gap-2"><button onClick={() => copyCode(s.code)} className="text-white hover:underline" title="Copy code">{s.code}</button></div>)}</td>
-                    <td className="px-3 py-2 align-middle text-white/80">{editingId === s.id ? (<select value={String(editValues.duration ?? toMonths(s.duration))} onChange={(e) => setEditValues((ev) => ({ ...ev, duration: Number(e.target.value) }))} className=" border border-white/10 rounded px-2 py-1 disabled:bg-transparent text-black"><option value={1}>1 month</option><option value={6}>6 months</option><option value={12}>12 months</option></select>) : (`${toMonths(s.duration)}m`)}</td>
-                    <td className="px-3 py-2 align-middle">{editingId === s.id ? (<input type="number" inputMode="numeric" pattern="[0-9]*" min={0} step={1} onWheel={(e) => (e.currentTarget as HTMLInputElement).blur()} value={String(editValues.credit ?? s.credit)} onChange={(e) => setEditValues((ev) => ({ ...ev, credit: Number(e.target.value) }))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none" />) : (<div className="text-white">{s.credit ?? 0}</div>)}</td>
+                    <td className="px-3 py-2 align-middle">{editingId === s.id ? (
+                      <input value={editValues.code || ""} onChange={(e) => setEditValues((ev) => ({ ...ev, code: e.target.value }))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none" />
+                    ) : (
+                      <div className="flex items-center gap-2"><button onClick={() => copyCode(s.code)} className="text-white hover:underline" title="Copy code">{s.code}</button></div>
+                    )}</td>
+                    <td className="px-3 py-2 align-middle text-white/80">{editingId === s.id ? (
+                      <select value={String(editValues.duration ?? toMonths(s.duration))} onChange={(e) => setEditValues((ev) => ({ ...ev, duration: Number(e.target.value) }))} className=" border border-white/10 rounded px-2 py-1 disabled:bg-transparent text-black"><option value={1}>1 month</option><option value={6}>6 months</option><option value={12}>12 months</option></select>
+                    ) : (`${toMonths(s.duration)}m`)}</td>
+                    <td className="px-3 py-2 align-middle">{editingId === s.id ? (
+                      <input type="number" inputMode="numeric" pattern="[0-9]*" min={0} step={1} onWheel={(e) => (e.currentTarget as HTMLInputElement).blur()} value={String(editValues.credit ?? s.credit)} onChange={(e) => setEditValues((ev) => ({ ...ev, credit: Number(e.target.value) }))} className="bg-transparent border border-white/10 rounded px-2 py-1 text-white focus:outline-none" />
+                    ) : (
+                      <div className="text-white">{s.credit ?? 0}</div>
+                    )}</td>
                     <td className="px-3 py-2"><span className="inline-flex items-center px-2 py-0.5 rounded border text-xs border-emerald-500/30 text-emerald-400">{s.status || "ACTIVE"}</span></td>
-                    <td className="px-3 py-2"><div className="flex gap-2">{editingId === s.id ? (<><button onClick={() => saveEdit(s.id)} className="px-2 py-1 rounded border border-green-500 text-green-400">Save</button><button onClick={cancelEdit} className="px-2 py-1 rounded border border-white/10">Cancel</button></>) : (<><button onClick={() => startEdit(s)} className="px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">Edit</button><button onClick={() => removeSubWithAuth(s.id)} className="px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10">Delete</button></>)}</div></td>
+                    <td className="px-3 py-2"><div className="flex gap-2">{editingId === s.id ? (
+                      <>
+                        <button onClick={() => saveEdit(s.id)} className="px-2 py-1 rounded border border-green-500 text-green-400">Save</button>
+                        <button onClick={() => setEditingId(null)} className="px-2 py-1 rounded border border-white/10">Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={() => startEdit(s)} className="px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">Edit</button>
+                        <button onClick={() => removeSubWithAuth(s.id)} className="px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10">Delete</button>
+                      </>
+                    )}</div></td>
                   </tr>
                 ))}
               </tbody>
@@ -192,12 +200,11 @@ export default function StreamingPage() {
 
   function PreviewModal({ channelId, channel, onClose }: { channelId: number | null; channel: IPTVChannel; onClose: () => void }) {
     return (
-      <div className="fixed inset-0  z-50 grid place-items-center bg-black/70 p-4" onClick={onClose}>
+      <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4" onClick={onClose}>
         <div className="w-full max-w-4xl bg-black/40 border border-white/10 rounded-xl p-5 backdrop-blur-md shadow-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3 min-w-0">
               {channel.logo ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={channel.logo} alt={channel.name} className="h-10 w-10 rounded bg-white/10 object-contain" />
               ) : (
                 <div className="h-10 w-10 rounded bg-white/10 grid place-items-center">
@@ -212,7 +219,7 @@ export default function StreamingPage() {
             <div className="flex items-center gap-2">
               <a href={`/admin/categories/add/streaming/subscription/${channel.id}`} rel="noreferrer">
                 <button className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/10 hover:bg-white/10 text-white/80">
-                  <Edit2 className="w-4 h-4" /> Add Subscription
+                  <Plus className="w-4 h-4" /> Add Subscription
                 </button>
               </a>
               <button onClick={onClose} className="p-1 rounded hover:bg-white/10" aria-label="Close">
@@ -221,18 +228,27 @@ export default function StreamingPage() {
             </div>
           </div>
 
-  
+          {message && (
+            <div className="mb-3 text-xs rounded border border-emerald-500/30 text-emerald-300 bg-emerald-500/10 px-3 py-2">{message}</div>
+          )}
+
+          <SubscriptionModal channelId={channelId} />
+        </div>
+      </div>
+    );
+  }
+
   const fetchSubscriptions = async (channelId: number | null) => {
     if (!channelId) return;
-    setSipinner1(true);
+    setSpinner1(true);
     try {
       const res = await fetch(`/api/admin/categories/category/subscription?channelId=${channelId}`);
       const data = await res.json().catch(() => ({}));
-      setSubs(data.subscriptions || []);
+      setSubs(Array.isArray(data.subscriptions) ? data.subscriptions : []);
     } catch (e) {
       setSubs([]);
     } finally {
-      setSipinner1(false);
+      setSpinner1(false);
     }
   };
 
@@ -246,14 +262,14 @@ export default function StreamingPage() {
       const params = new URLSearchParams();
       params.set("slug", "streaming");
       params.set("page", String(pageNum));
-      if (categoryFilter) params.set("category", categoryFilter);
+      if (categoryFilter && categoryFilter !== "All") params.set("category", categoryFilter);
       if (query) params.set("q", query);
       params.set("pageSize", String(pageSize));
       const res = await fetch(`/api/admin/categories/category?${params.toString()}`);
       const d = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(d?.error || "Failed to load");
-      setChannels(d.channels || []);
-      setTotalCount(d.total || 0);
+      setChannels(Array.isArray(d.channels) ? d.channels : []);
+      setTotalCount(Number(d.total) || 0);
     } catch (err: any) {
       setToast({ message: String(err?.message || err), type: "error" });
     } finally {
@@ -262,7 +278,6 @@ export default function StreamingPage() {
   };
 
   useEffect(() => {
-    // reset to first page when filters change
     setPage(1);
   }, [query, categoryFilter]);
 
@@ -296,6 +311,61 @@ export default function StreamingPage() {
     if (!edit) return;
     const fd = new FormData();
     fd.append("channelId", String(edit.id));
-    if (logo.logofile) {
-      fd.append("file", logo.logofile);
-    }
+    if (logo.logofile) fd.append("file", logo.logofile);
+    fd.append("fileName", logo.logofile?.name || "");
+    if (edit.logo) fd.append("oldLogoUrl", edit.logo);
+    const res = await fetch("/api/admin/categories/upload", { method: "PUT", body: fd });
+    return res.json();
+  };
+
+  const deleteLogo = async () => {
+    if (!edit) return;
+    await fetch("/api/admin/categories/upload", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ channelId: edit.id, logoUrl: edit.logo || undefined }) });
+    setForm((f) => ({ ...f, logo: "" }));
+    fetchChannels();
+  };
+
+  useEffect(() => {
+    if (!edit) setLogo({ logourl: "", logofile: null });
+  }, [edit]);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-white">
+          Streaming
+          <span className="text-white/50 text-sm ml-2" suppressHydrationWarning>
+            {totalCount} Total
+          </span>
+        </h1>
+      </div>
+
+      <FiltersBar onQueryChange={(v) => { setPage(1); setQuery(v); }} onAdd={() => router.push("/admin/categories/add/streaming")} category={categoryFilter} onCategoryChange={setCategoryFilter} categories={CATEGORIES as any} />
+
+      {toast && <Toast message={toast.message} type={toast.type as any} onClose={() => setToast(null)} />}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {loading ? (
+          <div className="col-span-full"><Spinner /></div>
+        ) : (
+          channels.map((ch) => (
+            <ChannelCard key={ch.id} channel={{ id: ch.id, name: ch.name, logo: ch.logo, description: ch.description, category: ch.category }} onPreview={(c) => { setPreview(c as any); setChannelId((c as any).id); }} onEdit={(c) => openEdit(c as any)} onDelete={(id) => setConfirmDeleteId(id)} />
+          ))
+        )}
+      </div>
+
+      <div className="flex items-center justify-between p-1">
+        <div />
+        <Pagination total={totalCount} pageSize={pageSize} page={page} onPageChange={setPage} />
+      </div>
+
+      {preview && <PreviewModal channelId={channelId} channel={preview} onClose={() => setPreview(null)} />}
+
+      {confirmDeleteId !== null && (
+        <ConfirmModal title="Delete Channel" message="Are you sure you want to delete this channel? This action cannot be undone." confirmText="Delete" onConfirm={() => removeChannel(confirmDeleteId)} onCancel={() => setConfirmDeleteId(null)} />
+      )}
+
+      {edit && <EditChannelModal open={!!edit} channel={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); fetchChannels(page); }} />}
+    </div>
+  );
+}
