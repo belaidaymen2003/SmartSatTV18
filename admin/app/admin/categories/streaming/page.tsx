@@ -221,16 +221,7 @@ export default function StreamingPage() {
             </div>
           </div>
 
-          {message && (
-            <div className="mb-3 text-xs rounded border border-emerald-500/30 text-emerald-300 bg-emerald-500/10 px-3 py-2">{message}</div>
-          )}
-
-          <SubscriptionModal channelId={channelId} />
-        </div>
-      </div>
-    );
-  }
-
+  
   const fetchSubscriptions = async (channelId: number | null) => {
     if (!channelId) return;
     setSipinner1(true);
@@ -271,9 +262,13 @@ export default function StreamingPage() {
   };
 
   useEffect(() => {
+    // reset to first page when filters change
     setPage(1);
-    fetchChannels(1);
   }, [query, categoryFilter]);
+
+  useEffect(() => {
+    fetchChannels(page);
+  }, [page, pageSize, query, categoryFilter]);
 
   const openEdit = (ch: IPTVChannel) => {
     setEdit(ch);
@@ -304,82 +299,3 @@ export default function StreamingPage() {
     if (logo.logofile) {
       fd.append("file", logo.logofile);
     }
-
-    fd.append("fileName", logo.logofile?.name || "");
-    if (edit.logo) fd.append("oldLogoUrl", edit.logo);
-    const res = await fetch("/api/admin/categories/upload", { method: "PUT", body: fd });
-    return res.json();
-  };
-
-  const deleteLogo = async () => {
-    if (!edit) return;
-    await fetch("/api/admin/categories/upload", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ channelId: edit.id, logoUrl: edit.logo || undefined }),
-    });
-    setForm((f) => ({ ...f, logo: "" }));
-    fetchChannels();
-  };
-
-  useEffect(() => {
-    if (!edit) {
-      setLogo({ logourl: "", logofile: null });
-    }
-  }, [edit]);
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-white">
-          Streaming
-          <span className="text-white/50 text-sm ml-2" suppressHydrationWarning>
-            {totalCount} Total
-          </span>
-        </h1>
-      </div>
-
-      <FiltersBar
-        onQueryChange={(v) => { setPage(1); setQuery(v); }}
-        onAdd={() => router.push("/admin/categories/add/streaming")}
-        category={categoryFilter}
-        onCategoryChange={setCategoryFilter}
-        categories={CATEGORIES as any}
-      />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {loading ? (
-          <div className="col-span-full"><Spinner /></div>
-        ) : (
-          channels.map((ch) => (
-            <ChannelCard
-              key={ch.id}
-              channel={{ id: ch.id, name: ch.name, logo: ch.logo, description: ch.description, category: ch.category }}
-              onPreview={(c) => { setPreview(c as any); setChannelId((c as any).id); }}
-              onEdit={(c) => openEdit(c as any)}
-              onDelete={(id) => setConfirmDeleteId(id)}
-            />
-          ))
-        )}
-      </div>
-
-      {preview && (
-        <PreviewModal channelId={channelId} channel={preview} onClose={() => setPreview(null)} />
-      )}
-
-      {confirmDeleteId !== null && (
-        <ConfirmModal
-          title="Delete Channel"
-          message="Are you sure you want to delete this channel? This action cannot be undone."
-          confirmText="Delete"
-          onConfirm={() => removeChannel(confirmDeleteId)}
-          onCancel={() => setConfirmDeleteId(null)}
-        />
-      )}
-
-      {edit && (
-        <EditChannelModal open={!!edit} channel={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); fetchChannels(); }} />
-      )}
-    </div>
-  );
-}
