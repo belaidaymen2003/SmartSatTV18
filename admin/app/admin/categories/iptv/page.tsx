@@ -462,7 +462,7 @@ export default function IPTVPage() {
             </div>
           )}
 
-          <SubscriptionTable channelId={channelId} />
+          <SubscriptionModal channelId={channelId} />
         </div>
       </div>
     );
