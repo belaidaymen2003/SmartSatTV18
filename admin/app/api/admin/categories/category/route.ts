@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@/lib/generated/prisma";
 enum Category {
   IPTV,
