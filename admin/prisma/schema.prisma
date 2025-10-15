@@ -81,22 +81,23 @@ enum Category {
 }
 
 model User {
-  id           Int                   @id @default(autoincrement())
-  email        String                @unique
-  username     String                @unique
-  name         String
-  passwordHash String
-  role         Role                  @default(USER)
-  credits      Int                   @default(0)
-  status       UserStatus            @default(APPROVED)
-  auth         Auth                  @default(DISCONNECTED)
-  authLastAt   DateTime?
-  comments     Comment[]
-  reviews      Review[]
-  beinJobs     BeInSportActivation[] @relation("BeInByUser")
+  id            Int                   @id @default(autoincrement())
+  email         String                @unique
+  username      String                @unique
+  name          String
+  passwordHash  String
+  role          Role                  @default(USER)
+  credits       Int                   @default(0)
+  status        UserStatus            @default(APPROVED)
+  auth          Auth                  @default(DISCONNECTED)
+  authLastAt    DateTime?
+  comments      Comment[]
+  reviews       Review[]
+  beinJobs      BeInSportActivation[] @relation("BeInByUser")
   subscriptions Subscription[]
-  createdAt    DateTime              @default(now())
-  updatedAt    DateTime              @updatedAt
+  appDownload   CatalogApp[]
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
 
   @@index([role, status])
 }
@@ -128,6 +129,20 @@ model CatalogItem {
 
   @@index([category, status])
   @@index([title])
+}
+
+model CatalogApp {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String
+  downloadLink String
+  image        String
+  credit       Float
+  version      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       Int?
+  user         User?    @relation(fields: [userId], references: [id])
 }
 
 model Genre {
@@ -217,20 +232,19 @@ model BeInSportActivation {
 }
 
 model IPTVChannel {
-  id          Int              @id @default(autoincrement())
-  name        String           // Stream URL (.m3u8, etc.)
-  logo        String?
-  description String?
-  category    Category          // Price of subscription
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime         @updatedAt
-  subscriptions Subscription[]  // All users who subscribed
+  id            Int            @id @default(autoincrement())
+  name          String // Stream URL (.m3u8, etc.)
+  logo          String?
+  description   String?
+  category      Category // Price of subscription
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[] // All users who subscribed
 }
-
 
 model Subscription {
   id        Int          @id @default(autoincrement())
-  user      User?         @relation(fields: [userId], references: [id])
+  user      User?        @relation(fields: [userId], references: [id])
   userId    Int?
   credit    Float        @default(0)
   code      String?      @unique
