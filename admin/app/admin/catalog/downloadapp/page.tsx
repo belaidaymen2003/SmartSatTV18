@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Pagination from '../../../../components/Admin/Pagination'
 import Spinner from '../../../../components/UI/Spinner'
 
@@ -18,16 +19,13 @@ type AppItem = {
 }
 
 export default function DownloadAppAdminPage() {
+  const router = useRouter()
   const [items, setItems] = useState<AppItem[]>([])
   const [q, setQ] = useState('')
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(12)
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [editing, setEditing] = useState<AppItem | null>(null)
-  const [showForm, setShowForm] = useState(false)
-
-  const [form, setForm] = useState({ name: '', description: '', downloadLink: '', image: '', credit: 0, version: '' })
 
   const fetchList = async () => {
     setLoading(true)
@@ -48,32 +46,11 @@ export default function DownloadAppAdminPage() {
   useEffect(() => { fetchList() }, [q, page, pageSize])
 
   const openCreate = () => {
-    setEditing(null)
-    setForm({ name: '', description: '', downloadLink: '', image: '', credit: 0, version: '' })
-    setShowForm(true)
+    router.push('/admin/catalog/add/downloadapp')
   }
 
   const openEdit = (it: AppItem) => {
-    setEditing(it)
-    setForm({ name: it.name || '', description: it.description || '', downloadLink: it.downloadLink || '', image: it.image || '', credit: it.credit || 0, version: it.version || '' })
-    setShowForm(true)
-  }
-
-  const save = async () => {
-    if (!form.name.trim() || !form.downloadLink.trim()) return alert('Name and download link are required')
-    try {
-      const payload = { ...form, credit: Number(form.credit) }
-      const method = editing ? 'PUT' : 'POST'
-      if (editing) (payload as any).id = editing.id
-      const res = await fetch('/api/admin/catalog/appdownload', { method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) })
-      const d = await res.json().catch(()=>({}))
-      if (!res.ok) return alert(d?.error || 'Server error')
-      setShowForm(false)
-      fetchList()
-    } catch (err) {
-      console.error(err)
-      alert('Failed')
-    }
+    router.push(`/admin/catalog/add/downloadapp?id=${it.id}`)
   }
 
   const remove = async (id: number) => {
@@ -151,34 +128,6 @@ export default function DownloadAppAdminPage() {
           <Pagination total={total} pageSize={pageSize} page={page} onPageChange={(p) => setPage(p)} />
         </div>
       </div>
-
-      {showForm && (
-        <div className="fixed inset-0 bg-black/60 grid place-items-center p-4">
-          <div className="w-full max-w-2xl bg-black/20 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">{editing ? 'Edit App' : 'Add App'}</h3>
-              <button onClick={() => setShowForm(false)} className="text-white/60">Close</button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-              <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Name" className="md:col-span-8 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
-              <input value={form.version} onChange={(e) => setForm((f) => ({ ...f, version: e.target.value }))} placeholder="Version" className="md:col-span-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
-              <input value={String(form.credit)} onChange={(e) => setForm((f) => ({ ...f, credit: Number(e.target.value) }))} placeholder="Credit" className="md:col-span-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
-
-              <input value={form.downloadLink} onChange={(e) => setForm((f) => ({ ...f, downloadLink: e.target.value }))} placeholder="Download link" className="md:col-span-12 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
-
-              <input value={form.image} onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))} placeholder="Image URL" className="md:col-span-6 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
-
-              <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="Description" className="md:col-span-12 h-28 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
-
-              <div className="md:col-span-12 flex items-center gap-3">
-                <button onClick={save} className="px-4 py-2 rounded-lg border border-orange-500 text-orange-400 hover:bg-orange-500/10">{editing ? 'Update' : 'Create'}</button>
-                <button onClick={() => { setShowForm(false) }} className="px-4 py-2 rounded-lg border border-white/10 text-white/60">Cancel</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
