@@ -267,23 +267,54 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
             <input value={vUrl} onChange={(e) => setVUrl(e.target.value)} placeholder="Video URL (optional if uploading file)" className="md:col-span-12 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
 
             <div className="md:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-              <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                <ImageIcon className="w-4 h-4 text-white/60" />
-                <input value={vThumb} onChange={(e) => { setVThumb(e.target.value); setThumbPreviewUrl(e.target.value || null); }} placeholder="Thumbnail URL" className="bg-transparent text-white placeholder-white/30 w-full outline-none" />
-              </label>
-              <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                <Upload className="w-4 h-4 text-white/60" />
-                <span className="ml-2 text-white/70">Browse thumbnail</span>
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setVThumbFile(f); if (f) { const url = URL.createObjectURL(f); setThumbPreviewUrl(url); } }} />
-              </label>
-            </div>
+              <div className="flex flex-col gap-2">
+                <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
+                  <ImageIcon className="w-4 h-4 text-white/60" />
+                  <input value={vThumb} onChange={(e) => { setVThumb(e.target.value); setThumbPreviewUrl(e.target.value || null); }} placeholder="Thumbnail URL" className="bg-transparent text-white placeholder-white/30 w-full outline-none" />
+                </label>
+                <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
+                  <Upload className="w-4 h-4 text-white/60" />
+                  <span className="ml-2 text-white/70">Browse thumbnail</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setVThumbFile(f); if (f) { const url = URL.createObjectURL(f); setThumbPreviewUrl(url); } }} />
+                </label>
 
-            <div className="md:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-              <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                <Upload className="w-4 h-4 text-white/60" />
-                <span className="ml-2 text-white/70">Browse video</span>
-                <input type="file" accept="video/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setVFile(f); if (f) { const url = URL.createObjectURL(f); setVideoPreviewUrl(url); } }} />
-              </label>
+                {thumbPreviewUrl && (
+                  <div className="mt-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={thumbPreviewUrl} alt="thumb preview" className="h-36 rounded-md object-contain bg-white/5" />
+                    {thumbUploadProgress != null && (
+                      <div className="mt-2">
+                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div style={{ width: `${thumbUploadProgress}%` }} className="h-2 bg-orange-500" />
+                        </div>
+                        <div className="text-xs text-white/60 mt-1">Uploading thumbnail: {thumbUploadProgress}%</div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
+                  <Upload className="w-4 h-4 text-white/60" />
+                  <span className="ml-2 text-white/70">Browse video</span>
+                  <input type="file" accept="video/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setVFile(f); if (f) { const url = URL.createObjectURL(f); setVideoPreviewUrl(url); } }} />
+                </label>
+
+                {videoPreviewUrl && (
+                  <div className="mt-2">
+                    <video src={videoPreviewUrl} controls className="w-full h-40 rounded-md bg-black/20 object-cover" />
+                    {videoUploadProgress != null && (
+                      <div className="mt-2">
+                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div style={{ width: `${videoUploadProgress}%` }} className="h-2 bg-orange-500" />
+                        </div>
+                        <div className="text-xs text-white/60 mt-1">Uploading video: {videoUploadProgress}%</div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             <textarea value={vDesc} onChange={(e) => setVDesc(e.target.value)} placeholder="Description" className="md:col-span-12 h-28 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
