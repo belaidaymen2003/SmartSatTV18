@@ -107,10 +107,18 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
         if (idParam) fd.append('appId', String(idParam))
         if (image) fd.append('oldImageUrl', String(image))
         const uploadMethod = idParam ? 'PUT' : 'POST'
-        const upRes = await fetch('/api/admin/catalog/upload', { method: uploadMethod, body: fd })
-        const upJson = await upRes.json().catch(()=>({}))
-        if (!upRes.ok) return alert(upJson?.error || 'Image upload failed')
-        payload.image = upJson.imageUrl || payload.image
+        try {
+          setImageUploadProgress(0)
+          const upJson = await uploadWithProgress('/api/admin/catalog/upload', fd, (p) => setImageUploadProgress(p), uploadMethod)
+          payload.image = upJson.imageUrl || payload.image
+          setImage(upJson.imageUrl || payload.image)
+          setImagePreviewUrl(upJson.imageUrl || payload.image)
+        } catch (err:any) {
+          console.error(err)
+          return alert(err?.error || err?.message || 'Image upload failed')
+        } finally {
+          setImageUploadProgress(null)
+        }
       }
 
       const method = idParam ? 'PUT' : 'POST'
