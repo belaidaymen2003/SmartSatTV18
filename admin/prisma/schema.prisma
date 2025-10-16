@@ -137,7 +137,6 @@ model Video {
   thumbnail     String?
   videoUrl      String            // Link to the actual video file or stream
   price         Float
-
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 }
