@@ -291,18 +291,34 @@ export default function UsersContent() {
       return
     }
 
+    if (editPassword && editPassword !== editPasswordConfirm) {
+      setError('Passwords do not match')
+      return
+    }
+
+    if (editPassword && editPassword.length < 6) {
+      setError('Password must be at least 6 characters')
+      return
+    }
+
     try {
       setSaving(true)
+      const payload: any = {
+        id: editModal.id,
+        name: editModal.name,
+        email: editModal.email,
+        username: editModal.username,
+        status: editModal.status,
+      }
+
+      if (editPassword) {
+        payload.password = editPassword
+      }
+
       const response = await fetch('/api/admin/users', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: editModal.id,
-          name: editModal.name,
-          email: editModal.email,
-          username: editModal.username,
-          status: editModal.status,
-        }),
+        body: JSON.stringify(payload),
       })
 
       if (!response.ok) {
@@ -316,6 +332,8 @@ export default function UsersContent() {
         setUserProfile({ ...userProfile, ...data.user })
       }
       setEditModal(null)
+      setEditPassword('')
+      setEditPasswordConfirm('')
     } catch (err: any) {
       setError(err.message)
     } finally {
