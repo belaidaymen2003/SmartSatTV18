@@ -33,6 +33,10 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
   const [vUrl, setVUrl] = useState('')
   const [vFile, setVFile] = useState<File | null>(null)
   const [vDesc, setVDesc] = useState('')
+  const [thumbPreviewUrl, setThumbPreviewUrl] = useState<string | null>(null)
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null)
+  const [thumbUploadProgress, setThumbUploadProgress] = useState<number | null>(null)
+  const [videoUploadProgress, setVideoUploadProgress] = useState<number | null>(null)
 
   useEffect(() => {
     if (!isDownloadApp && !isDemoVideo) return
