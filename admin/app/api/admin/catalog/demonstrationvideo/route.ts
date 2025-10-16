@@ -36,15 +36,30 @@ export async function GET(request: NextRequest) {
 
     const where = and.length ? { AND: and } : {};
 
-    const [total, videos] = await Promise.all([
-      prisma.video.count({ where }),
-      prisma.video.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-      }),
-    ]);
+    let total = 0;
+    let videos: any[] = [];
+    try {
+      const res = await Promise.all([
+        prisma.video.count({ where }),
+        prisma.video.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+        }),
+      ]);
+      total = res[0] as number;
+      videos = res[1] as any[];
+    } catch (err: any) {
+      // If Video table doesn't exist, return empty list instead of 500
+      if (err?.code === 'P2021' && err?.meta?.modelName === 'Video') {
+        console.warn('Video table missing, returning empty list');
+        total = 0;
+        videos = [];
+      } else {
+        throw err;
+      }
+    }
 
     return NextResponse.json({ videos, total, page, pageSize });
   } catch (error: any) {
