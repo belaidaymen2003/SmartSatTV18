@@ -676,6 +676,74 @@ export default function UsersContent() {
           </div>
         </div>
       )}
+
+      {editModal && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => setEditModal(null)}>
+          <div className="w-full max-w-md bg-black/30 border border-white/10 rounded-xl p-5 backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-white font-semibold">Edit User Information</h3>
+              <button className="p-1 hover:bg-white/10 rounded-md" onClick={() => setEditModal(null)}><X className="w-4 h-4 text-white/70" /></button>
+            </div>
+            <div className="grid gap-3 text-sm">
+              <div>
+                <label className="text-white/70 text-xs mb-1 block">Full Name</label>
+                <input
+                  value={editModal.name || ''}
+                  onChange={(e) => setEditModal({ ...editModal, name: e.target.value })}
+                  placeholder="Full name"
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30 focus:outline-none focus:border-white/30"
+                />
+              </div>
+              <div>
+                <label className="text-white/70 text-xs mb-1 block">Email</label>
+                <input
+                  value={editModal.email || ''}
+                  onChange={(e) => setEditModal({ ...editModal, email: e.target.value })}
+                  type="email"
+                  placeholder="Email"
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30 focus:outline-none focus:border-white/30"
+                />
+              </div>
+              <div>
+                <label className="text-white/70 text-xs mb-1 block">Username</label>
+                <input
+                  value={editModal.username || ''}
+                  onChange={(e) => setEditModal({ ...editModal, username: e.target.value })}
+                  placeholder="Username"
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30 focus:outline-none focus:border-white/30"
+                />
+              </div>
+              <div>
+                <label className="text-white/70 text-xs mb-1 block">Status</label>
+                <select
+                  value={editModal.status || 'Approved'}
+                  onChange={(e) => setEditModal({ ...editModal, status: e.target.value as 'Approved' | 'Banned' })}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-white/30"
+                >
+                  <option>Approved</option>
+                  <option>Banned</option>
+                </select>
+              </div>
+              <div className="flex items-center justify-end gap-2 mt-2">
+                <button
+                  onClick={() => setEditModal(null)}
+                  className="px-3 py-2 rounded-md border border-white/10 text-white/70 hover:bg-white/10 transition-colors disabled:opacity-50"
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveEditUser}
+                  className="px-3 py-2 rounded-md border border-blue-500 text-blue-400 hover:bg-blue-500/10 transition-colors disabled:opacity-50"
+                  disabled={saving || !editModal.name || !editModal.email || !editModal.username}
+                >
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
