@@ -1,5 +1,5 @@
 import React from "react";
-import EditChannelModal from "@/components/Categories/EditChannelModal";
+import EntityModal from "@/components/UI/EntityModal";
 
 type AppItem = {
   id?: number;
@@ -16,60 +16,54 @@ export default function EditAppModal(props: {
   onClose: () => void;
   initialData: AppItem;
   saving?: boolean;
-  onSave?: (data: any, logoFile?: File | null) => Promise<void>;
+  onSave?: (data: any, files?: Record<string, File | null>) => Promise<void>;
 }) {
-  // Map fields between CatalogApp and the Channel modal
   const { open, onClose, initialData, onSave, saving } = props;
 
-  const mappedInitial = {
+  const fields = [
+    { name: "name", label: "Name", type: "text" },
+    { name: "version", label: "Version", type: "text" },
+    { name: "credit", label: "Credit", type: "number" },
+    { name: "downloadLink", label: "Download Link", type: "url" },
+    { name: "image", label: "Image", type: "file" },
+    { name: "description", label: "Description", type: "textarea" },
+  ];
+
+  const initialValues = {
     id: initialData?.id,
-    name: initialData?.name,
-    description: initialData?.description,
-    category: initialData?.version || "",
-    logo: initialData?.image || undefined,
+    name: initialData?.name || "",
+    version: initialData?.version || "",
+    credit: typeof initialData?.credit !== "undefined" ? initialData.credit : 0,
+    downloadLink: initialData?.downloadLink || "",
+    image: initialData?.image || "",
+    description: initialData?.description || "",
   };
 
-  const externalOnSave = async (data: { id?: number; name: string; description: string; category: string; logo: string }, logoFile?: File | null) => {
-    // data.category holds version, data.logo holds image URL
+  const handleSave = async (values: Record<string, any>, files?: Record<string, File | null>) => {
     const payload: any = {
-      name: data.name,
-      description: data.description,
-      version: data.category,
-      image: data.logo,
-      credit: initialData?.credit ?? 0,
+      id: values.id,
+      name: values.name,
+      version: values.version,
+      credit: Number(values.credit || 0),
+      downloadLink: values.downloadLink,
+      image: values.image || undefined,
+      description: values.description || undefined,
     };
-    if (initialData?.id) payload.id = initialData.id;
-    // If onSave provided by caller, let it handle API
-    if (onSave) return onSave(payload, logoFile);
 
-    // Default behavior: call admin API
-    const method = initialData?.id ? "PUT" : "POST";
-    if (initialData?.id) payload.id = initialData.id;
+    if (onSave) return onSave(payload, files || {});
+
+    const method = payload.id ? "PUT" : "POST";
     const res = await fetch("/api/admin/catalog/appdownload", {
       method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payload, downloadLink: initialData?.downloadLink || "" }),
+      body: JSON.stringify(payload),
     });
     const d = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(d?.error || "Failed to save app");
     return d;
   };
 
-  const externalOnDeleteLogo = async () => {
-    // No special delete endpoint for images; just set to empty
-    // Caller could call API to remove image; here we do nothing.
-    return;
-  };
-
   return (
-    <EditChannelModal
-      open={open}
-      onClose={onClose}
-      initialData={mappedInitial}
-      categories={[]}
-      saving={saving}
-      onSave={externalOnSave}
-      onDeleteLogo={externalOnDeleteLogo}
-    />
+    <EntityModal open={open} title={initialData?.id ? "Edit App" : "Add App"} fields={fields} initialValues={initialValues} saving={saving} onClose={onClose} onSave={handleSave} />
   );
 }
