@@ -55,9 +55,7 @@ export default function DownloadAppAdminPage() {
   const [saving, setSaving] = useState(false)
 
   const openCreate = () => {
-    // open modal for creation
-    setEditing({} as any)
-    setIsModalOpen(true)
+    router.push('/admin/catalog/add/downloadapp')
   }
 
   const openEdit = (it: AppItem) => {
