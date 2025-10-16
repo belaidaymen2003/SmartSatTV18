@@ -276,6 +276,49 @@ export default function UsersContent() {
     setCreditModal(null)
   }
 
+  const openEditUser = (user: AdminUser) => {
+    setEditModal({ ...user })
+  }
+
+  const saveEditUser = async () => {
+    if (!editModal || !editModal.id) return
+    if (!editModal.name || !editModal.email || !editModal.username) {
+      setError('Name, email, and username are required')
+      return
+    }
+
+    try {
+      setSaving(true)
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editModal.id,
+          name: editModal.name,
+          email: editModal.email,
+          username: editModal.username,
+          status: editModal.status,
+        }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to update user')
+      }
+
+      const data = await response.json()
+      setUsers(users.map(u => u.id === editModal.id ? data.user : u))
+      if (userProfile?.id === editModal.id) {
+        setUserProfile({ ...userProfile, ...data.user })
+      }
+      setEditModal(null)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const openAddUser = () => router.push('/admin/users/add')
 
   const formatDate = (iso: string) => {
