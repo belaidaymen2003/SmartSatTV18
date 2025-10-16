@@ -65,12 +65,22 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
           setVThumb(video.thumbnail || '')
           setVUrl(video.videoUrl || '')
           setVDesc(video.description || '')
+          setThumbPreviewUrl(video.thumbnail || null)
+          setVideoPreviewUrl(video.videoUrl || null)
         }
       })
       .catch(console.error)
       .finally(() => setLoading(false))
     return () => { mounted = false }
   }, [idParam, slug])
+
+  // cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      if (thumbPreviewUrl && thumbPreviewUrl.startsWith('blob:')) URL.revokeObjectURL(thumbPreviewUrl)
+      if (videoPreviewUrl && videoPreviewUrl.startsWith('blob:')) URL.revokeObjectURL(videoPreviewUrl)
+    }
+  }, [thumbPreviewUrl, videoPreviewUrl])
 
   if (!isDownloadApp && !isDemoVideo) {
     return (
