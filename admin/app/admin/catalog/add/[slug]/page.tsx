@@ -267,53 +267,78 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
             <input value={vUrl} onChange={(e) => setVUrl(e.target.value)} placeholder="Video URL (optional if uploading file)" className="md:col-span-12 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
 
             <div className="md:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                  <ImageIcon className="w-4 h-4 text-white/60" />
-                  <input value={vThumb} onChange={(e) => { setVThumb(e.target.value); setThumbPreviewUrl(e.target.value || null); }} placeholder="Thumbnail URL" className="bg-transparent text-white placeholder-white/30 w-full outline-none" />
-                </label>
-                <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                  <Upload className="w-4 h-4 text-white/60" />
-                  <span className="ml-2 text-white/70">Browse thumbnail</span>
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setVThumbFile(f); if (f) { const url = URL.createObjectURL(f); setThumbPreviewUrl(url); } }} />
-                </label>
+              {/* Thumbnail box (style similar to EditChannelModal logo) */}
+              <div className="sm:col-span-1">
+                <label className="block text-sm text-white/70 mb-2">Thumbnail</label>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4 flex flex-col items-center">
+                  {thumbPreviewUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={thumbPreviewUrl} alt={vTitle || 'thumbnail'} className="h-28 w-28 rounded-lg bg-white/10 object-contain" />
+                  ) : (
+                    <div className="h-28 w-28 rounded-lg bg-white/10 grid place-items-center">
+                      <ImageIcon className="w-7 h-7 text-white/40" />
+                    </div>
+                  )}
 
-                {thumbPreviewUrl && (
-                  <div className="mt-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={thumbPreviewUrl} alt="thumb preview" className="h-36 rounded-md object-contain bg-white/5" />
-                    {thumbUploadProgress != null && (
-                      <div className="mt-2">
-                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                          <div style={{ width: `${thumbUploadProgress}%` }} className="h-2 bg-orange-500" />
-                        </div>
-                        <div className="text-xs text-white/60 mt-1">Uploading thumbnail: {thumbUploadProgress}%</div>
-                      </div>
+                  <div className="mt-3 flex items-center gap-2">
+                    <label className="px-3 py-2 border border-white/10 rounded cursor-pointer hover:bg-white/10 text-white/80 inline-flex items-center gap-2">
+                      Replace
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setVThumbFile(f); if (f) { const url = URL.createObjectURL(f); setThumbPreviewUrl(url); } }} />
+                    </label>
+                    {thumbPreviewUrl && (
+                      <button type="button" onClick={() => { setVThumbFile(null); setThumbPreviewUrl(''); setVThumb(''); }} className="px-3 py-2 border border-red-500/30 text-red-400 rounded hover:bg-red-500/10">Remove</button>
                     )}
                   </div>
-                )}
+
+                  <p className="mt-2 text-xs text-white/50 text-center">PNG/SVG recommended. Square images look best.</p>
+
+                  {/* URL input below */}
+                  <input value={vThumb} onChange={(e) => { setVThumb(e.target.value); setThumbPreviewUrl(e.target.value || null); }} placeholder="Or paste image URL" className="mt-3 w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40" />
+
+                  {thumbUploadProgress != null && (
+                    <div className="mt-3 w-full">
+                      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div style={{ width: `${thumbUploadProgress}%` }} className="h-2 bg-orange-500" />
+                      </div>
+                      <div className="text-xs text-white/60 mt-1">Uploading thumbnail: {thumbUploadProgress}%</div>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                  <Upload className="w-4 h-4 text-white/60" />
-                  <span className="ml-2 text-white/70">Browse video</span>
-                  <input type="file" accept="video/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setVFile(f); if (f) { const url = URL.createObjectURL(f); setVideoPreviewUrl(url); } }} />
-                </label>
+              {/* Video box */}
+              <div className="sm:col-span-1">
+                <label className="block text-sm text-white/70 mb-2">Video</label>
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4 flex flex-col items-center">
+                  {videoPreviewUrl ? (
+                    <video src={videoPreviewUrl} controls className="h-28 w-full rounded-md bg-black/20 object-cover" />
+                  ) : (
+                    <div className="h-28 w-full rounded-lg bg-white/10 grid place-items-center">
+                      <Upload className="w-7 h-7 text-white/40" />
+                    </div>
+                  )}
 
-                {videoPreviewUrl && (
-                  <div className="mt-2">
-                    <video src={videoPreviewUrl} controls className="w-full h-40 rounded-md bg-black/20 object-cover" />
-                    {videoUploadProgress != null && (
-                      <div className="mt-2">
-                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                          <div style={{ width: `${videoUploadProgress}%` }} className="h-2 bg-orange-500" />
-                        </div>
-                        <div className="text-xs text-white/60 mt-1">Uploading video: {videoUploadProgress}%</div>
-                      </div>
+                  <div className="mt-3 flex items-center gap-2">
+                    <label className="px-3 py-2 border border-white/10 rounded cursor-pointer hover:bg-white/10 text-white/80 inline-flex items-center gap-2">
+                      Replace
+                      <input type="file" accept="video/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setVFile(f); if (f) { const url = URL.createObjectURL(f); setVideoPreviewUrl(url); } }} />
+                    </label>
+                    {videoPreviewUrl && (
+                      <button type="button" onClick={() => { setVFile(null); setVideoPreviewUrl(''); setVUrl(''); }} className="px-3 py-2 border border-red-500/30 text-red-400 rounded hover:bg-red-500/10">Remove</button>
                     )}
                   </div>
-                )}
+
+                  <input value={vUrl} onChange={(e) => { setVUrl(e.target.value); setVideoPreviewUrl(e.target.value || null); }} placeholder="Or paste video URL" className="mt-3 w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white placeholder-white/40" />
+
+                  {videoUploadProgress != null && (
+                    <div className="mt-3 w-full">
+                      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div style={{ width: `${videoUploadProgress}%` }} className="h-2 bg-orange-500" />
+                      </div>
+                      <div className="text-xs text-white/60 mt-1">Uploading video: {videoUploadProgress}%</div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
