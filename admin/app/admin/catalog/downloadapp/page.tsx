@@ -48,22 +48,57 @@ export default function DownloadAppAdminPage() {
 
   useEffect(() => { fetchList() }, [q, page, pageSize])
 
+  const [editing, setEditing] = useState<AppItem | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const [toasts, setToasts] = useState<{ message: string; type?: any } | null>(null)
+  const [saving, setSaving] = useState(false)
+
   const openCreate = () => {
-    router.push('/admin/catalog/add/downloadapp')
+    // open modal for creation
+    setEditing({} as any)
+    setIsModalOpen(true)
   }
 
   const openEdit = (it: AppItem) => {
-    router.push(`/admin/catalog/add/downloadapp?id=${it.id}`)
+    setEditing(it)
+    setIsModalOpen(true)
   }
 
-  const remove = async (id: number) => {
-    if (!confirm('Delete this item?')) return
+  const remove = (id: number) => {
+    setEditing({ id } as any)
+    setIsConfirmOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!editing?.id) return setIsConfirmOpen(false)
     try {
-      const res = await fetch(`/api/admin/catalog/appdownload?id=${id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/admin/catalog/appdownload?id=${editing.id}`, { method: 'DELETE' })
       const d = await res.json().catch(()=>({}))
-      if (!res.ok) return alert(d?.error || 'Delete failed')
+      if (!res.ok) return setToasts({ message: d?.error || 'Delete failed', type: 'error' })
+      setToasts({ message: 'Deleted', type: 'success' })
+      setIsConfirmOpen(false)
+      setIsModalOpen(false)
       fetchList()
-    } catch (err) { console.error(err); alert('Failed') }
+    } catch (err:any) { console.error(err); setToasts({ message: err?.message || 'Failed', type: 'error' }) }
+  }
+
+  const handleSave = async (payload: any, logoFile?: File | null) => {
+    setSaving(true)
+    try {
+      const method = payload.id ? 'PUT' : 'POST'
+      const body = { ...payload }
+      if (!body.downloadLink) body.downloadLink = ''
+      const res = await fetch('/api/admin/catalog/appdownload', { method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+      const d = await res.json().catch(()=>({}))
+      if (!res.ok) throw new Error(d?.error || 'Failed')
+      setToasts({ message: payload.id ? 'Updated' : 'Created', type: 'success' })
+      setIsModalOpen(false)
+      fetchList()
+    } catch (err:any) {
+      setToasts({ message: err?.message || 'Failed to save', type: 'error' })
+      throw err
+    } finally { setSaving(false) }
   }
 
   const columns = useMemo(() => ['Name', 'Version', 'Credit', 'Created', 'Actions'], [])
