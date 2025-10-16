@@ -90,7 +90,7 @@ export default function DemonstrationVideoAdminPage() {
     { name: "title", label: "Title", type: "text" },
     { name: "price", label: "Price", type: "number" },
     { name: "thumbnail", label: "Thumbnail", type: "file" },
-    { name: "videoFile", label: "Video", type: "file" },
+    { name: "videoFile", label: "Video", type: "file", accept: "video/*" },
     { name: "videoUrl", label: "Video URL", type: "url" },
     { name: "description", label: "Description", type: "textarea" },
   ], []);
