@@ -166,6 +166,17 @@ export default function DownloadAppAdminPage() {
           <Pagination total={total} pageSize={pageSize} page={page} onPageChange={(p) => setPage(p)} />
         </div>
       </div>
+
+      {isModalOpen && editing && (
+        <EditAppModal open={isModalOpen} onClose={() => setIsModalOpen(false)} initialData={editing} saving={saving} onSave={handleSave} />
+      )}
+
+      {isConfirmOpen && (
+        <ConfirmModal message="Delete this app?" onCancel={() => setIsConfirmOpen(false)} onConfirm={confirmDelete} />
+      )}
+
+      {toasts && <Toast message={toasts.message} type={toasts.type} onClose={() => setToasts(null)} />}
+
     </div>
   )
 }
