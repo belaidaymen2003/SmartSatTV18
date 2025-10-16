@@ -84,7 +84,7 @@ export default function EntityModal({ open, title = "Edit", fields, initialValue
             <div className="mt-3 flex items-center gap-2">
               <label className="px-3 py-2 border border-white/10 rounded cursor-pointer hover:bg-white/10 text-white/80 inline-flex items-center gap-2">
                 Replace
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => onFileChange(name, e.target.files?.[0] || null)} />
+                <input type="file" accept={(f as any).accept || "image/*"} className="hidden" onChange={(e) => onFileChange(name, e.target.files?.[0] || null)} />
               </label>
               {filePreviews[name] && (
                 <button type="button" onClick={() => { setFilePreviews((s) => ({ ...s, [name]: "" })); setFileObjects((s) => ({ ...s, [name]: null })); setValues((s) => ({ ...s, [name]: "" })); }} className="px-3 py-2 border border-red-500/30 text-red-400 rounded hover:bg-red-500/10">Remove</button>
