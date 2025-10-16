@@ -280,6 +280,8 @@ export default function UsersContent() {
 
   const openEditUser = (user: AdminUser) => {
     setEditModal({ ...user })
+    setEditPassword('')
+    setEditPasswordConfirm('')
   }
 
   const saveEditUser = async () => {
