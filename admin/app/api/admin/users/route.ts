@@ -251,10 +251,14 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, name, email, username, credits, status } = body
+    const { id, name, email, username, credits, status, password } = body
 
     if (!id || !Number.isFinite(id)) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 })
+    }
+
+    if (password && password.length < 6) {
+      return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
     }
 
     try {
@@ -264,6 +268,9 @@ export async function PUT(request: NextRequest) {
       if (username) updateData.username = username
       if (credits !== undefined) updateData.credits = Math.max(0, credits)
       if (status) updateData.status = status === 'Banned' ? 'BANNED' : 'APPROVED'
+      if (password) {
+        updateData.passwordHash = await bcrypt.hash(password, 10)
+      }
 
       const user = await prisma.user.update({
         where: { id },
