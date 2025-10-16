@@ -105,39 +105,78 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
     } finally { setLoading(false) }
   }
 
+  // Helper to upload with progress using XMLHttpRequest
+  const uploadWithProgress = (url: string, formData: FormData, onProgress: (p: number)=>void, method = 'POST') => {
+    return new Promise<any>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open(method, url);
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const percent = Math.round((e.loaded / e.total) * 100);
+          onProgress(percent);
+        }
+      };
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          try {
+            const json = JSON.parse(xhr.responseText || '{}');
+            if (xhr.status >= 200 && xhr.status < 300) resolve(json);
+            else reject(json);
+          } catch (err) {
+            reject(err || new Error('Upload failed'));
+          }
+        }
+      };
+      xhr.onerror = () => reject(new Error('Upload network error'));
+      xhr.send(formData);
+    });
+  };
+
   const onSubmitDemoVideo = async () => {
     if (!vTitle.trim()) return alert('Title required')
     setLoading(true)
     try {
       const payload:any = { title: vTitle, price: Number(vPrice || 0), description: vDesc, thumbnail: vThumb, videoUrl: vUrl }
 
+      // Upload thumbnail if selected
       if (vThumbFile) {
         const fd = new FormData()
         fd.append('file', vThumbFile)
         fd.append('fileName', vThumbFile.name || `thumb_${Date.now()}.png`)
-        const up = await fetch('/api/admin/catalog/upload', { method: 'POST', body: fd })
-        const upJson = await up.json().catch(()=>({}))
-        if (!up.ok) return alert(upJson?.error || 'Thumbnail upload failed')
-        payload.thumbnail = upJson.imageUrl
-        setVThumb(upJson.imageUrl)
+        try {
+          setThumbUploadProgress(0)
+          const upJson = await uploadWithProgress('/api/admin/catalog/upload', fd, (p) => setThumbUploadProgress(p), 'POST')
+          payload.thumbnail = upJson.imageUrl
+          setVThumb(upJson.imageUrl)
+        } catch (err:any) {
+          console.error(err)
+          return alert(err?.error || err?.message || 'Thumbnail upload failed')
+        } finally {
+          setThumbUploadProgress(null)
+        }
       }
 
+      // Upload video if selected
       if (vFile) {
         const fd = new FormData()
         fd.append('file', vFile)
         fd.append('fileName', vFile.name || `video_${Date.now()}.mp4`)
-        if (idParam) {
-          fd.append('id', String(idParam))
-          if (vUrl) fd.append('oldUrl', vUrl)
-          const up = await fetch('/api/admin/catalog/demonstrationvideo/upload', { method: 'PUT', body: fd })
-          const upJson = await up.json().catch(()=>({}))
-          if (!up.ok) return alert(upJson?.error || 'Video upload failed')
-          payload.videoUrl = upJson.videoUrl || payload.videoUrl
-        } else {
-          const up = await fetch('/api/admin/catalog/demonstrationvideo/upload', { method: 'POST', body: fd })
-          const upJson = await up.json().catch(()=>({}))
-          if (!up.ok) return alert(upJson?.error || 'Video upload failed')
-          payload.videoUrl = upJson.videoUrl || payload.videoUrl
+        try {
+          setVideoUploadProgress(0)
+          if (idParam) {
+            fd.append('id', String(idParam))
+            if (vUrl) fd.append('oldUrl', vUrl)
+            const upJson = await uploadWithProgress('/api/admin/catalog/demonstrationvideo/upload', fd, (p) => setVideoUploadProgress(p), 'PUT')
+            payload.videoUrl = upJson.videoUrl || payload.videoUrl
+          } else {
+            const upJson = await uploadWithProgress('/api/admin/catalog/demonstrationvideo/upload', fd, (p) => setVideoUploadProgress(p), 'POST')
+            payload.videoUrl = upJson.videoUrl || payload.videoUrl
+          }
+        } catch (err:any) {
+          console.error(err)
+          return alert(err?.error || err?.message || 'Video upload failed')
+        } finally {
+          setVideoUploadProgress(null)
         }
       }
 
