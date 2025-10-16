@@ -82,12 +82,6 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
 
   if (!open) return null;
 
-  const handleFile = (f?: File | null) => {
-    if (!f) return;
-    setLogoFile(f);
-    setLogoPreview(URL.createObjectURL(f));
-  };
-
   // legacy upload flow used by older callers
   const replaceLogoLegacy = async (channelId: number | undefined) => {
     if (!channelId) return null;
