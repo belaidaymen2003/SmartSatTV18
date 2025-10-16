@@ -83,9 +83,28 @@ export default function DownloadAppAdminPage() {
     } catch (err:any) { console.error(err); setToasts({ message: err?.message || 'Failed', type: 'error' }) }
   }
 
-  const handleSave = async (payload: any, logoFile?: File | null) => {
+  const handleSave = async (payload: any, logoFileOrFiles?: File | null | Record<string, File | null>) => {
     setSaving(true)
     try {
+      // Normalize files param
+      let file: File | null | undefined = null
+      if (logoFileOrFiles instanceof File) file = logoFileOrFiles
+      else if (logoFileOrFiles && typeof logoFileOrFiles === 'object') file = (logoFileOrFiles as any).image || null
+
+      // If we have a file, upload it first
+      if (file) {
+        const fd = new FormData()
+        fd.append('file', file)
+        fd.append('fileName', file.name)
+        if (payload.id) fd.append('appId', String(payload.id))
+        if (payload.image) fd.append('oldImageUrl', String(payload.image))
+        const uploadMethod = payload.id ? 'PUT' : 'POST'
+        const upRes = await fetch('/api/admin/catalog/upload', { method: uploadMethod, body: fd })
+        const upJson = await upRes.json().catch(() => ({}))
+        if (!upRes.ok) throw new Error(upJson?.error || 'Image upload failed')
+        payload.image = upJson.imageUrl || payload.image
+      }
+
       const method = payload.id ? 'PUT' : 'POST'
       const body = { ...payload }
       if (!body.downloadLink) body.downloadLink = ''
