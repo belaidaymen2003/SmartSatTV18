@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { X, Image as ImageIcon } from "lucide-react";
 import Spinner from "@/components/UI/Spinner";
 import Toast from "@/components/UI/Toast";
+import UploadPreview from "@/components/UI/UploadPreview";
 
 export type Channel = {
   id: number;
