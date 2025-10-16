@@ -83,6 +83,8 @@ export default function UsersContent() {
   const [creditModal, setCreditModal] = useState<{ id: number; mode: 'add' | 'edit' } | null>(null)
   const [creditAmount, setCreditAmount] = useState<string>('')
   const [editModal, setEditModal] = useState<Partial<AdminUser> | null>(null)
+  const [editPassword, setEditPassword] = useState('')
+  const [editPasswordConfirm, setEditPasswordConfirm] = useState('')
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [profileLoading, setProfileLoading] = useState(false)
   const [expandedSection, setExpandedSection] = useState<string | null>(null)
