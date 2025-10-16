@@ -10,6 +10,7 @@ function toNumber(v: any, fallback?: number) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    console.log('DEMO GET searchParams:', Object.fromEntries(searchParams.entries()));
     const id = searchParams.get("id");
     if (id) {
       const vid = Number(id);
@@ -36,6 +37,8 @@ export async function GET(request: NextRequest) {
 
     const where = and.length ? { AND: and } : {};
 
+    console.log('DEMO GET where:', JSON.stringify(where));
+
     const [total, videos] = await Promise.all([
       prisma.video.count({ where }),
       prisma.video.findMany({
@@ -46,8 +49,11 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
+    console.log('DEMO GET result counts:', { total, videosLength: videos.length });
+
     return NextResponse.json({ videos, total, page, pageSize });
   } catch (error: any) {
+    console.error('DEMO GET ERROR', error);
     return NextResponse.json({ error: error?.message ?? String(error) }, { status: 500 });
   }
 }
