@@ -84,8 +84,9 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
     return () => {
       if (thumbPreviewUrl && thumbPreviewUrl.startsWith('blob:')) URL.revokeObjectURL(thumbPreviewUrl)
       if (videoPreviewUrl && videoPreviewUrl.startsWith('blob:')) URL.revokeObjectURL(videoPreviewUrl)
+      if (imagePreviewUrl && imagePreviewUrl.startsWith('blob:')) URL.revokeObjectURL(imagePreviewUrl)
     }
-  }, [thumbPreviewUrl, videoPreviewUrl])
+  }, [thumbPreviewUrl, videoPreviewUrl, imagePreviewUrl])
 
   if (!isDownloadApp && !isDemoVideo) {
     return (
