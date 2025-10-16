@@ -60,6 +60,7 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
           setCredit(app.credit ?? 0)
           setDownloadLink(app.downloadLink || '')
           setImage(app.image || '')
+          setImagePreviewUrl(app.image || null)
           setDescription(app.description || '')
         } else if (isDemoVideo) {
           const video = d.video
