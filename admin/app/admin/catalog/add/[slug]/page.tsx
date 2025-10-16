@@ -25,6 +25,8 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
   const [downloadLink, setDownloadLink] = useState('')
   const [image, setImage] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null)
+  const [imageUploadProgress, setImageUploadProgress] = useState<number | null>(null)
   const [description, setDescription] = useState('')
 
   // Demonstration video state
