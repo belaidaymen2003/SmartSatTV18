@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Pagination from "../../../components/Admin/Pagination";
-import Spinner from "../../../components/UI/Spinner";
-import EntityModal from "../../../components/UI/EntityModal";
-import ConfirmModal from "../../../components/UI/ConfirmModal";
-import Toast from "../../../components/UI/Toast";
+import Pagination from "../../../../components/Admin/Pagination";
+import Spinner from "../../../../components/UI/Spinner";
+import EntityModal from "../../../../components/UI/EntityModal";
+import ConfirmModal from "../../../../components/UI/ConfirmModal";
+import Toast from "../../../../components/UI/Toast";
 
 export const dynamic = "force-dynamic";
 
