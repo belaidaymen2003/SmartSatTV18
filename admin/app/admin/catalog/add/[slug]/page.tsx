@@ -204,15 +204,20 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
               <input value={downloadLink} onChange={(e) => setDownloadLink(e.target.value)} placeholder="Download link" className="md:col-span-12 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
 
               <div className="md:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                  <ImageIcon className="w-4 h-4 text-white/60" />
-                  <input value={image} onChange={(e) => setImage(e.target.value)} placeholder="Image URL" className="bg-transparent text-white placeholder-white/30 w-full outline-none" />
-                </label>
-                <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                  <Upload className="w-4 h-4 text-white/60" />
-                  <span className="ml-2 text-white/70">Browse</span>
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
-                </label>
+                <div className="sm:col-span-1">
+                  <UploadPreview
+                    type="image"
+                    label="Image"
+                    previewUrl={imagePreviewUrl}
+                    file={imageFile}
+                    urlValue={image}
+                    accept="image/*"
+                    uploadProgress={imageUploadProgress}
+                    onFileChange={(f) => { setImageFile(f); if (f) setImagePreviewUrl(URL.createObjectURL(f)); }}
+                    onUrlChange={(v) => { setImage(v); setImagePreviewUrl(v || null); }}
+                    onRemove={() => { setImageFile(null); setImagePreviewUrl(''); setImage(''); }}
+                  />
+                </div>
               </div>
 
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" className="md:col-span-12 h-28 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white" />
