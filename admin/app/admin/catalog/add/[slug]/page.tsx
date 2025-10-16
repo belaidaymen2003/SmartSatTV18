@@ -17,6 +17,7 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
   const [credit, setCredit] = useState<number>(0)
   const [downloadLink, setDownloadLink] = useState('')
   const [image, setImage] = useState('')
+  const [imageFile, setImageFile] = useState<File | null>(null)
   const [description, setDescription] = useState('')
 
   const idParam = search?.get('id')
@@ -56,6 +57,21 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
     setLoading(true)
     try {
       const payload:any = { name, version, credit: Number(credit), downloadLink, image, description }
+
+      // If an image file was selected upload it first
+      if (imageFile) {
+        const fd = new FormData()
+        fd.append('file', imageFile)
+        fd.append('fileName', imageFile.name)
+        if (idParam) fd.append('appId', String(idParam))
+        if (image) fd.append('oldImageUrl', String(image))
+        const uploadMethod = idParam ? 'PUT' : 'POST'
+        const upRes = await fetch('/api/admin/catalog/upload', { method: uploadMethod, body: fd })
+        const upJson = await upRes.json().catch(()=>({}))
+        if (!upRes.ok) return alert(upJson?.error || 'Image upload failed')
+        payload.image = upJson.imageUrl || payload.image
+      }
+
       const method = idParam ? 'PUT' : 'POST'
       if (idParam) payload.id = Number(idParam)
       const res = await fetch('/api/admin/catalog/appdownload', { method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) })
@@ -91,8 +107,9 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
                 <input value={image} onChange={(e) => setImage(e.target.value)} placeholder="Image URL" className="bg-transparent text-white placeholder-white/30 w-full outline-none" />
               </label>
               <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
-                <LinkIcon className="w-4 h-4 text-white/60" />
-                <input placeholder="Upload image (paste URL)" className="bg-transparent text-white placeholder-white/30 w-full outline-none" />
+                <Upload className="w-4 h-4 text-white/60" />
+                <span className="ml-2 text-white/70">Browse</span>
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
               </label>
             </div>
 
