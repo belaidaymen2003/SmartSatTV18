@@ -50,7 +50,30 @@ export default function EditAppModal(props: {
       description: values.description || undefined,
     };
 
+    // If caller provided custom onSave, let it handle file upload too
     if (onSave) return onSave(payload, files || {});
+
+    // If there is a file to upload, call the upload endpoint first
+    try {
+      if (files && files.image) {
+        const file = files.image;
+        if (file) {
+          const fd = new FormData();
+          fd.append("file", file);
+          fd.append("fileName", `${file.name}`);
+          if (payload.id) fd.append("appId", String(payload.id));
+          if (payload.image) fd.append("oldImageUrl", String(payload.image));
+          const uploadMethod = payload.id ? "PUT" : "POST";
+          const upRes = await fetch("/api/admin/catalog/upload", { method: uploadMethod, body: fd });
+          const upJson = await upRes.json().catch(() => ({}));
+          if (!upRes.ok) throw new Error(upJson?.error || "Image upload failed");
+          // set returned image URL
+          payload.image = upJson.imageUrl || payload.image;
+        }
+      }
+    } catch (err:any) {
+      throw new Error(err?.message || "Image upload failed");
+    }
 
     const method = payload.id ? "PUT" : "POST";
     const res = await fetch("/api/admin/catalog/appdownload", {
