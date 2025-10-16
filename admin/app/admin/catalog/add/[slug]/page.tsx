@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Image as ImageIcon, Upload } from 'lucide-react'
+import UploadPreview from '@/components/UI/UploadPreview'
 
 export const dynamic = 'force-dynamic'
 
