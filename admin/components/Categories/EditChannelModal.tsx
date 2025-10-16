@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { X, Image as ImageIcon } from "lucide-react";
 import Spinner from "@/components/UI/Spinner";
 import Toast from "@/components/UI/Toast";
+import UploadPreview from "@/components/UI/UploadPreview";
 
 export type Channel = {
   id: number;
@@ -80,12 +81,6 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
   }, [open]);
 
   if (!open) return null;
-
-  const handleFile = (f?: File | null) => {
-    if (!f) return;
-    setLogoFile(f);
-    setLogoPreview(URL.createObjectURL(f));
-  };
 
   // legacy upload flow used by older callers
   const replaceLogoLegacy = async (channelId: number | undefined) => {
@@ -184,36 +179,18 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="sm:col-span-1">
-            <label className="block text-sm text-white/70 mb-2">Logo</label>
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4 flex flex-col items-center">
-              {logoPreview ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={logoPreview} alt={form.name} className="h-28 w-28 rounded-lg bg-white/10 object-contain" />
-              ) : (
-                <div className="h-28 w-28 rounded-lg bg-white/10 grid place-items-center">
-                  <ImageIcon className="w-7 h-7 text-white/40" />
-                </div>
-              )}
-
-              <div className="mt-3 flex items-center gap-2">
-                <label className="px-3 py-2 border border-white/10 rounded cursor-pointer hover:bg-white/10 text-white/80 inline-flex items-center gap-2">
-                  Replace
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) handleFile(f);
-                    }}
-                  />
-                </label>
-                {logoPreview && (
-                  <button type="button" onClick={handleDeleteLogo} className="px-3 py-2 border border-red-500/30 text-red-400 rounded hover:bg-red-500/10">Remove</button>
-                )}
-              </div>
-              <p className="mt-2 text-xs text-white/50 text-center">PNG/SVG recommended. Square images look best.</p>
-            </div>
+            <UploadPreview
+              type="image"
+              label="Logo"
+              previewUrl={logoPreview || null}
+              file={logoFile}
+              urlValue={logoPreview || ''}
+              accept="image/*"
+              uploadProgress={null}
+              onFileChange={(f) => { setLogoFile(f); if (f) setLogoPreview(URL.createObjectURL(f)); }}
+              onUrlChange={(v) => { setLogoPreview(v || ''); }}
+              onRemove={() => { setLogoFile(null); setLogoPreview(''); }}
+            />
           </div>
 
           <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
