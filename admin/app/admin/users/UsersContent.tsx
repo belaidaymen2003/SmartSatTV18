@@ -746,6 +746,35 @@ export default function UsersContent() {
                   <option>Banned</option>
                 </select>
               </div>
+              <div className="border-t border-white/10 pt-3 mt-3">
+                <p className="text-white/70 text-xs mb-3 font-medium">Change Password (Optional)</p>
+                <div>
+                  <label className="text-white/70 text-xs mb-1 block">New Password</label>
+                  <input
+                    value={editPassword}
+                    onChange={(e) => setEditPassword(e.target.value)}
+                    type="password"
+                    placeholder="Leave empty to keep current password"
+                    className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30 focus:outline-none focus:border-white/30"
+                  />
+                </div>
+                <div className="mt-2">
+                  <label className="text-white/70 text-xs mb-1 block">Confirm Password</label>
+                  <input
+                    value={editPasswordConfirm}
+                    onChange={(e) => setEditPasswordConfirm(e.target.value)}
+                    type="password"
+                    placeholder="Confirm new password"
+                    className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30 focus:outline-none focus:border-white/30"
+                  />
+                </div>
+                {editPassword && editPassword.length < 6 && (
+                  <p className="text-red-400 text-xs mt-1">Password must be at least 6 characters</p>
+                )}
+                {editPassword && editPassword !== editPasswordConfirm && (
+                  <p className="text-red-400 text-xs mt-1">Passwords do not match</p>
+                )}
+              </div>
               <div className="flex items-center justify-end gap-2 mt-2">
                 <button
                   onClick={() => setEditModal(null)}
