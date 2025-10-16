@@ -137,9 +137,7 @@ model Video {
   thumbnail     String?
   videoUrl      String            // Link to the actual video file or stream
   price         Float
-  createdBy     Int
-  admin         User              @relation(fields: [createdBy], references: [id])
-  purchases     Purchase[]
+
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 }
