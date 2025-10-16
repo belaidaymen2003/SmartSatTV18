@@ -282,7 +282,7 @@ export default function DynamicAddPage({ params }:{ params: { slug: string } }) 
               <label className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-lg px-3 py-2">
                 <Upload className="w-4 h-4 text-white/60" />
                 <span className="ml-2 text-white/70">Browse video</span>
-                <input type="file" accept="video/*" className="hidden" onChange={(e) => setVFile(e.target.files?.[0] || null)} />
+                <input type="file" accept="video/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0] || null; setVFile(f); if (f) { const url = URL.createObjectURL(f); setVideoPreviewUrl(url); } }} />
               </label>
             </div>
 
