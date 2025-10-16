@@ -33,10 +33,16 @@ export default function Sidebar({ className = '' }: { className?: string }) {
             <Home className="w-4 h-4" />
             <span className="text-sm font-semibold">DASHBOARD</span>
           </Link>
-          <Link href="/admin/catalog" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/10 transition-colors">
-            <Grid className="w-4 h-4" />
-            <span className="text-sm">CATALOG</span>
-          </Link>
+          <div>
+            <Link href="/admin/catalog" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/10 transition-colors">
+              <Grid className="w-4 h-4" />
+              <span className="text-sm">CATALOG</span>
+            </Link>
+            <div className="ml-6 mt-1 flex flex-col gap-1">
+              <Link href="/admin/catalog/downloadapp" className="text-sm text-white/80 px-2 py-1 rounded-md hover:bg-white/5">Downloadable Apps</Link>
+              <Link href="/admin/catalog/demonstrationvideo" className="text-sm text-white/80 px-2 py-1 rounded-md hover:bg-white/5">Demonstration Videos</Link>
+            </div>
+          </div>
           <Link href="/admin/users" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/10 transition-colors">
             <Users className="w-4 h-4" />
             <span className="text-sm">USERS</span>
