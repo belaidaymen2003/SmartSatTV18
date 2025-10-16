@@ -9,49 +9,11 @@ function toNumber(v: any, fallback?: number) {
 
 export async function GET(request: NextRequest) {
   try {
+    // Temporary bypass DB to isolate error source
     const { searchParams } = new URL(request.url);
-    console.log('DEMO GET searchParams:', Object.fromEntries(searchParams.entries()));
-    const id = searchParams.get("id");
-    if (id) {
-      const vid = Number(id);
-      if (!Number.isFinite(vid)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
-      const video = await prisma.video.findUnique({ where: { id: vid } });
-      if (!video) return NextResponse.json({ error: "Not found" }, { status: 404 });
-      return NextResponse.json({ video });
-    }
-
-    const q = (searchParams.get("q") || "").trim();
-    const minPrice = toNumber(searchParams.get("minPrice"), undefined);
-    const maxPrice = toNumber(searchParams.get("maxPrice"), undefined);
-    const createdFrom = searchParams.get("createdFrom");
-    const createdTo = searchParams.get("createdTo");
     const page = Math.max(1, Number(searchParams.get("page") || 1));
     const pageSize = Math.min(100, Math.max(1, Number(searchParams.get("pageSize") || 12)));
-
-    const and: any[] = [];
-    if (q) and.push({ title: { contains: q, mode: "insensitive" } });
-    if (typeof minPrice === "number") and.push({ price: { gte: minPrice } });
-    if (typeof maxPrice === "number") and.push({ price: { lte: maxPrice } });
-    if (createdFrom) and.push({ createdAt: { gte: new Date(createdFrom) } });
-    if (createdTo) and.push({ createdAt: { lte: new Date(createdTo) } });
-
-    const where = and.length ? { AND: and } : {};
-
-    console.log('DEMO GET where:', JSON.stringify(where));
-
-    const [total, videos] = await Promise.all([
-      prisma.video.count({ where }),
-      prisma.video.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-      }),
-    ]);
-
-    console.log('DEMO GET result counts:', { total, videosLength: videos.length });
-
-    return NextResponse.json({ videos, total, page, pageSize });
+    return NextResponse.json({ videos: [], total: 0, page, pageSize });
   } catch (error: any) {
     console.error('DEMO GET ERROR', error);
     return NextResponse.json({ error: error?.message ?? String(error) }, { status: 500 });
