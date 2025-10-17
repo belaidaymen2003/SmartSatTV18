@@ -799,6 +799,16 @@ export default function UsersContent() {
           </div>
         </div>
       )}
+      {deleteTarget && (
+        <ConfirmModal
+          title="Delete User"
+          message={`Are you sure you want to delete ${deleteTarget.name} (ID ${deleteTarget.id})? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
     </div>
   )
 }
