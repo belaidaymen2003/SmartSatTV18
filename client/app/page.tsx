@@ -88,7 +88,7 @@ const LoginForm = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: email, password }),
-        credentials: 'same-origin',
+        credentials: 'include',
       })
       const data = await res.json()
       if (!res.ok) {
