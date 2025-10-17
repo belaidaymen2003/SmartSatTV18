@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@/lib/generated/prisma'
-import  bcrypt from "bcrypt"
+
 
 const prisma = new PrismaClient()
 
@@ -141,8 +141,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const defaultPassword = password || 'TempPassword123!'
-    const passwordHash = await bcrypt.hash(defaultPassword, 10)
+    const defaultPassword = password || "smartsattv123"
+    const passwordHash = defaultPassword
 
     try {
       const user = await prisma.user.create({
@@ -217,7 +217,7 @@ export async function PUT(request: NextRequest) {
       if (credits !== undefined) updateData.credits = Math.max(0, credits)
       if (status) updateData.status = status === 'Banned' ? 'BANNED' : 'APPROVED'
       if (password) {
-        updateData.passwordHash = await bcrypt.hash(password, 10)
+        updateData.passwordHash = password
       }
 
       const user = await prisma.user.update({
