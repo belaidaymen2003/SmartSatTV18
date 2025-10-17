@@ -525,20 +525,6 @@ export default function UsersContent() {
                   ))}
                 </div>
 
-                {/* Credits Section */}
-                <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-                  <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
-                    <Coins className="w-4 h-4 text-yellow-400" />
-                    Credits Management
-                  </h4>
-                  <div className="flex gap-2">
-                    <button onClick={() => openAddCredits(userProfile.id)} disabled={saving} className="flex-1 px-3 py-2 rounded-lg border border-blue-500 text-blue-400 hover:bg-blue-500/10 text-sm transition-colors disabled:opacity-50">Add Credits</button>
-                    <button onClick={() => openEditCredits(userProfile.id, userProfile.credits)} disabled={saving} className="flex-1 px-3 py-2 rounded-lg border border-orange-500 text-orange-400 hover:bg-orange-500/10 text-sm transition-colors disabled:opacity-50">Set Credits</button>
-                    {userProfile.credits > 0 && (
-                      <button onClick={() => resetCredits(userProfile.id)} disabled={saving} className="flex-1 px-3 py-2 rounded-lg border border-red-500 text-red-400 hover:bg-red-500/10 text-sm transition-colors disabled:opacity-50">Reset</button>
-                    )}
-                  </div>
-                </div>
 
                 {/* Subscriptions */}
                 {userProfile.subscriptions.length > 0 && (
@@ -689,15 +675,31 @@ export default function UsersContent() {
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => setCreditModal(null)}>
           <div className="w-full max-w-sm bg-black/30 border border-white/10 rounded-xl p-5 backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-semibold">{creditModal.mode === 'add' ? 'Add credits' : 'Set credits'}</h3>
+              <h3 className="text-white font-semibold flex items-center gap-2">
+                <Coins className="w-4 h-4 text-yellow-400" />
+                Credits Management
+              </h3>
               <button className="p-1 hover:bg-white/10 rounded-md" onClick={() => setCreditModal(null)}><X className="w-4 h-4 text-white/70" /></button>
             </div>
-            <div className="grid gap-3 text-sm">
-              <input value={creditAmount} onChange={(e) => setCreditAmount(e.target.value)} placeholder="Amount" type="number" className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30 focus:outline-none focus:border-white/30" />
-              <div className="flex items-center justify-end gap-2 mt-1">
-                <button onClick={() => setCreditModal(null)} className="px-3 py-2 rounded-md border border-white/10 text-white/70 hover:bg-white/10 transition-colors disabled:opacity-50" disabled={saving}>Cancel</button>
-                <button onClick={saveCredits} className="px-3 py-2 rounded-md border border-orange-500 text-orange-400 hover:bg-orange-500/10 transition-colors disabled:opacity-50" disabled={saving || Number.isNaN(Number(creditAmount))}>Save</button>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center justify-between bg-black/40 border border-white/10 rounded-lg px-3 py-2">
+                <span className="text-white/70">Current credits</span>
+                <span className="text-white font-semibold">{nf.format(users.find(u => u.id === creditModal.id)?.credits ?? 0)}</span>
               </div>
+              <div className="flex gap-2">
+                <button onClick={() => setCreditModal({ id: creditModal.id, mode: 'add' })} disabled={saving} className={`flex-1 px-3 py-2 rounded-lg border text-sm transition-colors disabled:opacity-50 ${creditModal.mode === 'add' ? 'border-blue-500 text-blue-400 bg-blue-500/10' : 'border-white/10 text-white/70 hover:bg-white/10'}`}>Add Credits</button>
+                <button onClick={() => setCreditModal({ id: creditModal.id, mode: 'edit' })} disabled={saving} className={`flex-1 px-3 py-2 rounded-lg border text-sm transition-colors disabled:opacity-50 ${creditModal.mode === 'edit' ? 'border-orange-500 text-orange-400 bg-orange-500/10' : 'border-white/10 text-white/70 hover:bg-white/10'}`}>Set Credits</button>
+                <button onClick={async () => { await resetCredits(creditModal.id); setCreditModal(null) }} disabled={saving || (users.find(u => u.id === creditModal.id)?.credits ?? 0) === 0} className="flex-1 px-3 py-2 rounded-lg border border-red-500 text-red-400 hover:bg-red-500/10 text-sm transition-colors disabled:opacity-50">Reset</button>
+              </div>
+              {(creditModal.mode === 'add' || creditModal.mode === 'edit') && (
+                <div className="grid gap-3">
+                  <input value={creditAmount} onChange={(e) => setCreditAmount(e.target.value)} placeholder={creditModal.mode === 'add' ? 'Amount to add' : 'Exact credit amount'} type="number" className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/30 focus:outline-none focus:border-white/30" />
+                  <div className="flex items-center justify-end gap-2 mt-1">
+                    <button onClick={() => setCreditModal(null)} className="px-3 py-2 rounded-md border border-white/10 text-white/70 hover:bg-white/10 transition-colors disabled:opacity-50" disabled={saving}>Cancel</button>
+                    <button onClick={saveCredits} className={`px-3 py-2 rounded-md border transition-colors disabled:opacity-50 ${creditModal.mode === 'add' ? 'border-blue-500 text-blue-400 hover:bg-blue-500/10' : 'border-orange-500 text-orange-400 hover:bg-orange-500/10'}`} disabled={saving || Number.isNaN(Number(creditAmount))}>{creditModal.mode === 'add' ? 'Add' : 'Set'}</button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
