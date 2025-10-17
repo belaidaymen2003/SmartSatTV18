@@ -1,3 +1,7 @@
+import path from 'path'
+import dotenv from 'dotenv'
+dotenv.config({ path: path.resolve(process.cwd(), '../admin/.env') })
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
