@@ -90,7 +90,7 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
             {sessionCredits > 0 && (
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30">
                 <Coins className="w-5 h-5 text-yellow-400" />
-                <span className="text-white font-semibold">{credits} Credits</span>
+                <span className="text-white font-semibold">{sessionCredits} Credits</span>
               </div>
             )}
             
