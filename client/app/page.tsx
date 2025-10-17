@@ -96,7 +96,13 @@ const LoginForm = () => {
         setIsLoading(false)
         return
       }
-      // login successful
+      // login successful — persist minimal session for dashboard compatibility
+      try {
+        if (data.user?.email) localStorage.setItem('userEmail', data.user.email)
+        if (typeof data.user?.credits !== 'undefined') localStorage.setItem('userCredits', String(data.user.credits))
+      } catch (e) {
+        // ignore
+      }
       router.push('/dashboard')
     } catch (err: any) {
       setError(err.message || 'Login failed')
