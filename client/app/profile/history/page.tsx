@@ -11,7 +11,7 @@ export default function HistoryPage() {
     let mounted = true
     async function fetchHistory() {
       try {
-        const res = await fetch('/api/user/history')
+        const res = await fetch('/api/user/history', { credentials: 'include' })
         const d = await res.json()
         if (!res.ok) {
           router.push('/')
