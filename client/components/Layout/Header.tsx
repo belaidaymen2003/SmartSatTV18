@@ -15,6 +15,7 @@ import {
   X
 } from 'lucide-react'
 import logo from '../../public/Logo2.png'
+import UserMenu from '../UserMenu'
 
 interface HeaderProps {
   credits?: number
