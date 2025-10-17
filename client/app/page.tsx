@@ -77,17 +77,32 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
+  const [error, setError] = useState('')
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setTimeout(() => {
-      if (email && password) {
-        localStorage.setItem('userCredits', '150')
-        localStorage.setItem('userEmail', email)
-        router.push('/dashboard')
+    setError('')
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email, password }),
+        credentials: 'same-origin',
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Login failed')
+        setIsLoading(false)
+        return
       }
+      // login successful
+      router.push('/dashboard')
+    } catch (err: any) {
+      setError(err.message || 'Login failed')
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
   }
 
   return (
