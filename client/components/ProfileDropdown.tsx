@@ -34,8 +34,9 @@ export default function ProfileDropdown() {
         // ignore
       }
     }
-    if (open) fetchNotifs()
-  }, [open])
+    // always fetch notifications count in background (no list shown in dropdown)
+    fetchNotifs()
+  }, [])
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
