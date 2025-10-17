@@ -11,7 +11,7 @@ export default function FavoritesPage() {
     let mounted = true
     async function fetchFav() {
       try {
-        const res = await fetch('/api/user/favorites')
+        const res = await fetch('/api/user/favorites', { credentials: 'include' })
         const d = await res.json()
         if (!res.ok) {
           router.push('/')
