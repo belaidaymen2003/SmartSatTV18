@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@/lib/generated/prisma'
-import * as bcrypt from "bcrypt"
+import  bcrypt from "bcrypt"
 
 const prisma = new PrismaClient()
 
