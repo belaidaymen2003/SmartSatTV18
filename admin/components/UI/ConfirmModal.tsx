@@ -7,7 +7,7 @@ type ConfirmModalProps = {
   message: string;
   confirmText?: string;
   cancelText?: string;
-  onConfirm: () => void;
+  onConfirm: () => Promise<void>;
   onCancel: () => void;
 };
 
