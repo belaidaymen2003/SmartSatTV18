@@ -13,7 +13,7 @@ export default function SettingsPage() {
     let mounted = true
     async function fetchData() {
       try {
-        const res = await fetch('/api/user/settings')
+        const res = await fetch('/api/user/settings', { credentials: 'include' })
         const d = await res.json()
         if (!res.ok) {
           router.push('/')
@@ -37,7 +37,7 @@ export default function SettingsPage() {
     e.preventDefault()
     setSaving(true)
     try {
-      const res = await fetch('/api/user/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await fetch('/api/user/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form), credentials: 'include' })
       const d = await res.json()
       if (!res.ok) {
         alert(d.error || 'Failed')
