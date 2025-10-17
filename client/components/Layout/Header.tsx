@@ -104,7 +104,7 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
               </button>
               {sessionEmail && (
                 <div>
-                  <UserMenu email={sessionEmail} />
+                  <ProfileDropdown />
                 </div>
               )}
               <button
