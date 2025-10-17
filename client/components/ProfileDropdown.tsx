@@ -53,6 +53,11 @@ export default function ProfileDropdown() {
     } catch (e) {
       // ignore
     }
+    try {
+      localStorage.removeItem('userEmail')
+      localStorage.removeItem('userCredits')
+      localStorage.removeItem('watchlist')
+    } catch (e) {}
     window.location.href = '/'
   }
 
