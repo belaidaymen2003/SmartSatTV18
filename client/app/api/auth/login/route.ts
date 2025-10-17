@@ -24,7 +24,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    const match = await bcrypt.compare(password, user.passwordHash)
+    let match = false
+    try {
+      if (user.passwordHash.startsWith('$2')) {
+        match = await bcrypt.compare(password, user.passwordHash)
+      } else {
+        // legacy plaintext password in DB — accept and rehash
+        match = password === user.passwordHash
+        if (match) {
+          // rehash and store asynchronously
+          const newHash = await bcrypt.hash(password, 10)
+          await prisma.user.update({ where: { id: user.id }, data: { passwordHash: newHash } })
+        }
+      }
+    } catch (e) {
+      // fallback
+      match = false
+    }
+
     if (!match) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
