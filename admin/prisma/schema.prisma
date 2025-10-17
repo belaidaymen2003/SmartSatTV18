@@ -81,21 +81,22 @@ enum Category {
 }
 
 model User {
-  id            Int                   @id @default(autoincrement())
-  email         String                @unique
-  username      String                @unique
-  name          String
-  passwordHash  String
-  role          Role                  @default(USER)
-  credits       Int                   @default(0)
-  status        UserStatus            @default(APPROVED)
-  auth          Auth                  @default(DISCONNECTED)
-  authLastAt    DateTime?
-  beinJobs      BeInSportActivation[] @relation("BeInByUser")
-  subscriptions Subscription[]
-  appDownload   CatalogApp[]
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
+  id               Int                   @id @default(autoincrement())
+  email            String                @unique
+  username         String                @unique
+  name             String
+  passwordHash     String
+  role             Role                  @default(USER)
+  credits          Int                   @default(0)
+  authLastAt       DateTime?
+  status           UserStatus            @default(APPROVED)
+  video            Video[]
+  auth             Auth                  @default(DISCONNECTED)
+  beinJobs         BeInSportActivation[] @relation("BeInByUser")
+  subscriptionplan SubscriptionPlan[]
+  appDownload      CatalogApp[]
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
 
   @@index([role, status])
 }
@@ -132,6 +133,8 @@ model Video {
   thumbnail   String?
   videoUrl    String // Link to the actual video file or stream
   price       Float
+  userId      Int?
+  user        User?    @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -252,18 +255,27 @@ model IPTVChannel {
   subscriptions Subscription[] // All users who subscribed
 }
 
+model SubscriptionPlan {
+  id             Int          @id @default(autoincrement())
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId Int?
+  user           User?         @relation(fields: [userId], references: [id])
+  userId         Int?
+  status         Status       @default(ACTIVE)
+  startDate      DateTime     @default(now())
+  endDate        DateTime
+  updatedAt      DateTime     @updatedAt
+}
 
 model Subscription {
-  id        Int          @id @default(autoincrement())
-  user      User?        @relation(fields: [userId], references: [id])
-  userId    Int?
-  credit    Float        @default(0)
-  code      String?      @unique
-  channel   IPTVChannel  @relation(fields: [channelId], references: [id])
-  channelId Int
-  duration  DurationPlan @default(ONE_MONTH)
-  startDate DateTime     @default(now())
-  endDate   DateTime
-  status    Status       @default(ACTIVE)
-  updatedAt DateTime     @updatedAt
+  id               Int                @id @default(autoincrement())
+  credit           Float              @default(0)
+  code             String?            @unique
+  channel          IPTVChannel        @relation(fields: [channelId], references: [id])
+  channelId        Int
+  duration         DurationPlan       @default(ONE_MONTH)
+  status           Status             @default(ACTIVE)
+  subscriptionplan SubscriptionPlan[]
+  createAt         DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
 }
