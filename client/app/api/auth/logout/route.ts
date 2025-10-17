@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
 
     const res = NextResponse.json({ message: 'Logged out' })
-    res.cookies.set('token', '', { httpOnly: true, path: '/', maxAge: 0 })
+    res.cookies.set('token', '', { httpOnly: true, sameSite: 'none', secure: true, path: '/', maxAge: 0 })
     return res
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
