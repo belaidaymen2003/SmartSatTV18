@@ -44,7 +44,7 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
     fetchMe()
   }, [])
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (onLogout) {
       onLogout()
     } else {
