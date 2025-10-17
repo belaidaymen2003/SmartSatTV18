@@ -91,8 +91,6 @@ model User {
   status        UserStatus            @default(APPROVED)
   auth          Auth                  @default(DISCONNECTED)
   authLastAt    DateTime?
-  comments      Comment[]
-  reviews       Review[]
   beinJobs      BeInSportActivation[] @relation("BeInByUser")
   subscriptions Subscription[]
   appDownload   CatalogApp[]
@@ -102,7 +100,7 @@ model User {
   @@index([role, status])
 }
 
-model CatalogItem {
+/*model CatalogItem {
   id            Int          @id @default(autoincrement())
   title         String
   rating        Float        @default(0)
@@ -120,16 +118,12 @@ model CatalogItem {
   country       String?
   director      String?
   actors        String[] // simple string array; switch to relation if needed
-  comments      Comment[]
-  reviews       Review[]
-  genres        ItemGenre[]
-  tags          ItemTag[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
   @@index([category, status])
   @@index([title])
-}
+}*/
 model Video {
   id            Int              @id @default(autoincrement())
   title         String
@@ -154,40 +148,40 @@ model CatalogApp {
   user         User?    @relation(fields: [userId], references: [id])
 }
 
-model Genre {
+/*model Genre {
   id        Int         @id @default(autoincrement())
   name      String      @unique
   items     ItemGenre[]
   createdAt DateTime    @default(now())
-}
+}*/
 
-model ItemGenre {
+/*model ItemGenre {
   itemId  Int
   genreId Int
   item    CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
   genre   Genre       @relation(fields: [genreId], references: [id], onDelete: Cascade)
 
   @@id([itemId, genreId])
-}
+}*/
 
-model Tag {
+/*model Tag {
   id        Int       @id @default(autoincrement())
   // Examples: "GIFT CARDS", "beIN SPORTS", "Goosat", "CARTE INTERNET"
   name      String    @unique
   items     ItemTag[]
   createdAt DateTime  @default(now())
 }
-
-model ItemTag {
+*/
+/*model ItemTag {
   itemId Int
   tagId  Int
   item   CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
   tag    Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([itemId, tagId])
-}
+}*/
 
-model Comment {
+/*model Comment {
   id         Int           @id @default(autoincrement())
   itemId     Int
   userId     Int?
@@ -201,9 +195,9 @@ model Comment {
   user User?       @relation(fields: [userId], references: [id])
 
   @@index([itemId, status])
-}
+}*/
 
-model Review {
+/*model Review {
   id         Int          @id @default(autoincrement())
   itemId     Int
   userId     Int?
@@ -218,7 +212,7 @@ model Review {
   user User?       @relation(fields: [userId], references: [id])
 
   @@index([itemId, status])
-}
+}*/
 
 model Settings {
   id                 Int      @id @default(1)
