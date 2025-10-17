@@ -5,6 +5,7 @@ import { Search, Calendar, Eye, Edit2, Trash2, User, UserPlus, Coins, X, Chevron
 import Pagination from '../../../components/Admin/Pagination'
 import ConfirmModal from '../../../components/UI/ConfirmModal'
 import { useRouter } from 'next/navigation'
+import Spinner from '@/components/UI/Spinner'
 
 interface AdminUser {
   id: number
@@ -87,6 +88,7 @@ export default function UsersContent() {
   const [editPassword, setEditPassword] = useState('')
   const [editPasswordConfirm, setEditPasswordConfirm] = useState('')
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [profileLoading, setProfileLoading] = useState(false)
   const [expandedSection, setExpandedSection] = useState<string | null>(null)
   const [users, setUsers] = useState<AdminUser[]>([])
@@ -429,7 +431,7 @@ export default function UsersContent() {
                         <td className="px-4 py-3 text-white/60">{formatDate(row.createdAt)}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <button onClick={() => fetchUserProfile(row.id)} disabled={saving} className="p-2 rounded-md bg-white/5 hover:bg-white/10 disabled:opacity-50 transition-colors" aria-label="View details"><Eye className="w-4 h-4 text-white" /></button>
+                            <button onClick={() => { setIsModalOpen(true);  fetchUserProfile(row.id) ;  }} disabled={saving} className="p-2 rounded-md bg-white/5 hover:bg-white/10 disabled:opacity-50 transition-colors" aria-label="View details"><Eye className="w-4 h-4 text-white" /></button>
                             <button onClick={() => openEditUser(row)} disabled={saving} className="p-2 rounded-md bg-white/5 hover:bg-white/10 disabled:opacity-50 transition-colors" aria-label="Edit user"><Edit2 className="w-4 h-4 text-blue-300" /></button>
                             <button onClick={() => (row.credits ? openEditCredits(row.id, row.credits) : openAddCredits(row.id))} disabled={saving} className="p-2 rounded-md bg-white/5 hover:bg-white/10 disabled:opacity-50 transition-colors" aria-label="Manage credits"><Coins className="w-4 h-4 text-yellow-300" /></button>
                             <button onClick={() => setDeleteTarget(row)} disabled={saving} className="p-2 rounded-md bg-white/5 hover:bg-white/10 disabled:opacity-50 transition-colors" aria-label="Delete"><Trash2 className="w-4 h-4 text-red-400" /></button>
@@ -449,9 +451,9 @@ export default function UsersContent() {
         )}
       </div>
 
-      {userProfile && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 overflow-y-auto" onClick={() => setUserProfile(null)}>
-          <div className="w-full max-w-2xl bg-black/30 border border-white/10 rounded-xl backdrop-blur-md my-6" onClick={(e) => e.stopPropagation()}>
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 overflow-y-auto" onClick={() => {setUserProfile(null); setIsModalOpen(false)} }>
+          {userProfile ? (<div className="w-full max-w-2xl bg-black/30 border border-white/10 rounded-xl backdrop-blur-md my-6" onClick={(e) => e.stopPropagation()}>
             <div className="sticky top-0 bg-black/50 border-b border-white/10 p-5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-orange-500/20 border border-orange-500/40 flex items-center justify-center">
@@ -462,7 +464,7 @@ export default function UsersContent() {
                   <p className="text-white/50 text-xs">@{userProfile.username}</p>
                 </div>
               </div>
-              <button className="p-1 hover:bg-white/10 rounded-md" onClick={() => setUserProfile(null)}><X className="w-4 h-4 text-white/70" /></button>
+              <button className="p-1 hover:bg-white/10 rounded-md" onClick={() => {setUserProfile(null); setIsModalOpen(false)} }><X className="w-4 h-4 text-white/70" /></button>
             </div>
 
             {profileLoading ? (
@@ -667,7 +669,7 @@ export default function UsersContent() {
                 )}
               </div>
             )}
-          </div>
+          </div>): <Spinner size={7} />}
         </div>
       )}
 
