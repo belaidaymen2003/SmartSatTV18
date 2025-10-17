@@ -33,7 +33,7 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
   useEffect(() => {
     async function fetchMe() {
       try {
-        const res = await fetch('/api/auth/me')
+        const res = await fetch('/api/auth/me', { credentials: 'include' })
         if (!res.ok) return
         const data = await res.json()
         setSessionEmail(data.user?.email || '')
