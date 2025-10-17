@@ -11,7 +11,7 @@ export default function ProfilePage() {
     let mounted = true
     async function fetchOverview() {
       try {
-        const res = await fetch('/api/user/overview')
+        const res = await fetch('/api/user/overview', { credentials: 'include' })
         const d = await res.json()
         if (!res.ok) {
           router.push('/')
