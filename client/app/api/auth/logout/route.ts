@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const token = req.cookies.get('token')?.value
     if (!token) {
       const res = NextResponse.json({ message: 'Logged out' })
-      res.cookies.set('token', '', { httpOnly: true, path: '/', maxAge: 0 })
+      res.cookies.set('token', '', { httpOnly: true, sameSite: 'none', secure: true, path: '/', maxAge: 0 })
       return res
     }
 
