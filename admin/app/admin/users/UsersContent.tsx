@@ -30,8 +30,6 @@ interface UserProfile {
   createdAt: string
   updatedAt: string
   stats: {
-    comments: number
-    reviews: number
     subscriptions: number
     appDownloads: number
     beinJobs: number
@@ -46,21 +44,8 @@ interface UserProfile {
     endDate: string
     credit: number
   }>
-  comments: Array<{
-    id: number
-    itemTitle: string
-    content: string
-    status: string
-    createdAt: string
-  }>
-  reviews: Array<{
-    id: number
-    itemTitle: string
-    rating: number
-    content: string | null
-    status: string
-    createdAt: string
-  }>
+
+
   appDownloads: Array<{
     id: number
     name: string
@@ -511,8 +496,6 @@ export default function UsersContent() {
                 {/* Statistics */}
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                   {[
-                    { label: 'Comments', value: userProfile.stats.comments, icon: FileText },
-                    { label: 'Reviews', value: userProfile.stats.reviews, icon: FileText },
                     { label: 'Subscriptions', value: userProfile.stats.subscriptions, icon: Clock },
                     { label: 'App Downloads', value: userProfile.stats.appDownloads, icon: Download },
                     { label: 'BeIn Jobs', value: userProfile.stats.beinJobs, icon: Zap },
@@ -560,7 +543,7 @@ export default function UsersContent() {
                 )}
 
                 {/* Comments */}
-                {userProfile.comments.length > 0 && (
+                {/*userProfile.comments.length > 0 && (
                   <div className="bg-white/5 border border-white/10 rounded-lg">
                     <button onClick={() => setExpandedSection(expandedSection === 'comments' ? null : 'comments')} className="w-full p-4 flex items-center justify-between hover:bg-white/5 transition-colors">
                       <h4 className="text-white font-semibold flex items-center gap-2">
@@ -584,10 +567,10 @@ export default function UsersContent() {
                       </div>
                     )}
                   </div>
-                )}
+                )*/}
 
                 {/* Reviews */}
-                {userProfile.reviews.length > 0 && (
+                {/* {userProfile.reviews.length > 0 && (
                   <div className="bg-white/5 border border-white/10 rounded-lg">
                     <button onClick={() => setExpandedSection(expandedSection === 'reviews' ? null : 'reviews')} className="w-full p-4 flex items-center justify-between hover:bg-white/5 transition-colors">
                       <h4 className="text-white font-semibold flex items-center gap-2">
@@ -612,7 +595,7 @@ export default function UsersContent() {
                       </div>
                     )}
                   </div>
-                )}
+                )} */}
 
                 {/* App Downloads */}
                 {userProfile.appDownloads.length > 0 && (
