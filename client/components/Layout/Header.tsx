@@ -103,9 +103,8 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
                 <Settings className="w-5 h-5 text-white" />
               </button>
               {sessionEmail && (
-                <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/10">
-                  <User className="w-4 h-4 text-white" />
-                  <span className="text-white text-sm">{userEmail.split('@')[0]}</span>
+                <div>
+                  <UserMenu email={sessionEmail} />
                 </div>
               )}
               <button
