@@ -100,40 +100,42 @@ model User {
   @@index([role, status])
 }
 
-/*model CatalogItem {
-  id            Int          @id @default(autoincrement())
-  title         String
-  rating        Float        @default(0)
-  category      ItemCategory
-  views         Int          @default(0)
-  status        ItemStatus   @default(VISIBLE)
-  mediaUrl      String?
-  quality       Quality?
-  age           String?
-  description   String?
-  runtime       String?
-  premiereDate  DateTime?
-  coverUrl      String?
-  backgroundUrl String?
-  country       String?
-  director      String?
-  actors        String[] // simple string array; switch to relation if needed
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  @@index([category, status])
-  @@index([title])
-}*/
+/**
+ * model CatalogItem {
+ * id            Int          @id @default(autoincrement())
+ * title         String
+ * rating        Float        @default(0)
+ * category      ItemCategory
+ * views         Int          @default(0)
+ * status        ItemStatus   @default(VISIBLE)
+ * mediaUrl      String?
+ * quality       Quality?
+ * age           String?
+ * description   String?
+ * runtime       String?
+ * premiereDate  DateTime?
+ * coverUrl      String?
+ * backgroundUrl String?
+ * country       String?
+ * director      String?
+ * actors        String[] // simple string array; switch to relation if needed
+ * createdAt     DateTime     @default(now())
+ * updatedAt     DateTime     @updatedAt
+ * @@index([category, status])
+ * @@index([title])
+ * }
+ */
 model Video {
-  id            Int              @id @default(autoincrement())
-  title         String
-  description   String?
-  thumbnail     String?
-  videoUrl      String            // Link to the actual video file or stream
-  price         Float
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  thumbnail   String?
+  videoUrl    String // Link to the actual video file or stream
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
+
 model CatalogApp {
   id           Int      @id @default(autoincrement())
   name         String
@@ -148,71 +150,76 @@ model CatalogApp {
   user         User?    @relation(fields: [userId], references: [id])
 }
 
-/*model Genre {
-  id        Int         @id @default(autoincrement())
-  name      String      @unique
-  items     ItemGenre[]
-  createdAt DateTime    @default(now())
-}*/
+/**
+ * model Genre {
+ * id        Int         @id @default(autoincrement())
+ * name      String      @unique
+ * items     ItemGenre[]
+ * createdAt DateTime    @default(now())
+ * }
+ */
 
-/*model ItemGenre {
-  itemId  Int
-  genreId Int
-  item    CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  genre   Genre       @relation(fields: [genreId], references: [id], onDelete: Cascade)
+/**
+ * model ItemGenre {
+ * itemId  Int
+ * genreId Int
+ * item    CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * genre   Genre       @relation(fields: [genreId], references: [id], onDelete: Cascade)
+ * @@id([itemId, genreId])
+ * }
+ */
 
-  @@id([itemId, genreId])
-}*/
+/**
+ * model Tag {
+ * id        Int       @id @default(autoincrement())
+ * // Examples: "GIFT CARDS", "beIN SPORTS", "Goosat", "CARTE INTERNET"
+ * name      String    @unique
+ * items     ItemTag[]
+ * createdAt DateTime  @default(now())
+ * }
+ */
+/**
+ * model ItemTag {
+ * itemId Int
+ * tagId  Int
+ * item   CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * tag    Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+ * @@id([itemId, tagId])
+ * }
+ */
 
-/*model Tag {
-  id        Int       @id @default(autoincrement())
-  // Examples: "GIFT CARDS", "beIN SPORTS", "Goosat", "CARTE INTERNET"
-  name      String    @unique
-  items     ItemTag[]
-  createdAt DateTime  @default(now())
-}
-*/
-/*model ItemTag {
-  itemId Int
-  tagId  Int
-  item   CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  tag    Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+/**
+ * model Comment {
+ * id         Int           @id @default(autoincrement())
+ * itemId     Int
+ * userId     Int?
+ * authorName String
+ * content    String
+ * status     CommentStatus @default(PENDING)
+ * createdAt  DateTime      @default(now())
+ * updatedAt  DateTime      @updatedAt
+ * item CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * user User?       @relation(fields: [userId], references: [id])
+ * @@index([itemId, status])
+ * }
+ */
 
-  @@id([itemId, tagId])
-}*/
-
-/*model Comment {
-  id         Int           @id @default(autoincrement())
-  itemId     Int
-  userId     Int?
-  authorName String
-  content    String
-  status     CommentStatus @default(PENDING)
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-
-  item CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  user User?       @relation(fields: [userId], references: [id])
-
-  @@index([itemId, status])
-}*/
-
-/*model Review {
-  id         Int          @id @default(autoincrement())
-  itemId     Int
-  userId     Int?
-  authorName String
-  rating     Float
-  content    String?
-  status     ReviewStatus @default(PENDING)
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-
-  item CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  user User?       @relation(fields: [userId], references: [id])
-
-  @@index([itemId, status])
-}*/
+/**
+ * model Review {
+ * id         Int          @id @default(autoincrement())
+ * itemId     Int
+ * userId     Int?
+ * authorName String
+ * rating     Float
+ * content    String?
+ * status     ReviewStatus @default(PENDING)
+ * createdAt  DateTime     @default(now())
+ * updatedAt  DateTime     @updatedAt
+ * item CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * user User?       @relation(fields: [userId], references: [id])
+ * @@index([itemId, status])
+ * }
+ */
 
 model Settings {
   id                 Int      @id @default(1)
@@ -244,6 +251,7 @@ model IPTVChannel {
   updatedAt     DateTime       @updatedAt
   subscriptions Subscription[] // All users who subscribed
 }
+
 
 model Subscription {
   id        Int          @id @default(autoincrement())
