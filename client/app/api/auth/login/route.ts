@@ -53,7 +53,8 @@ export async function POST(req: NextRequest) {
     await prisma.user.update({ where: { id: user.id }, data: { auth: 'CONNECTED', authLastAt: new Date() } })
 
     const res = NextResponse.json({ user: { id: user.id, name: user.name, email: user.email, username: user.username, credits: user.credits } })
-    res.cookies.set('token', token, { httpOnly: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 7 })
+    // Use SameSite=None and Secure to allow cookie to be set in preview/proxy environments (cross-site)
+    res.cookies.set('token', token, { httpOnly: true, sameSite: 'none', secure: true, path: '/', maxAge: 60 * 60 * 24 * 7 })
     return res
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
