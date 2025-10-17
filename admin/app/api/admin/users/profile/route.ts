@@ -24,28 +24,8 @@ export async function GET(request: NextRequest) {
             },
             orderBy: { startDate: 'desc' },
           },
-          comments: {
-            include: {
-              item: {
-                select: {
-                  title: true,
-                },
-              },
-            },
-            orderBy: { createdAt: 'desc' },
-            take: 10,
-          },
-          reviews: {
-            include: {
-              item: {
-                select: {
-                  title: true,
-                },
-              },
-            },
-            orderBy: { createdAt: 'desc' },
-            take: 10,
-          },
+     
+
           appDownload: {
             orderBy: { createdAt: 'desc' },
           },
@@ -73,8 +53,6 @@ export async function GET(request: NextRequest) {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         stats: {
-          comments: user._count?.comments || 0,
-          reviews: user._count?.reviews || 0,
           subscriptions: user.subscriptions.length,
           appDownloads: user.appDownload.length,
           beinJobs: user.beinJobs.length,
@@ -89,21 +67,8 @@ export async function GET(request: NextRequest) {
           endDate: sub.endDate,
           credit: sub.credit,
         })),
-        comments: user.comments.map(comment => ({
-          id: comment.id,
-          itemTitle: comment.item.title,
-          content: comment.content,
-          status: comment.status,
-          createdAt: comment.createdAt,
-        })),
-        reviews: user.reviews.map(review => ({
-          id: review.id,
-          itemTitle: review.item.title,
-          rating: review.rating,
-          content: review.content,
-          status: review.status,
-          createdAt: review.createdAt,
-        })),
+
+ 
         appDownloads: user.appDownload.map(app => ({
           id: app.id,
           name: app.name,

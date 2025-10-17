@@ -126,7 +126,7 @@ export default function AdminCommentsPage() {
           </div>
         </div>
       )}
-      {confirmDeleteId !== null && (
+      {/*confirmDeleteId !== null && (
         <ConfirmModal
           title="Delete Comment"
           message="Are you sure you want to delete this comment?"
@@ -134,7 +134,7 @@ export default function AdminCommentsPage() {
           onConfirm={confirmRemove}
           onCancel={() => setConfirmDeleteId(null)}
         />
-      )}
+      )*/}
       {toast && (<Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />)}
     </div>
   )

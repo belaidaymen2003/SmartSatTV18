@@ -125,7 +125,7 @@ export async function DELETE(request: NextRequest) {
       if (resolvedId) await imagekit.deleteFile(resolvedId);
 
       if (Number.isFinite(appId)) {
-        await prisma.catalogApp.update({ where: { id: appId }, data: { image: null } });
+        await prisma.catalogApp.update({ where: { id: appId }, data: { image: "" } });
       }
 
       return NextResponse.json({ message: "Image deleted" });
@@ -133,7 +133,7 @@ export async function DELETE(request: NextRequest) {
 
     try {
       if (Number.isFinite(appId)) {
-        await prisma.catalogApp.update({ where: { id: appId }, data: { image: null } });
+        await prisma.catalogApp.update({ where: { id: appId }, data: { image: "" } });
         return NextResponse.json({ message: "Image deleted (db)" });
       }
     } catch (error: any) {

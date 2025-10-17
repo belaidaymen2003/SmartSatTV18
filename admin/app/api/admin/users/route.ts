@@ -53,12 +53,6 @@ export async function GET(request: NextRequest) {
             role: true,
             createdAt: true,
             updatedAt: true,
-            _count: {
-              select: {
-                comments: true,
-                reviews: true,
-              },
-            },
           },
         })
 
@@ -73,8 +67,7 @@ export async function GET(request: NextRequest) {
           username: user.username,
           credits: user.credits,
           status: user.status,
-          comments: user._count.comments,
-          reviews: user._count.reviews,
+
           createdAt: user.createdAt.toISOString().split('T')[0],
         })
       } catch (error: any) {
@@ -102,12 +95,6 @@ export async function GET(request: NextRequest) {
             credits: true,
             status: true,
             createdAt: true,
-            _count: {
-              select: {
-                comments: true,
-                reviews: true,
-              },
-            },
           },
           orderBy: { createdAt: 'desc' },
           skip: (page - 1) * pageSize,
@@ -123,8 +110,6 @@ export async function GET(request: NextRequest) {
         plan: 'Premium',
         credits: user.credits,
         status: user.status === 'APPROVED' ? 'Approved' : 'Banned',
-        comments: user._count.comments,
-        reviews: user._count.reviews,
         createdAt: user.createdAt.toISOString().split('T')[0],
       }))
 
@@ -246,12 +231,7 @@ export async function PUT(request: NextRequest) {
           credits: true,
           status: true,
           createdAt: true,
-          _count: {
-            select: {
-              comments: true,
-              reviews: true,
-            },
-          },
+
         },
       })
 
@@ -265,8 +245,6 @@ export async function PUT(request: NextRequest) {
           plan: 'Premium',
           credits: user.credits,
           status: user.status === 'APPROVED' ? 'Approved' : 'Banned',
-          comments: user._count.comments,
-          reviews: user._count.reviews,
           createdAt: user.createdAt.toISOString().split('T')[0],
         },
       })
