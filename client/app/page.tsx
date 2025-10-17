@@ -116,14 +116,14 @@ const LoginForm = () => {
         <div className="space-y-2">
           <label className="text-white font-medium flex items-center gap-2">
             <Mail className="w-4 h-4" />
-            Email Address
+            Email or Username
           </label>
           <input
-            type="email"
+            type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
-            placeholder="Enter your email"
+            placeholder="Enter your email or username"
             required
           />
         </div>
