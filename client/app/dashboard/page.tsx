@@ -290,10 +290,21 @@ export default function DashboardPage() {
             <Carousel itemWidthPx={260} autoPlayMs={3200}>
               {iptvChannelsList.map((item) => (
                 <div key={item.id}>
-                  <ContentCard
-                    content={item}
-                    onPurchase={handlePurchase}
-                    onViewDetails={handleViewDetails}
+                  <SubscriptionCard
+                    product={{
+                      id: item.id,
+                      title: item.title,
+                      price: item.price,
+                      image: item.image,
+                      description: item.description,
+                      duration: item.duration,
+                      genre: item.genre,
+                      type: item.type,
+                      channels: (item as any).channels,
+                      quality: (item as any).quality,
+                    }}
+                    onPurchase={(p) => handlePurchase(p as any)}
+                    onViewDetails={(p) => handleViewDetails(p as any)}
                     userCredits={credits}
                   />
                 </div>
