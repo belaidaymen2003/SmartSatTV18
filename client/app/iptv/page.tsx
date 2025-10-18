@@ -17,7 +17,7 @@ import {
 interface IPTVPackage {
   id: number
   title: string
-  category: 'sports' | 'international' | 'movies' | 'entertainment'
+  category: string
   price: number
   rating?: number
   image: string
@@ -48,15 +48,18 @@ export default function IPTVPage() {
 
   const [iptvPackages, setIptvPackages] = useState<IPTVPackage[]>([])
   const [totalPackages, setTotalPackages] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     let mounted = true
     ;(async () => {
       try {
+        setIsLoading(true)
         const params = new URLSearchParams()
         params.set('page', '1')
         params.set('pageSize', '100')
-        const res = await fetch(`/api/catalog/iptv?${params.toString()}`)
+        params.set('category', 'iptv')
+        const res = await fetch(`/api/catalog/channels?${params.toString()}`)
         const d = await res.json().catch(() => ({}))
         const channels = Array.isArray(d.channels) ? d.channels : []
         if (!mounted) return
@@ -76,11 +79,12 @@ export default function IPTVPage() {
         setTotalPackages(d.total || mapped.length)
       } catch (err) {
         console.error(err)
+      } finally {
+        if (mounted) setIsLoading(false)
       }
     })()
     return () => { mounted = false }
   }, [])
-
 
   const categories = [
     { id: 'all', label: 'All Packages', icon: <Satellite className="w-5 h-5" /> },
@@ -160,82 +164,86 @@ export default function IPTVPage() {
         </div>
 
         {/* Packages Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredPackages.map((pkg) => (
-            <div
-              key={pkg.id}
-              className="glass rounded-xl overflow-hidden border border-white/10 hover:border-blue-400 transition-all duration-300 group"
-            >
-              {/* Package Image */}
-              <div className="relative h-48 overflow-hidden bg-white/5">
-                <img
-                  src={pkg.image}
-                  alt={pkg.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                
-                {/* Category Badge */}
-                <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-blue-500 text-white text-xs font-semibold capitalize">
-                  {pkg.category}
-                </div>
-
-                {/* Rating */}
-                {pkg.rating && (
-                  <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-black/70 px-2 py-1 rounded text-xs text-yellow-400">
-                    <Star className="w-3 h-3 fill-current" />
-                    {pkg.rating}
-                  </div>
-                )}
-              </div>
-
-              {/* Package Info */}
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-2 line-clamp-2">{pkg.title}</h3>
-                <p className="text-white/60 text-sm mb-3 line-clamp-2">{pkg.description}</p>
-                
-                <div className="mb-4 space-y-2 text-sm text-white/70">
-                  <div className="flex items-center gap-2">
-                    <Tv className="w-4 h-4 text-blue-400" />
-                    {pkg.channels} channels
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-green-400" />
-                    {pkg.quality}
-                  </div>
-                </div>
-
-                {pkg.details && (
-                  <p className="text-white/50 text-xs mb-4">{pkg.details}</p>
-                )}
-
-                {/* Price and Button */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                  <div>
-                    <p className="text-white/60 text-xs mb-1">Price</p>
-                    <p className="text-2xl font-bold text-blue-400">{pkg.price}</p>
-                    <p className="text-white/60 text-xs">Credits</p>
-                  </div>
-                  <button
-                    onClick={() => handleSubscribe(pkg)}
-                    disabled={credits < pkg.price}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                      credits >= pkg.price
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:shadow-lg hover:scale-105'
-                        : 'bg-white/10 text-white/50 cursor-not-allowed'
-                    }`}
-                  >
-                    Subscribe
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredPackages.length === 0 && (
+        {isLoading ? (
           <div className="text-center py-12">
-            <p className="text-white/60">No packages found in this category</p>
+            <p className="text-white/60">Loading IPTV packages...</p>
+          </div>
+        ) : filteredPackages.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredPackages.map((pkg) => (
+              <div
+                key={pkg.id}
+                className="glass rounded-xl overflow-hidden border border-white/10 hover:border-blue-400 transition-all duration-300 group"
+              >
+                {/* Package Image */}
+                <div className="relative h-48 overflow-hidden bg-white/5">
+                  <img
+                    src={pkg.image}
+                    alt={pkg.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  
+                  {/* Category Badge */}
+                  <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-blue-500 text-white text-xs font-semibold capitalize">
+                    {pkg.category}
+                  </div>
+
+                  {/* Rating */}
+                  {pkg.rating && (
+                    <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-black/70 px-2 py-1 rounded text-xs text-yellow-400">
+                      <Star className="w-3 h-3 fill-current" />
+                      {pkg.rating}
+                    </div>
+                  )}
+                </div>
+
+                {/* Package Info */}
+                <div className="p-4">
+                  <h3 className="font-semibold text-lg mb-2 line-clamp-2">{pkg.title}</h3>
+                  <p className="text-white/60 text-sm mb-3 line-clamp-2">{pkg.description}</p>
+                  
+                  <div className="mb-4 space-y-2 text-sm text-white/70">
+                    <div className="flex items-center gap-2">
+                      <Tv className="w-4 h-4 text-blue-400" />
+                      {pkg.channels} channels
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-green-400" />
+                      {pkg.quality}
+                    </div>
+                  </div>
+
+                  {pkg.details && (
+                    <p className="text-white/50 text-xs mb-4">{pkg.details}</p>
+                  )}
+
+                  {/* Price and Button */}
+                  <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                    <div>
+                      <p className="text-white/60 text-xs mb-1">Price</p>
+                      <p className="text-2xl font-bold text-blue-400">{pkg.price}</p>
+                      <p className="text-white/60 text-xs">Credits</p>
+                    </div>
+                    <button
+                      onClick={() => handleSubscribe(pkg)}
+                      disabled={credits < pkg.price}
+                      className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                        credits >= pkg.price
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:shadow-lg hover:scale-105'
+                          : 'bg-white/10 text-white/50 cursor-not-allowed'
+                      }`}
+                    >
+                      Subscribe
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-white/60">No IPTV packages available</p>
           </div>
         )}
       </main>
