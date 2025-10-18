@@ -108,7 +108,7 @@ export default function DashboardPage() {
         }))
 
         // IPTV Channels
-        const chRes = await fetch('/admin/api/admin/categories/category?category=All&pageSize=12')
+        const chRes = await fetch('/api/catalog/iptv?category=All&pageSize=12')
         const chJson = await chRes.json().catch(() => ({}))
         const channels = Array.isArray(chJson.channels) ? chJson.channels : []
         const mappedChannels = channels.map((c: any) => ({
