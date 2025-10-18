@@ -82,22 +82,22 @@ enum Category {
 }
 //ss
 model User {
-  id               Int                   @id @default(autoincrement())
-  email            String                @unique
-  username         String                @unique
-  name             String
-  passwordHash     String
-  role             Role                  @default(USER)
-  credits          Int                   @default(0)
-  authLastAt       DateTime?
-  status           UserStatus            @default(APPROVED)
-  video            Video[]
-  auth             Auth                  @default(DISCONNECTED)
-  beinJobs         BeInSportActivation[] @relation("BeInByUser")
-  subscriptionplan SubscriptionPlan[]
-  appDownload      CatalogApp[]
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime              @updatedAt
+  id                Int                   @id @default(autoincrement())
+  email             String                @unique
+  username          String                @unique
+  name              String
+  passwordHash      String
+  role              Role                  @default(USER)
+  credits           Int                   @default(0)
+  authLastAt        DateTime?
+  status            UserStatus            @default(APPROVED)
+  video             Video[]
+  auth              Auth                  @default(DISCONNECTED)
+  beinJobs          BeInSportActivation[] @relation("BeInByUser")
+  userSubscriptions UserSubscription[]
+  appDownload       CatalogApp[]
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
 
   @@index([role, status])
 }
