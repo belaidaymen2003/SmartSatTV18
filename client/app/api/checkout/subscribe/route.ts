@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     const updatedSubscription = await prisma.subscription.update({
       where: { id: subscriptionId },
       data: {
-        status: 'SOLD_OUT'
+        status: 'SOLD_OUT' as any
       }
     })
 
