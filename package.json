@@ -12,5 +12,11 @@
   "scripts": {
     "dev": "npm run dev --workspace=admin",
     "build": "npm run build --workspace=admin && npm run build --workspace=client"
+  },
+  "devDependencies": {
+    "prisma": "^6.17.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.17.1"
   }
 }
