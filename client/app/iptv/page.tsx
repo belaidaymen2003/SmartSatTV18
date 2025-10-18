@@ -46,104 +46,41 @@ export default function IPTVPage() {
     if (storedEmail) setUserEmail(storedEmail)
   }, [router])
 
-  const iptvPackages: IPTVPackage[] = [
-    {
-      id: 1,
-      title: "Sports Premium Bundle",
-      category: "sports",
-      price: 35,
-      rating: 4.7,
-      image: "https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg",
-      description: "Complete sports experience with live matches and exclusive coverage",
-      channels: 50,
-      quality: "Full HD",
-      details: "Live Sports • 24/7 Coverage • Multiple Languages"
-    },
-    {
-      id: 2,
-      title: "Premier League Bundle",
-      category: "sports",
-      price: 40,
-      rating: 4.9,
-      image: "https://images.pexels.com/photos/3621141/pexels-photo-3621141.jpeg",
-      description: "Exclusive Premier League and international football matches",
-      channels: 30,
-      quality: "Full HD + 4K",
-      details: "Live Matches • Match Analysis • Replays"
-    },
-    {
-      id: 3,
-      title: "International Channels",
-      category: "international",
-      price: 40,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/3944091/pexels-photo-3944091.jpeg",
-      description: "150+ channels from around the world in multiple languages",
-      channels: 150,
-      quality: "Full HD",
-      details: "Multiple Languages • Global Content • 24/7 Access"
-    },
-    {
-      id: 4,
-      title: "European Channels",
-      category: "international",
-      price: 32,
-      rating: 4.5,
-      image: "https://images.pexels.com/photos/3597970/pexels-photo-3597970.jpeg",
-      description: "Premium European television and entertainment channels",
-      channels: 80,
-      quality: "Full HD",
-      details: "European Content • Live TV • News & Entertainment"
-    },
-    {
-      id: 5,
-      title: "Movie Heaven",
-      category: "movies",
-      price: 30,
-      rating: 4.8,
-      image: "https://images.pexels.com/photos/7991580/pexels-photo-7991580.jpeg",
-      description: "Dedicated movie channels with latest theatrical releases",
-      channels: 60,
-      quality: "Full HD + 4K",
-      details: "Latest Movies • Daily Updates • 4K Quality"
-    },
-    {
-      id: 6,
-      title: "Blockbuster Cinema",
-      category: "movies",
-      price: 28,
-      rating: 4.7,
-      image: "https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg",
-      description: "Hollywood blockbusters and exclusive cinema releases",
-      channels: 45,
-      quality: "Full HD + 4K",
-      details: "New Releases • Classics • 4K Streaming"
-    },
-    {
-      id: 7,
-      title: "Entertainment Plus",
-      category: "entertainment",
-      price: 25,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/7991319/pexels-photo-7991319.jpeg",
-      description: "TV series, reality shows, and entertainment content",
-      channels: 70,
-      quality: "Full HD",
-      details: "Series • Reality TV • Talk Shows • Unlimited Access"
-    },
-    {
-      id: 8,
-      title: "Family Entertainment",
-      category: "entertainment",
-      price: 22,
-      rating: 4.5,
-      image: "https://images.pexels.com/photos/7991225/pexels-photo-7991225.jpeg",
-      description: "Family-friendly entertainment for all ages",
-      channels: 55,
-      quality: "Full HD",
-      details: "Kids Content • Family Shows • Educational Programs"
-    }
-  ]
+  const [iptvPackages, setIptvPackages] = useState<IPTVPackage[]>([])
+  const [totalPackages, setTotalPackages] = useState(0)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const params = new URLSearchParams()
+        params.set('page', '1')
+        params.set('pageSize', '100')
+        const res = await fetch(`/api/catalog/iptv?${params.toString()}`)
+        const d = await res.json().catch(() => ({}))
+        const channels = Array.isArray(d.channels) ? d.channels : []
+        if (!mounted) return
+        const mapped = channels.map((c: any) => ({
+          id: c.id,
+          title: c.name,
+          category: (c.category || 'IPTV').toLowerCase(),
+          price: c.price ?? 0,
+          rating: c.rating ?? 4.2,
+          image: c.logo || '',
+          description: c.description || '',
+          channels: c.channels ?? 0,
+          quality: c.quality ?? 'HD',
+          details: c.details || ''
+        }))
+        setIptvPackages(mapped)
+        setTotalPackages(d.total || mapped.length)
+      } catch (err) {
+        console.error(err)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
 
   const categories = [
     { id: 'all', label: 'All Packages', icon: <Satellite className="w-5 h-5" /> },
