@@ -93,24 +93,7 @@ export default function ProfileDropdown() {
 
           <div className="p-3">
             <div className="text-sm font-medium text-white/80 mb-2">Notifications</div>
-            {notifications.length ? (
-              <ul className="max-h-48 overflow-auto space-y-2">
-                {notifications.map((n) => (
-                  <li key={n.id} className="p-2 rounded hover:bg-white/5 flex items-start gap-3">
-                    <div className="w-8">
-                      {n.type === 'subscription' ? <Clock className="w-5 h-5 text-blue-400" /> : <Bell className="w-5 h-5 text-green-400" />}
-                    </div>
-                    <div>
-                      <div className="text-sm text-white">{n.title}</div>
-                      <div className="text-xs text-white/60">{n.message}</div>
-                    </div>
-                    <div className="ml-auto text-xs text-white/50">{n.date ? new Date(n.date).toLocaleDateString() : ''}</div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="text-xs text-white/60">No notifications</div>
-            )}
+            <div className="text-xs text-white/60">You have {notifications.length} notifications. View them using the bell icon.</div>
           </div>
 
           <div className="p-3 border-t border-white/5 grid grid-cols-2 gap-2">
