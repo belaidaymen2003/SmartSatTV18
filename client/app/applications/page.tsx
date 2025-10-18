@@ -48,176 +48,42 @@ export default function ApplicationsPage() {
     if (storedEmail) setUserEmail(storedEmail)
   }, [router])
 
-  const applications: Application[] = [
-    {
-      id: 1,
-      title: "IPTV Player Pro",
-      category: "player",
-      price: 25,
-      rating: 4.8,
-      image: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg",
-      description: "Professional IPTV player with advanced streaming capabilities",
-      platforms: ["iOS", "Android", "Windows", "macOS"],
-      version: "2.5.1",
-      size: "125MB",
-      downloads: "50K+",
-      details: "Advanced Codec Support • 4K Ready • Zero Buffering"
-    },
-    {
-      id: 2,
-      title: "Stream Manager",
-      category: "manager",
-      price: 15,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/3944091/pexels-photo-3944091.jpeg",
-      description: "Manage all your streaming subscriptions in one place",
-      platforms: ["iOS", "Android", "Web"],
-      version: "1.8.0",
-      size: "45MB",
-      downloads: "30K+",
-      details: "Multi-Account Support • Sync Across Devices • Smart Organization"
-    },
-    {
-      id: 3,
-      title: "HD Video Downloader",
-      category: "downloader",
-      price: 20,
-      rating: 4.7,
-      image: "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg",
-      description: "Download your favorite content in HD quality",
-      platforms: ["Windows", "macOS", "Android"],
-      version: "3.2.5",
-      size: "85MB",
-      downloads: "25K+",
-      details: "Batch Download • Resume Support • Auto-Organization"
-    },
-    {
-      id: 4,
-      title: "Smart TV Companion",
-      category: "player",
-      price: 18,
-      rating: 4.5,
-      image: "https://images.pexels.com/photos/3261069/pexels-photo-3261069.jpeg",
-      description: "Control and stream content to your Smart TV",
-      platforms: ["iOS", "Android", "Web"],
-      version: "2.1.0",
-      size: "92MB",
-      downloads: "40K+",
-      details: "AirPlay • Chromecast • DLNA Support • Remote Control"
-    },
-    {
-      id: 5,
-      title: "PlayBack Pro",
-      category: "player",
-      price: 22,
-      rating: 4.9,
-      image: "https://images.pexels.com/photos/3861957/pexels-photo-3861957.jpeg",
-      description: "Premium video player with advanced features",
-      platforms: ["Windows", "macOS", "Linux"],
-      version: "4.0.2",
-      size: "156MB",
-      downloads: "60K+",
-      details: "Subtitle Engine • Equalizer • Gesture Controls • Codecs Support"
-    },
-    {
-      id: 6,
-      title: "Subscription Organizer",
-      category: "manager",
-      price: 12,
-      rating: 4.4,
-      image: "https://images.pexels.com/photos/3808517/pexels-photo-3808517.jpeg",
-      description: "Keep track of all your subscriptions and billing",
-      platforms: ["iOS", "Android", "Web"],
-      version: "1.5.3",
-      size: "38MB",
-      downloads: "20K+",
-      details: "Bill Reminders • Budget Tracking • Payment History"
-    },
-    {
-      id: 7,
-      title: "Content Converter",
-      category: "utility",
-      price: 16,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/3587620/pexels-photo-3587620.jpeg",
-      description: "Convert videos between different formats",
-      platforms: ["Windows", "macOS"],
-      version: "5.1.0",
-      size: "210MB",
-      downloads: "35K+",
-      details: "Fast Conversion • Batch Processing • Quality Presets"
-    },
-    {
-      id: 8,
-      title: "Stream Optimizer",
-      category: "utility",
-      price: 14,
-      rating: 4.7,
-      image: "https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg",
-      description: "Optimize your network for better streaming",
-      platforms: ["Windows", "macOS", "Android"],
-      version: "2.3.1",
-      size: "67MB",
-      downloads: "28K+",
-      details: "Network Analysis • Speed Test • Auto-Optimization"
-    },
-    {
-      id: 9,
-      title: "Media Library Pro",
-      category: "manager",
-      price: 19,
-      rating: 4.8,
-      image: "https://images.pexels.com/photos/5632398/pexels-photo-5632398.jpeg",
-      description: "Organize and manage your media collection",
-      platforms: ["iOS", "Android", "Windows", "macOS"],
-      version: "3.4.0",
-      size: "120MB",
-      downloads: "45K+",
-      details: "Smart Categorization • Metadata Fetching • Artwork Support"
-    },
-    {
-      id: 10,
-      title: "Quality Enhancer",
-      category: "utility",
-      price: 17,
-      rating: 4.5,
-      image: "https://images.pexels.com/photos/4348410/pexels-photo-4348410.jpeg",
-      description: "Upscale and enhance video quality",
-      platforms: ["Windows", "macOS"],
-      version: "1.9.2",
-      size: "180MB",
-      downloads: "22K+",
-      details: "AI Upscaling • Noise Reduction • Color Correction"
-    },
-    {
-      id: 11,
-      title: "Subtitle Master",
-      category: "utility",
-      price: 13,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/5632397/pexels-photo-5632397.jpeg",
-      description: "Advanced subtitle editing and management",
-      platforms: ["Windows", "macOS", "Linux"],
-      version: "2.7.1",
-      size: "74MB",
-      downloads: "33K+",
-      details: "Multi-Language Support • Sync Adjustment • Format Conversion"
-    },
-    {
-      id: 12,
-      title: "Remote Control",
-      category: "manager",
-      price: 11,
-      rating: 4.4,
-      image: "https://images.pexels.com/photos/5632396/pexels-photo-5632396.jpeg",
-      description: "Control streaming devices from your phone",
-      platforms: ["iOS", "Android"],
-      version: "1.6.0",
-      size: "52MB",
-      downloads: "27K+",
-      details: "Universal Support • Custom Layout • Voice Commands"
-    }
-  ]
+  const [applications, setApplications] = useState<Application[]>([])
+  const [totalApps, setTotalApps] = useState(0)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const params = new URLSearchParams()
+        params.set('page', '1')
+        params.set('pageSize', '100')
+        const res = await fetch(`/api/catalog/applications?${params.toString()}`)
+        const d = await res.json().catch(() => ({}))
+        const apps = Array.isArray(d.apps) ? d.apps : []
+        if (!mounted) return
+        const mapped = apps.map((a: any) => ({
+          id: a.id,
+          title: a.name || a.title || 'App',
+          category: 'player',
+          price: a.credit ?? 0,
+          rating: 4.5,
+          image: a.image || '',
+          description: a.description || '',
+          platforms: ['iOS', 'Android'],
+          version: a.version || '',
+          size: a.size || '',
+          downloads: a.downloads || '',
+          details: a.description || ''
+        }))
+        setApplications(mapped)
+        setTotalApps(d.total || mapped.length)
+      } catch (err) {
+        console.error(err)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
 
   const categories = [
     { id: 'all', label: 'All Apps', icon: <Package className="w-5 h-5" /> },
