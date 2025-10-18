@@ -56,6 +56,7 @@ enum Auth {
   DISCONNECTED
 }
 
+//ss
 enum DurationPlan {
   ONE_MONTH
   SIX_MONTHS
@@ -66,6 +67,7 @@ enum Status {
   ACTIVE
   EXPIRED
   CANCELLED
+  SOLD_OUT
 }
 
 enum Category {
@@ -74,22 +76,22 @@ enum Category {
 }
 
 model User {
-  id               Int                   @id @default(autoincrement())
-  email            String                @unique
-  username         String                @unique
-  name             String
-  passwordHash     String
-  role             Role                  @default(USER)
-  credits          Int                   @default(0)
-  authLastAt       DateTime?
-  status           UserStatus            @default(APPROVED)
-  video            Video[]
-  auth             Auth                  @default(DISCONNECTED)
-  beinJobs         BeInSportActivation[] @relation("BeInByUser")
-  subscriptionplan SubscriptionPlan[]
-  appDownload      CatalogApp[]
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime              @updatedAt
+  id                Int                   @id @default(autoincrement())
+  email             String                @unique
+  username          String                @unique
+  name              String
+  passwordHash      String
+  role              Role                  @default(USER)
+  credits           Int                   @default(0)
+  authLastAt        DateTime?
+  status            UserStatus            @default(APPROVED)
+  video             Video[]
+  auth              Auth                  @default(DISCONNECTED)
+  beinJobs          BeInSportActivation[] @relation("BeInByUser")
+  userSubscriptions UserSubscription[]
+  appDownload       CatalogApp[]
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
 
   @@index([role, status])
 }
@@ -152,27 +154,34 @@ model IPTVChannel {
   subscriptions Subscription[]
 }
 
-model SubscriptionPlan {
-  id             Int           @id @default(autoincrement())
-  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
-  subscriptionId Int?
-  user           User?         @relation(fields: [userId], references: [id])
-  userId         Int?
-  status         Status        @default(ACTIVE)
-  startDate      DateTime      @default(now())
-  endDate        DateTime
-  updatedAt      DateTime      @updatedAt
+model Subscription {
+  id                Int                @id @default(autoincrement())
+  credit            Float              @default(0)
+  code              String?            @unique
+  channel           IPTVChannel        @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId         Int
+  duration          DurationPlan       @default(ONE_MONTH)
+  status            Status             @default(ACTIVE)
+  userSubscriptions UserSubscription[]
+  createAt          DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([channelId, status])
 }
 
-model Subscription {
-  id               Int                @id @default(autoincrement())
-  credit           Float              @default(0)
-  code             String?            @unique
-  channel          IPTVChannel        @relation(fields: [channelId], references: [id])
-  channelId        Int
-  duration         DurationPlan       @default(ONE_MONTH)
-  status           Status             @default(ACTIVE)
-  subscriptionplan SubscriptionPlan[]
-  createAt         DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+model UserSubscription {
+  id             Int          @id @default(autoincrement())
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  subscriptionId Int
+  status         Status       @default(ACTIVE)
+  code           String?
+  startDate      DateTime     @default(now())
+  endDate        DateTime
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([userId, subscriptionId])
+  @@index([userId, status])
 }

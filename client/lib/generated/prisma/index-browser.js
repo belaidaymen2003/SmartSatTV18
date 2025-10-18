@@ -188,16 +188,6 @@ exports.Prisma.IPTVChannelScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.SubscriptionPlanScalarFieldEnum = {
-  id: 'id',
-  subscriptionId: 'subscriptionId',
-  userId: 'userId',
-  status: 'status',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.SubscriptionScalarFieldEnum = {
   id: 'id',
   credit: 'credit',
@@ -206,6 +196,18 @@ exports.Prisma.SubscriptionScalarFieldEnum = {
   duration: 'duration',
   status: 'status',
   createAt: 'createAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  subscriptionId: 'subscriptionId',
+  status: 'status',
+  code: 'code',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
@@ -243,16 +245,17 @@ exports.Category = exports.$Enums.Category = {
   STREAMING: 'STREAMING'
 };
 
-exports.Status = exports.$Enums.Status = {
-  ACTIVE: 'ACTIVE',
-  EXPIRED: 'EXPIRED',
-  CANCELLED: 'CANCELLED'
-};
-
 exports.DurationPlan = exports.$Enums.DurationPlan = {
   ONE_MONTH: 'ONE_MONTH',
   SIX_MONTHS: 'SIX_MONTHS',
   ONE_YEAR: 'ONE_YEAR'
+};
+
+exports.Status = exports.$Enums.Status = {
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED',
+  SOLD_OUT: 'SOLD_OUT'
 };
 
 exports.Prisma.ModelName = {
@@ -262,8 +265,8 @@ exports.Prisma.ModelName = {
   Settings: 'Settings',
   BeInSportActivation: 'BeInSportActivation',
   IPTVChannel: 'IPTVChannel',
-  SubscriptionPlan: 'SubscriptionPlan',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  UserSubscription: 'UserSubscription'
 };
 
 /**
