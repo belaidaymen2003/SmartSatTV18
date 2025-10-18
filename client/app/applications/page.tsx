@@ -109,7 +109,7 @@ export default function ApplicationsPage() {
   }
 
   const stats = [
-    { label: 'Total Apps', value: applications.length.toString(), icon: <Package className="w-5 h-5" /> },
+    { label: 'Total Apps', value: totalApps.toString(), icon: <Package className="w-5 h-5" /> },
     { label: 'Active Downloads', value: '250K+', icon: <Users className="w-5 h-5" /> },
     { label: 'Avg Rating', value: '4.6★', icon: <Star className="w-5 h-5" /> }
   ]
