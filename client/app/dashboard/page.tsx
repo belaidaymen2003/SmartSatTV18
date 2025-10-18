@@ -92,7 +92,7 @@ export default function DashboardPage() {
     ;(async () => {
       try {
         // Apps
-        const appsRes = await fetch('/admin/api/admin/catalog/appdownload')
+        const appsRes = await fetch('/api/catalog/applications')
         const appsJson = await appsRes.json().catch(() => ({}))
         const apps = Array.isArray(appsJson.apps) ? appsJson.apps : []
         const mappedApps = apps.map((a: any) => ({
