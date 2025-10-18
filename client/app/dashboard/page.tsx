@@ -32,6 +32,7 @@ export default function DashboardPage() {
   const router = useRouter()
   const [watchlistIds, setWatchlistIds] = useState<number[]>([])
   const [demoVideos, setDemoVideos] = useState<Content[]>([])
+  const [streamingPreview, setStreamingPreview] = useState<Content[]>([])
 
   useEffect(() => {
     const storedCredits = localStorage.getItem('userCredits')
@@ -125,6 +126,31 @@ export default function DashboardPage() {
             if (!mounted) return
         setAppsContent(mappedApps)
         setIptvChannelsList(mappedChannels)
+
+        // Fetch streaming plans preview
+        try {
+          const spParams = new URLSearchParams()
+          spParams.set('page', '1')
+          spParams.set('pageSize', '8')
+          const spRes = await fetch(`/api/catalog/streaming?${spParams.toString()}`)
+          const spJson = await spRes.json().catch(() => ({}))
+          const vids = Array.isArray(spJson.videos) ? spJson.videos : []
+          const mappedStreaming = vids.map((v: any) => ({
+            id: v.id,
+            title: v.title || 'Streaming Plan',
+            type: 'movie' as const,
+            price: v.price ?? 0,
+            rating: v.rating ?? 4.5,
+            image: v.thumbnail || 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg',
+            description: v.description || '',
+            duration: v.duration || 'Monthly',
+            genre: 'Streaming',
+            trailer: v.videoUrl
+          }))
+          setStreamingPreview(mappedStreaming)
+        } catch (err) {
+          // ignore
+        }
       } catch (err) {
         // ignore
       }
@@ -227,7 +253,7 @@ export default function DashboardPage() {
               action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3500}>
-              {demoVideos.map((item) => (
+              {streamingPreview.map((item) => (
                 <div key={item.id}>
                   <ContentCard
                     content={item}
