@@ -13,7 +13,10 @@ export async function GET(req: NextRequest) {
       if (!Number.isFinite(cid)) {
         return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
       }
-      const channel = await prisma.iPTVChannel.findUnique({ where: { id: cid } })
+      const channel = await prisma.iPTVChannel.findUnique({
+        where: { id: cid },
+        include: { subscriptions: true }
+      })
       if (!channel) {
         return NextResponse.json({ error: 'Not found' }, { status: 404 })
       }
@@ -31,7 +34,6 @@ export async function GET(req: NextRequest) {
       and.push({ name: { contains: q, mode: 'insensitive' } })
     }
 
-    // Category filter: IPTV, STREAMING, or 'all' for no filter
     if (rawCategory) {
       const lc = rawCategory.toLowerCase()
       if (lc === 'iptv') {
@@ -50,6 +52,7 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * pageSize,
         take: pageSize,
+        include: { subscriptions: true }
       }),
     ])
 
