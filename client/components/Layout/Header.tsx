@@ -80,7 +80,6 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
             <a href="/streaming" className="text-white/80 hover:text-white transition-colors">Streaming</a>
             <a href="/iptv" className="text-white/80 hover:text-white transition-colors">IPTV</a>
             <a href="/applications" className="text-white/80 hover:text-white transition-colors">Applications</a>
-            <a href="/live" className="text-white/80 hover:text-white transition-colors">Live TV</a>
             <a href="/profile" className="text-white/80 hover:text-white transition-colors">My Space</a>
           </nav>
 
