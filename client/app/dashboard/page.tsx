@@ -108,27 +108,28 @@ export default function DashboardPage() {
           genre: 'App'
         }))
 
-        // IPTV Channels
-        const chRes = await fetch('/api/catalog/iptv?category=iptv&pageSize=12')
-        const chJson = await chRes.json().catch(() => ({}))
-        const channels = Array.isArray(chJson.channels) ? chJson.channels : []
-        const mappedChannels = channels.map((c: any) => ({
-          id: c.id,
-          title: c.name || 'Channel',
-          type: 'live' as const,
-          price: 0,
+        // Subscriptions (IPTV plans)
+        const subsRes = await fetch('/api/catalog/subscriptions')
+        const subsJson = await subsRes.json().catch(() => ({}))
+        const subs = Array.isArray(subsJson.subscriptions) ? subsJson.subscriptions : []
+        const mappedSubs = subs.map((s: any) => ({
+          id: s.id,
+          title: (s.channel && s.channel.name) ? `${s.channel.name}` : `Subscription ${s.id}`,
+          type: 'subscription' as const,
+          price: s.credit ?? 0,
           rating: 4.2,
-          image: c.logo || '',
-          description: c.description || '',
-          duration: 'Live',
-          genre: c.category || 'IPTV'
+          image: s.channel?.logo || '',
+          description: s.channel?.description || s.code || '',
+          duration: (s.duration || '').toString(),
+          genre: 'IPTV',
+          channels: s.channel ? undefined : undefined,
         }))
 
             if (!mounted) return
         setAppsContent(mappedApps)
-        setIptvChannelsList(mappedChannels)
+        setIptvChannelsList(mappedSubs)
 
-        // Fetch streaming plans preview
+        // Fetch streaming plans preview (Videos)
         try {
           const spParams = new URLSearchParams()
           spParams.set('page', '1')
@@ -144,7 +145,7 @@ export default function DashboardPage() {
             rating: v.rating ?? 4.5,
             image: v.thumbnail || 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg',
             description: v.description || '',
-            duration: v.duration || 'Monthly',
+            duration: 'Streaming',
             genre: 'Streaming',
             trailer: v.videoUrl
           }))
@@ -249,9 +250,9 @@ export default function DashboardPage() {
         <section>
           <MotionReveal delayMs={120}>
             <SectionHeader
-              title="Streaming"
-              subtitle="Preview streaming plans and featured content"
-              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
+            title="Streaming"
+            subtitle="Preview streaming videos and plans from the catalog"
+            action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3500}>
               {streamingPreview.map((item) => (
@@ -283,8 +284,8 @@ export default function DashboardPage() {
         <section>
           <MotionReveal delayMs={120}>
             <SectionHeader
-              title="IPTV Channels"
-              subtitle="Live TV and streaming channels from around the world"
+              title="IPTV Subscriptions"
+              subtitle="Available IPTV subscription plans from channels"
               action={<a href="/iptv" className="text-sm text-white/60 hover:text-white">Explore</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3200}>
