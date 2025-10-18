@@ -54,7 +54,7 @@ export default function DashboardPage() {
     let mounted = true
     ;(async () => {
       try {
-        const res = await fetch('/admin/api/admin/catalog/demonstrationvideo')
+        const res = await fetch('/api/catalog/streaming')
         const d = await res.json().catch(() => ({}))
         const vids = Array.isArray(d.videos) ? d.videos : []
         if (!mounted) return
