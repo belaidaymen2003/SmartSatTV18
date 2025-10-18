@@ -103,7 +103,7 @@ export default function StreamingPage() {
   }
 
   const stats = [
-    { label: 'Total Plans', value: streamingPlans.length.toString(), icon: <Zap className="w-5 h-5" /> },
+    { label: 'Total Plans', value: totalPlans.toString(), icon: <Zap className="w-5 h-5" /> },
     { label: 'Active Members', value: '500K+', icon: <Users className="w-5 h-5" /> },
     { label: 'Avg Rating', value: '4.8★', icon: <Star className="w-5 h-5" /> }
   ]
