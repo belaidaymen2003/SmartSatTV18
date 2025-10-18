@@ -155,10 +155,10 @@ export default function SubscriptionDetailPage() {
       const res = await fetch('/api/checkout/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           subscriptionId: selectedSubscription.id,
-          userEmail,
-          code: selectedSubscription.code
+          userEmail
         })
       })
 
@@ -169,7 +169,7 @@ export default function SubscriptionDetailPage() {
         localStorage.setItem('userCredits', newCredits.toString())
 
         const message = selectedSubscription.code
-          ? `✓ Successfully purchased! Your code: ${selectedSubscription.code}\n\nView your subscription details in your profile.`
+          ? `✓ Successfully purchased!\n\nCode: ${selectedSubscription.code}\n\nView all your subscription details in your profile.`
           : `✓ Successfully subscribed to "${channel.name}"`
         alert(message)
 
@@ -189,8 +189,8 @@ export default function SubscriptionDetailPage() {
         }
 
         setTimeout(() => {
-          router.push('/profile')
-        }, 1000)
+          router.push('/profile/subscriptions')
+        }, 2000)
       } else {
         const err = await res.json().catch(() => ({}))
         alert(`Error: ${err.error || 'Failed to purchase subscription'}`)
