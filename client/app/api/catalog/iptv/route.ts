@@ -5,6 +5,15 @@ const prisma = new PrismaClient()
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
+    const id = searchParams.get('id')
+    if (id) {
+      const cid = Number(id)
+      if (!Number.isFinite(cid)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
+      const channel = await prisma.iPTVChannel.findUnique({ where: { id: cid } })
+      if (!channel) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+      return NextResponse.json({ channel })
+    }
+
     const q = (searchParams.get('q') || '').trim()
     const category = (searchParams.get('category') || '').trim()
     const page = Math.max(1, Number(searchParams.get('page') || 1))
