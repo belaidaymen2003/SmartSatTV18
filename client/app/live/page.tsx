@@ -25,16 +25,39 @@ export default function LiveTVPage() {
     if (storedEmail) setUserEmail(storedEmail)
   }, [router])
 
-  const channels: Content[] = [
-    { id: 101, title: "World News 24", type: "live", price: 8, rating: 4.4, image: "https://images.pexels.com/photos/3944091/pexels-photo-3944091.jpeg", description: "Breaking news from around the globe.", duration: "Live", genre: "News", year: 2025 },
-    { id: 102, title: "Sports Center HD", type: "live", price: 10, rating: 4.6, image: "https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg", description: "Live sports, highlights, and analysis.", duration: "Live", genre: "Sports", year: 2025 },
-    { id: 103, title: "CinePrime Live", type: "live", price: 7, rating: 4.2, image: "https://images.pexels.com/photos/7991225/pexels-photo-7991225.jpeg", description: "Blockbusters and movie talk shows.", duration: "Live", genre: "Entertainment", year: 2025 },
-    { id: 104, title: "eSports Arena", type: "live", price: 9, rating: 4.7, image: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg", description: "Top tournaments, pro matches & commentary.", duration: "Live", genre: "Esports", year: 2025 },
-    { id: 105, title: "Documentary One", type: "live", price: 6, rating: 4.3, image: "https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg", description: "Nature, history, and science docs.", duration: "Live", genre: "Documentary", year: 2025 },
-    { id: 106, title: "Fashion TV+", type: "live", price: 5, rating: 4.1, image: "https://images.pexels.com/photos/794064/pexels-photo-794064.jpeg", description: "Trends, runway, and lifestyle.", duration: "Live", genre: "Lifestyle", year: 2025 },
-    { id: 107, title: "TechStream", type: "live", price: 7, rating: 4.5, image: "https://images.pexels.com/photos/3861979/pexels-photo-3861979.jpeg", description: "Gadgets, reviews, and launches.", duration: "Live", genre: "Technology", year: 2025 },
-    { id: 108, title: "Global Finance", type: "live", price: 8, rating: 4.2, image: "https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg", description: "Markets, business news, and analysis.", duration: "Live", genre: "Business", year: 2025 },
-  ]
+  const [channels, setChannels] = useState<Content[]>([])
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const params = new URLSearchParams()
+        params.set('page', '1')
+        params.set('pageSize', '100')
+        const res = await fetch(`/api/catalog/iptv?${params.toString()}`)
+        const d = await res.json().catch(() => ({}))
+        const chs = Array.isArray(d.channels) ? d.channels : []
+        if (!mounted) return
+        const mapped = chs.map((c: any) => ({
+          id: c.id,
+          title: c.name,
+          type: 'live' as const,
+          price: c.price ?? 0,
+          rating: c.rating ?? 4.2,
+          image: c.logo || '',
+          description: c.description || '',
+          duration: 'Live',
+          genre: c.category || 'News',
+          year: c.createdAt ? new Date(c.createdAt).getFullYear() : undefined,
+        }))
+        setChannels(mapped)
+      } catch (err) {
+        console.error(err)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
 
   const schedule = [
     { time: 'Now', title: 'Headlines Live', channel: 'World News 24', tag: 'News' },
