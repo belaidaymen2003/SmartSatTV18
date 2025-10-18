@@ -77,17 +77,38 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
+  const [error, setError] = useState('')
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setTimeout(() => {
-      if (email && password) {
-        localStorage.setItem('userCredits', '150')
-        localStorage.setItem('userEmail', email)
-        router.push('/dashboard')
+    setError('')
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email, password }),
+        credentials: 'include',
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Login failed')
+        setIsLoading(false)
+        return
       }
+      // login successful — persist minimal session for dashboard compatibility
+      try {
+        if (data.user?.email) localStorage.setItem('userEmail', data.user.email)
+        if (typeof data.user?.credits !== 'undefined') localStorage.setItem('userCredits', String(data.user.credits))
+      } catch (e) {
+        // ignore
+      }
+      router.push('/dashboard')
+    } catch (err: any) {
+      setError(err.message || 'Login failed')
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
   }
 
   return (
@@ -101,14 +122,14 @@ const LoginForm = () => {
         <div className="space-y-2">
           <label className="text-white font-medium flex items-center gap-2">
             <Mail className="w-4 h-4" />
-            Email Address
+            Email or Username
           </label>
           <input
-            type="email"
+            type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
-            placeholder="Enter your email"
+            placeholder="Enter your email or username"
             required
           />
         </div>
