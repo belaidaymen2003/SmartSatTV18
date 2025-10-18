@@ -142,17 +142,83 @@ export default function DashboardPage() {
     }
   ]
 
-  const gamingContent = [
+  const appsContent = [
     {
       id: 7,
-      title: "Gaming Championship",
-      type: "gaming" as const,
-      price: 8,
-      rating: 4.7,
+      title: "IPTV Player Pro",
+      type: "app" as const,
+      price: 25,
+      rating: 4.8,
       image: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg",
-      description: "Live esports tournament featuring top gamers",
+      description: "Professional IPTV player with advanced streaming",
+      duration: "Lifetime",
+      genre: "App",
+      year: 2024
+    },
+    {
+      id: 8,
+      title: "Stream Manager",
+      type: "app" as const,
+      price: 15,
+      rating: 4.6,
+      image: "https://images.pexels.com/photos/3944091/pexels-photo-3944091.jpeg",
+      description: "Manage all your streaming subscriptions",
+      duration: "Lifetime",
+      genre: "App",
+      year: 2024
+    }
+  ]
+
+  const subscriptionsContent = [
+    {
+      id: 9,
+      title: "Premium Monthly Pass",
+      type: "subscription" as const,
+      price: 50,
+      rating: 4.9,
+      image: "https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg",
+      description: "One month access to all premium content",
+      duration: "30 days",
+      genre: "Subscription",
+      year: 2024
+    },
+    {
+      id: 10,
+      title: "Pro 6-Month Bundle",
+      type: "subscription" as const,
+      price: 120,
+      rating: 5.0,
+      image: "https://images.pexels.com/photos/7991319/pexels-photo-7991319.jpeg",
+      description: "Six months of premium streaming access",
+      duration: "180 days",
+      genre: "Subscription",
+      year: 2024
+    }
+  ]
+
+  const iptvChannels = [
+    {
+      id: 11,
+      title: "Sports Premium Bundle",
+      type: "iptv" as const,
+      price: 35,
+      rating: 4.7,
+      image: "https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg",
+      description: "50+ sports channels including live matches",
       duration: "Live",
-      genre: "Esports",
+      genre: "Sports",
+      year: 2024
+    },
+    {
+      id: 12,
+      title: "International Channels",
+      type: "iptv" as const,
+      price: 40,
+      rating: 4.6,
+      image: "https://images.pexels.com/photos/3944091/pexels-photo-3944091.jpeg",
+      description: "150+ channels from around the world",
+      duration: "Live",
+      genre: "International",
       year: 2024
     }
   ]
@@ -160,8 +226,8 @@ export default function DashboardPage() {
   const categories = [
     { name: 'Movies', icon: <Film className="w-6 h-6" />, count: 1250, color: 'from-blue-500 to-purple-600' },
     { name: 'Series', icon: <Tv className="w-6 h-6" />, count: 850, color: 'from-green-500 to-teal-600' },
-    { name: 'Live TV', icon: <Radio className="w-6 h-6" />, count: 120, color: 'from-red-500 to-pink-600' },
-    { name: 'Gaming', icon: <Gamepad2 className="w-6 h-6" />, count: 45, color: 'from-orange-500 to-yellow-600' }
+    { name: 'IPTV Channels', icon: <Radio className="w-6 h-6" />, count: 180, color: 'from-red-500 to-pink-600' },
+    { name: 'Apps', icon: <Gamepad2 className="w-6 h-6" />, count: 45, color: 'from-orange-500 to-yellow-600' }
   ]
 
   const stats = [
@@ -290,16 +356,62 @@ export default function DashboardPage() {
           </MotionReveal>
         </section>
 
-        {/* Live Now */}
+        {/* Premium Subscriptions */}
         <section>
           <MotionReveal delayMs={120}>
             <SectionHeader
+              title="Premium Subscriptions"
+              subtitle="Unlimited access to all premium content"
+              action={<a href="/shop" className="text-sm text-white/60 hover:text-white">View All</a>}
+            />
+            <Carousel itemWidthPx={260} autoPlayMs={3500}>
+              {subscriptionsContent.map((item) => (
+                <div key={item.id}>
+                  <ContentCard
+                    content={item}
+                    onPurchase={handlePurchase}
+                    onViewDetails={handleViewDetails}
+                    userCredits={credits}
+                  />
+                </div>
+              ))}
+            </Carousel>
+          </MotionReveal>
+        </section>
+
+        {/* IPTV Channels */}
+        <section>
+          <MotionReveal delayMs={120}>
+            <SectionHeader
+              title="IPTV Channels"
+              subtitle="Live TV and streaming channels from around the world"
+              action={<a href="/shop" className="text-sm text-white/60 hover:text-white">Explore</a>}
+            />
+            <Carousel itemWidthPx={260} autoPlayMs={3200}>
+              {iptvChannels.map((item) => (
+                <div key={item.id}>
+                  <ContentCard
+                    content={item}
+                    onPurchase={handlePurchase}
+                    onViewDetails={handleViewDetails}
+                    userCredits={credits}
+                  />
+                </div>
+              ))}
+            </Carousel>
+          </MotionReveal>
+        </section>
+
+        {/* Live Channels */}
+        <section>
+          <MotionReveal delayMs={140}>
+            <SectionHeader
               title="Live Now"
-              subtitle="Breaking news, sports and esports streaming right now"
+              subtitle="Breaking news, sports and live streaming right now"
               action={<a href="/catalog" className="text-sm text-white/60 hover:text-white">Explore</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={2800}>
-              {[...liveChannels, ...gamingContent].map((item) => (
+              {liveChannels.map((item) => (
                 <div key={item.id}>
                   <ContentCard
                     content={item}
@@ -314,7 +426,7 @@ export default function DashboardPage() {
               {[
                 { time: 'Now', title: 'Global Headlines', channel: 'CNN', tag: 'News' },
                 { time: '20:30', title: 'Champions League Live', channel: 'Sports Center', tag: 'Football' },
-                { time: '21:00', title: 'Finals - Match 3', channel: 'Esports Arena', tag: 'Esports' },
+                { time: '21:00', title: 'Finals - Match 3', channel: 'Gaming Arena', tag: 'Esports' },
               ].map((row, i) => (
                 <div key={i} className="flex items-center justify-between glass rounded-xl px-4 py-3 border border-white/10">
                   <div className="flex items-center gap-3">
@@ -328,6 +440,29 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
+          </MotionReveal>
+        </section>
+
+        {/* Available Apps */}
+        <section>
+          <MotionReveal delayMs={160}>
+            <SectionHeader
+              title="Available Apps"
+              subtitle="Download powerful apps to enhance your experience"
+              action={<a href="/shop" className="text-sm text-white/60 hover:text-white">View All</a>}
+            />
+            <Carousel itemWidthPx={260} autoPlayMs={3800}>
+              {appsContent.map((item) => (
+                <div key={item.id}>
+                  <ContentCard
+                    content={item}
+                    onPurchase={handlePurchase}
+                    onViewDetails={handleViewDetails}
+                    userCredits={credits}
+                  />
+                </div>
+              ))}
+            </Carousel>
           </MotionReveal>
         </section>
 
@@ -361,13 +496,13 @@ export default function DashboardPage() {
 
         {/* Recommendations */}
         <section>
-          <MotionReveal>
+          <MotionReveal delayMs={180}>
             <SectionHeader
               title="Recommended For You"
               action={<a href="/profile" className="text-sm text-white/60 hover:text-white">Personalize</a>}
             />
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-              {featuredContent.concat(liveChannels, gamingContent).slice(0,12).map((item) => (
+              {featuredContent.concat(liveChannels, subscriptionsContent, iptvChannels, appsContent).slice(0,12).map((item) => (
                 <ContentCard
                   key={item.id}
                   content={item}
