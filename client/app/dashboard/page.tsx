@@ -82,7 +82,6 @@ export default function DashboardPage() {
     return () => { mounted = false; clearTimeout(t) }
   }, [router])
 
-  const [subscriptions, setSubscriptions] = useState<Content[]>([])
   const [appsContent, setAppsContent] = useState<Content[]>([])
   const [iptvChannelsList, setIptvChannelsList] = useState<Content[]>([])
 
@@ -123,26 +122,9 @@ export default function DashboardPage() {
           genre: c.category || 'IPTV'
         }))
 
-        // Subscriptions
-        const subsRes = await fetch('/api/catalog/subscriptions')
-        const subsJson = await subsRes.json().catch(() => ({}))
-        const subs = Array.isArray(subsJson.subscriptions) ? subsJson.subscriptions : []
-        const mappedSubs = subs.map((s: any, idx: number) => ({
-          id: s.id || idx + 1000,
-          title: s.channel?.name ? `${s.channel.name} - ${s.duration ?? 'Plan'}` : 'Subscription',
-          type: 'subscription' as const,
-          price: s.credit ?? 0,
-          rating: 4.5,
-          image: s.channel?.logo || '',
-          description: s.channel?.description || '',
-          duration: s.duration ?? '1 month',
-          genre: 'Subscription'
-        }))
-
-        if (!mounted) return
+            if (!mounted) return
         setAppsContent(mappedApps)
         setIptvChannelsList(mappedChannels)
-        setSubscriptions(mappedSubs)
       } catch (err) {
         // ignore
       }
@@ -235,28 +217,6 @@ export default function DashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
   
-        {/* Premium Subscriptions */}
-        <section>
-          <MotionReveal delayMs={120}>
-            <SectionHeader
-              title="Premium Subscriptions"
-              subtitle="Unlimited access to all premium content"
-              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
-            />
-            <Carousel itemWidthPx={260} autoPlayMs={3500}>
-              {subscriptions.map((item) => (
-                <div key={item.id}>
-                  <ContentCard
-                    content={item}
-                    onPurchase={handlePurchase}
-                    onViewDetails={handleViewDetails}
-                    userCredits={credits}
-                  />
-                </div>
-              ))}
-            </Carousel>
-          </MotionReveal>
-        </section>
 
         {/* IPTV Channels */}
         <section>
@@ -316,7 +276,6 @@ export default function DashboardPage() {
               <Carousel itemWidthPx={224} autoPlayMs={3400}>
                 {[
                   ...demoVideos,
-                  ...subscriptions,
                   ...iptvChannelsList,
                   ...appsContent,
                 ]
