@@ -281,47 +281,6 @@ export default function DashboardPage() {
           </MotionReveal>
         </section>
 
-        {/* Live Channels */}
-        <section>
-          <MotionReveal delayMs={140}>
-            <SectionHeader
-              title="Live Now"
-              subtitle="Breaking news, sports and live streaming right now"
-              action={<a href="/live" className="text-sm text-white/60 hover:text-white">Explore</a>}
-            />
-            <Carousel itemWidthPx={260} autoPlayMs={2800}>
-              {liveChannels.map((item) => (
-                <div key={item.id}>
-                  <ContentCard
-                    content={item}
-                    onPurchase={handlePurchase}
-                    onViewDetails={handleViewDetails}
-                    userCredits={credits}
-                  />
-                </div>
-              ))}
-            </Carousel>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-white/70">
-              {[
-                { time: 'Now', title: 'Global Headlines', channel: 'CNN', tag: 'News' },
-                { time: '20:30', title: 'Champions League Live', channel: 'Sports Center', tag: 'Football' },
-                { time: '21:00', title: 'Finals - Match 3', channel: 'Gaming Arena', tag: 'Esports' },
-              ].map((row, i) => (
-                <div key={i} className="flex items-center justify-between glass rounded-xl px-4 py-3 border border-white/10">
-                  <div className="flex items-center gap-3">
-                    <span className="px-2 py-1 rounded bg-white/10">{row.time}</span>
-                    <div>
-                      <div className="font-semibold text-white">{row.title}</div>
-                      <div className="text-white/60">{row.channel}</div>
-                    </div>
-                  </div>
-                  <span className="px-2 py-1 rounded-full bg-red-500/20 text-red-300 text-xs">{row.tag}</span>
-                </div>
-              ))}
-            </div>
-          </MotionReveal>
-        </section>
-
         {/* Available Apps */}
         <section>
           <MotionReveal delayMs={160}>
