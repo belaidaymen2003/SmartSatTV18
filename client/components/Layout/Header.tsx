@@ -87,12 +87,7 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
           {/* User Info & Actions */}
           <div className="flex items-center gap-4">
             {/* Credits Display */}
-            {sessionCredits > 0 && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30">
-                <Coins className="w-5 h-5 text-yellow-400" />
-                <span className="text-white font-semibold">{sessionCredits} Credits</span>
-              </div>
-            )}
+            {/* Credits are shown inside the profile dropdown only */}
             
             {/* Desktop Actions: single profile dropdown */}
             <div className="hidden md:flex items-center gap-3">
