@@ -218,6 +218,29 @@ export default function DashboardPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
   
 
+        {/* Streaming Preview */}
+        <section>
+          <MotionReveal delayMs={120}>
+            <SectionHeader
+              title="Streaming"
+              subtitle="Preview streaming plans and featured content"
+              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
+            />
+            <Carousel itemWidthPx={260} autoPlayMs={3500}>
+              {demoVideos.map((item) => (
+                <div key={item.id}>
+                  <ContentCard
+                    content={item}
+                    onPurchase={handlePurchase}
+                    onViewDetails={handleViewDetails}
+                    userCredits={credits}
+                  />
+                </div>
+              ))}
+            </Carousel>
+          </MotionReveal>
+        </section>
+
         {/* IPTV Channels */}
         <section>
           <MotionReveal delayMs={120}>
