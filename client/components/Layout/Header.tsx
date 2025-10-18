@@ -154,12 +154,6 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
                 Support
               </button>
               <div className="flex items-center gap-3 pt-4 border-t border-white/10">
-                <button className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-                  <Bell className="w-5 h-5 text-white" />
-                </button>
-                <button className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-                  <Settings className="w-5 h-5 text-white" />
-                </button>
                 <button
                   onClick={handleLogout}
                   className="p-2 rounded-full bg-red-500/20 hover:bg-red-500/30 transition-colors"
