@@ -78,10 +78,10 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
           <nav className="hidden md:flex items-center gap-6">
             <a href="/dashboard" className="text-white/80 hover:text-white transition-colors">Home</a>
             <a href="/catalog" className="text-white/80 hover:text-white transition-colors">Catalog</a>
+            <a href="/shop" className="text-white/80 hover:text-white transition-colors">Shop</a>
             <a href="/live" className="text-white/80 hover:text-white transition-colors">Live TV</a>
             <a href="/search" className="text-white/80 hover:text-white transition-colors">Search</a>
             <a href="/profile" className="text-white/80 hover:text-white transition-colors">My Space</a>
-            <a href="/support" className="text-white/80 hover:text-white transition-colors">Support</a>
           </nav>
 
           {/* User Info & Actions */}
@@ -125,6 +125,12 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
                 Catalog
               </button>
               <button
+                onClick={() => { setIsMenuOpen(false); window.location.href = '/shop' }}
+                className="text-white/80 hover:text-white transition-colors text-left"
+              >
+                Shop
+              </button>
+              <button
                 onClick={() => { setIsMenuOpen(false); window.location.href = '/live' }}
                 className="text-white/80 hover:text-white transition-colors text-left"
               >
@@ -141,12 +147,6 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
                 className="text-white/80 hover:text-white transition-colors text-left"
               >
                 My Space
-              </button>
-              <button
-                onClick={() => { setIsMenuOpen(false); window.location.href = '/support' }}
-                className="text-white/80 hover:text-white transition-colors text-left"
-              >
-                Support
               </button>
               <div className="flex items-center gap-3 pt-4 border-t border-white/10">
                 <button
