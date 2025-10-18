@@ -136,12 +136,6 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
                 Applications
               </button>
               <button
-                onClick={() => { setIsMenuOpen(false); window.location.href = '/live' }}
-                className="text-white/80 hover:text-white transition-colors text-left"
-              >
-                Live TV
-              </button>
-              <button
                 onClick={() => { setIsMenuOpen(false); window.location.href = '/profile' }}
                 className="text-white/80 hover:text-white transition-colors text-left"
               >
