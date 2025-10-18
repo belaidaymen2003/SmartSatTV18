@@ -267,7 +267,7 @@ export default function DashboardPage() {
               action={<a href="/iptv" className="text-sm text-white/60 hover:text-white">Explore</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3200}>
-              {iptvChannels.map((item) => (
+              {iptvChannelsList.map((item) => (
                 <div key={item.id}>
                   <ContentCard
                     content={item}
