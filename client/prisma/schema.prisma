@@ -55,7 +55,7 @@ enum Auth {
   CONNECTED
   DISCONNECTED
 }
-
+//ss
 enum DurationPlan {
   ONE_MONTH
   SIX_MONTHS
@@ -66,6 +66,7 @@ enum Status {
   ACTIVE
   EXPIRED
   CANCELLED
+  SOLD_OUT
 }
 
 enum Category {
