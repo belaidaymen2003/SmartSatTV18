@@ -106,7 +106,7 @@ export default function IPTVPage() {
   }
 
   const stats = [
-    { label: 'Total Packages', value: iptvPackages.length.toString(), icon: <Satellite className="w-5 h-5" /> },
+    { label: 'Total Packages', value: totalPackages.toString(), icon: <Satellite className="w-5 h-5" /> },
     { label: 'Active Subscribers', value: '35K+', icon: <Users className="w-5 h-5" /> },
     { label: 'Avg Rating', value: '4.7★', icon: <Star className="w-5 h-5" /> }
   ]
