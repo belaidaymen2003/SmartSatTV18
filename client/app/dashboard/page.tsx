@@ -476,7 +476,7 @@ export default function DashboardPage() {
                 action={<a href="/profile" className="text-sm text-white/60 hover:text-white">Manage</a>}
               />
               <Carousel itemWidthPx={224} autoPlayMs={3400}>
-                {featuredContent.concat(liveChannels, gamingContent)
+                {featuredContent.concat(liveChannels, subscriptionsContent, iptvChannels, appsContent)
                   .filter((c) => watchlistIds.includes(c.id))
                   .map((item) => (
                     <div key={item.id}>
