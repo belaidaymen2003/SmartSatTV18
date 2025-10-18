@@ -54,6 +54,7 @@ export default function ContentDetailPage() {
   const contentId = parseInt(params.id as string)
 
   const [contentDetails, setContentDetails] = useState<ContentDetail | null>(null)
+  const [contentLoading, setContentLoading] = useState(true)
 
   useEffect(() => {
     let mounted = true
@@ -109,6 +110,8 @@ export default function ContentDetailPage() {
         if (mounted) setContentDetails(null)
       } catch (err) {
         console.error(err)
+      } finally {
+        if (mounted) setContentLoading(false)
       }
     })()
     return () => { mounted = false }
