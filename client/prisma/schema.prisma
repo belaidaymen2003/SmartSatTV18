@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  APPROVED
+  BANNED
+}
+
+enum ItemCategory {
+  MOVIE
+  TV_SERIES
+  ANIME
+  CARTOON
+  LIVE_TV
+  STREAMING
+}
+
+enum ItemStatus {
+  VISIBLE
+  HIDDEN
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  HIDDEN
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  HIDDEN
+}
+
+enum Quality {
+  SD
+  HD
+  FullHD
+  K4
+}
+
+enum Auth {
+  CONNECTED
+  DISCONNECTED
+}
+
+enum DurationPlan {
+  ONE_MONTH
+  SIX_MONTHS
+  ONE_YEAR
+}
+
+enum Status {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum Category {
+  IPTV
+  STREAMING
+}
+
+model User {
+  id               Int                   @id @default(autoincrement())
+  email            String                @unique
+  username         String                @unique
+  name             String
+  passwordHash     String
+  role             Role                  @default(USER)
+  credits          Int                   @default(0)
+  authLastAt       DateTime?
+  status           UserStatus            @default(APPROVED)
+  video            Video[]
+  auth             Auth                  @default(DISCONNECTED)
+  beinJobs         BeInSportActivation[] @relation("BeInByUser")
+  subscriptionplan SubscriptionPlan[]
+  appDownload      CatalogApp[]
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  @@index([role, status])
+}
+
+model Video {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  thumbnail   String?
+  videoUrl    String
+  price       Float
+  userId      Int?
+  user        User?    @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CatalogApp {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String
+  downloadLink String
+  image        String
+  credit       Float
+  version      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       Int?
+  user         User?    @relation(fields: [userId], references: [id])
+}
+
+model Settings {
+  id                 Int      @id @default(1)
+  brandName          String   @default("HOTFLIX")
+  accentColor        String   @default("#f97316")
+  allowRegistrations Boolean  @default(true)
+  maintenanceMode    Boolean  @default(false)
+  updatedAt          DateTime @updatedAt
+}
+
+model BeInSportActivation {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique
+  customerId String
+  months     Int
+  createdBy  Int?
+  createdAt  DateTime @default(now())
+
+  author User? @relation("BeInByUser", fields: [createdBy], references: [id])
+}
+
+model IPTVChannel {
+  id            Int            @id @default(autoincrement())
+  name          String
+  logo          String?
+  description   String?
+  category      Category
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[]
+}
+
+model SubscriptionPlan {
+  id             Int          @id @default(autoincrement())
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId Int?
+  user           User?         @relation(fields: [userId], references: [id])
+  userId         Int?
+  status         Status       @default(ACTIVE)
+  startDate      DateTime     @default(now())
+  endDate        DateTime
+  updatedAt      DateTime     @updatedAt
+}
+
+model Subscription {
+  id               Int                @id @default(autoincrement())
+  credit           Float              @default(0)
+  code             String?            @unique
+  channel          IPTVChannel        @relation(fields: [channelId], references: [id])
+  channelId        Int
+  duration         DurationPlan       @default(ONE_MONTH)
+  status           Status             @default(ACTIVE)
+  subscriptionplan SubscriptionPlan[]
+  createAt         DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
