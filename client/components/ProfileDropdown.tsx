@@ -74,10 +74,6 @@ export default function ProfileDropdown() {
         <div className="flex items-center gap-2">
           <User className="w-5 h-5 text-white" />
           <div className="text-white/90 text-sm">{user?.name || user?.email?.split('@')[0] || 'User'}</div>
-          <div className="ml-2 px-3 py-1 rounded-full bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-yellow-400" />
-            <span className="text-white text-sm font-semibold">{user?.credits ?? 0}</span>
-          </div>
         </div>
       </button>
 
