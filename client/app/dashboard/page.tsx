@@ -313,7 +313,7 @@ export default function DashboardPage() {
           <MotionReveal>
             <SectionHeader
               title="Continue Watching"
-              action={<a href="/catalog" className="text-sm text-white/60 hover:text-white">View All</a>}
+              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
             />
             <Carousel itemWidthPx={224} autoPlayMs={3200}>
               {featuredContent.map((item) => (
@@ -335,7 +335,7 @@ export default function DashboardPage() {
           <MotionReveal delayMs={80}>
             <SectionHeader
               title="Top 10 Movies To Watch"
-              action={<a href="/catalog" className="text-sm text-white/60 hover:text-white">See More</a>}
+              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">See More</a>}
             />
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {Array.from({ length: 10 }).map((_, idx) => {
@@ -362,7 +362,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="Premium Subscriptions"
               subtitle="Unlimited access to all premium content"
-              action={<a href="/shop" className="text-sm text-white/60 hover:text-white">View All</a>}
+              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3500}>
               {subscriptionsContent.map((item) => (
@@ -385,7 +385,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="IPTV Channels"
               subtitle="Live TV and streaming channels from around the world"
-              action={<a href="/shop" className="text-sm text-white/60 hover:text-white">Explore</a>}
+              action={<a href="/iptv" className="text-sm text-white/60 hover:text-white">Explore</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3200}>
               {iptvChannels.map((item) => (
@@ -408,7 +408,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="Live Now"
               subtitle="Breaking news, sports and live streaming right now"
-              action={<a href="/catalog" className="text-sm text-white/60 hover:text-white">Explore</a>}
+              action={<a href="/live" className="text-sm text-white/60 hover:text-white">Explore</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={2800}>
               {liveChannels.map((item) => (
@@ -449,7 +449,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="Available Apps"
               subtitle="Download powerful apps to enhance your experience"
-              action={<a href="/shop" className="text-sm text-white/60 hover:text-white">View All</a>}
+              action={<a href="/applications" className="text-sm text-white/60 hover:text-white">View All</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3800}>
               {appsContent.map((item) => (
@@ -476,7 +476,7 @@ export default function DashboardPage() {
                 action={<a href="/profile" className="text-sm text-white/60 hover:text-white">Manage</a>}
               />
               <Carousel itemWidthPx={224} autoPlayMs={3400}>
-                {featuredContent.concat(liveChannels, gamingContent)
+                {featuredContent.concat(liveChannels, subscriptionsContent, iptvChannels, appsContent)
                   .filter((c) => watchlistIds.includes(c.id))
                   .map((item) => (
                     <div key={item.id}>
