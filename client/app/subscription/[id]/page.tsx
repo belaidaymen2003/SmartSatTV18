@@ -146,7 +146,7 @@ export default function SubscriptionDetailPage() {
     if (!selectedSubscription || !channel) return
 
     if (credits < selectedSubscription.credit) {
-      alert('Insufficient credits! Please add more credits to your account.')
+      alert(`Insufficient credits! You need ${selectedSubscription.credit} credits but only have ${credits}. Please add more credits to your account.`)
       return
     }
 
@@ -163,21 +163,14 @@ export default function SubscriptionDetailPage() {
       })
 
       if (res.ok) {
+        const data = await res.json()
         const newCredits = credits - selectedSubscription.credit
         setCredits(newCredits)
         localStorage.setItem('userCredits', newCredits.toString())
 
-        const ownedSubs = localStorage.getItem('ownedSubscriptions')
-        let ownedIds: number[] = []
-        if (ownedSubs) { try { ownedIds = JSON.parse(ownedSubs) } catch { ownedIds = [] } }
-        if (!ownedIds.includes(selectedSubscription.id)) {
-          ownedIds.push(selectedSubscription.id)
-        }
-        localStorage.setItem('ownedSubscriptions', JSON.stringify(ownedIds))
-
         const message = selectedSubscription.code
-          ? `Successfully purchased! Your code: ${selectedSubscription.code}`
-          : `Successfully subscribed to "${channel.name}" for ${selectedSubscription.credit} credits!`
+          ? `✓ Successfully purchased! Your code: ${selectedSubscription.code}\n\nView your subscription details in your profile.`
+          : `✓ Successfully subscribed to "${channel.name}"`
         alert(message)
 
         setSubscriptions((subs) =>
@@ -194,6 +187,10 @@ export default function SubscriptionDetailPage() {
         } else {
           setSelectedSubscription(null)
         }
+
+        setTimeout(() => {
+          router.push('/profile')
+        }, 1000)
       } else {
         const err = await res.json().catch(() => ({}))
         alert(`Error: ${err.error || 'Failed to purchase subscription'}`)
