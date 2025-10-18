@@ -20,7 +20,7 @@ export async function GET(
         channelId,
         status: statusFilter as any
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createAt: 'desc' }
     })
 
     return NextResponse.json({ subscriptions, total: subscriptions.length })
