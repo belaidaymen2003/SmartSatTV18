@@ -15,13 +15,20 @@ export async function GET(req: NextRequest) {
     }
 
     const q = (searchParams.get('q') || '').trim()
-    const category = (searchParams.get('category') || '').trim()
+    const rawCategory = (searchParams.get('category') || '').trim()
     const page = Math.max(1, Number(searchParams.get('page') || 1))
     const pageSize = Math.min(100, Math.max(1, Number(searchParams.get('pageSize') || 12)))
 
     const and: any[] = []
     if (q) and.push({ name: { contains: q, mode: 'insensitive' } })
-    if (category && category !== 'all') and.push({ category: category.toUpperCase() })
+
+    // Normalize category to Prisma enum values (IPTV | STREAMING). Accept 'all', 'iptv', 'streaming' (case-insensitive)
+    if (rawCategory) {
+      const lc = rawCategory.toLowerCase()
+      if (lc === 'iptv') and.push({ category: 'IPTV' })
+      else if (lc === 'streaming') and.push({ category: 'STREAMING' })
+      // if user passed 'all' or unknown value, don't filter by category
+    }
 
     const where = and.length ? { AND: and } : {}
 
