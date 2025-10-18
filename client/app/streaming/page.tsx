@@ -45,155 +45,40 @@ export default function StreamingPage() {
     if (storedEmail) setUserEmail(storedEmail)
   }, [router])
 
-  const streamingPlans: StreamingPlan[] = [
-    {
-      id: 1,
-      title: "Basic Monthly",
-      duration: "monthly",
-      price: 9,
-      rating: 4.2,
-      image: "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg",
-      description: "Essential streaming with standard quality",
-      features: [
-        "HD Quality (720p)",
-        "1 Simultaneous Stream",
-        "Unlimited Streaming",
-        "Mobile App Access",
-        "Standard Customer Support"
-      ]
-    },
-    {
-      id: 2,
-      title: "Premium Monthly Pass",
-      duration: "monthly",
-      price: 50,
-      rating: 4.9,
-      image: "https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg",
-      description: "Full premium access with all features",
-      features: [
-        "4K Ultra HD",
-        "4 Simultaneous Streams",
-        "Unlimited Streaming",
-        "Offline Downloads",
-        "Priority Support",
-        "Ad-Free Experience"
-      ]
-    },
-    {
-      id: 3,
-      title: "Standard Monthly",
-      duration: "monthly",
-      price: 25,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/7991319/pexels-photo-7991319.jpeg",
-      description: "Enhanced streaming with great quality",
-      features: [
-        "Full HD (1080p)",
-        "2 Simultaneous Streams",
-        "Unlimited Streaming",
-        "Mobile App Access",
-        "Standard Support"
-      ]
-    },
-    {
-      id: 4,
-      title: "Pro 3-Month Bundle",
-      duration: "quarterly",
-      price: 120,
-      rating: 4.8,
-      image: "https://images.pexels.com/photos/7991320/pexels-photo-7991320.jpeg",
-      description: "Three months of premium streaming",
-      features: [
-        "4K Ultra HD",
-        "4 Simultaneous Streams",
-        "Unlimited Streaming",
-        "Offline Downloads",
-        "Family Sharing",
-        "Priority Support"
-      ],
-      savings: "Save 20%"
-    },
-    {
-      id: 5,
-      title: "Pro 6-Month Bundle",
-      duration: "quarterly",
-      price: 120,
-      rating: 5.0,
-      image: "https://images.pexels.com/photos/7991319/pexels-photo-7991319.jpeg",
-      description: "Six months of unlimited premium content",
-      features: [
-        "4K Ultra HD",
-        "4 Simultaneous Streams",
-        "Unlimited Streaming",
-        "Offline Downloads",
-        "Family Sharing",
-        "Priority Support",
-        "Early Access to New Content"
-      ],
-      savings: "Save 25%"
-    },
-    {
-      id: 6,
-      title: "Annual Premium Pass",
-      duration: "annual",
-      price: 199,
-      rating: 4.9,
-      image: "https://images.pexels.com/photos/7991225/pexels-photo-7991225.jpeg",
-      description: "Full year of unlimited premium streaming",
-      features: [
-        "4K Ultra HD",
-        "4 Simultaneous Streams",
-        "Unlimited Streaming",
-        "Offline Downloads",
-        "Family Sharing",
-        "VIP Support",
-        "Free Monthly Bonus Credits",
-        "Early Access to Originals"
-      ],
-      savings: "Save 40%"
-    },
-    {
-      id: 7,
-      title: "2-Year Premium Bundle",
-      duration: "annual",
-      price: 349,
-      rating: 5.0,
-      image: "https://images.pexels.com/photos/7991580/pexels-photo-7991580.jpeg",
-      description: "Maximum savings with 2 years of access",
-      features: [
-        "4K Ultra HD",
-        "4 Simultaneous Streams",
-        "Unlimited Streaming",
-        "Offline Downloads",
-        "Family Sharing",
-        "VIP Support 24/7",
-        "Monthly Bonus Credits",
-        "Early Access to New Content",
-        "Free Upgrades"
-      ],
-      savings: "Save 50%"
-    },
-    {
-      id: 8,
-      title: "Family Plan - Annual",
-      duration: "annual",
-      price: 249,
-      rating: 4.8,
-      image: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg",
-      description: "Perfect for families with up to 6 profiles",
-      features: [
-        "4K Ultra HD",
-        "6 Simultaneous Streams",
-        "6 User Profiles",
-        "Parental Controls",
-        "Offline Downloads",
-        "Priority Support",
-        "Ad-Free Experience",
-        "Family Sharing"
-      ],
-      savings: "Save 35%"
-    }
-  ]
+  const [streamingPlans, setStreamingPlans] = useState<StreamingPlan[]>([])
+  const [totalPlans, setTotalPlans] = useState(0)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const params = new URLSearchParams()
+        params.set('page', '1')
+        params.set('pageSize', '100')
+        const res = await fetch(`/api/catalog/streaming?${params.toString()}`)
+        const d = await res.json().catch(() => ({}))
+        const videos = Array.isArray(d.videos) ? d.videos : []
+        if (!mounted) return
+        const mapped = videos.map((v: any) => ({
+          id: v.id,
+          title: v.title || 'Stream',
+          duration: 'monthly' as const,
+          price: v.price ?? 0,
+          rating: 4.5,
+          image: v.thumbnail || '',
+          description: v.description || '',
+          features: (v.description ? String(v.description).split('.').slice(0,5).map(s => s.trim()).filter(Boolean) : []),
+          savings: undefined,
+        }))
+        setStreamingPlans(mapped)
+        setTotalPlans(d.total || mapped.length)
+      } catch (err) {
+        console.error(err)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
 
   const durations = [
     { id: 'all', label: 'All Plans' },
