@@ -14,12 +14,33 @@ export async function GET(req: NextRequest) {
 
     const where = and.length ? { AND: and } : {}
 
-    const [total, videos] = await Promise.all([
-      prisma.video.count({ where }),
-      prisma.video.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * pageSize, take: pageSize }),
-    ])
+    // Try standard prisma query first. If the DB schema is missing some columns (e.g. userId),
+    // fall back to raw SQL selecting only known columns to avoid crashing.
+    try {
+      const [total, videos] = await Promise.all([
+        prisma.video.count({ where }),
+        prisma.video.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * pageSize, take: pageSize }),
+      ])
+      return NextResponse.json({ videos, total, page, pageSize })
+    } catch (err: any) {
+      console.error('STREAMING API (prisma) ERROR, falling back to raw SQL:', err?.message || err)
+      // Fallback: select explicit columns that are expected to exist in older schemas
+      try {
+        const offset = (page - 1) * pageSize
+        const videos: any[] = await prisma.$queryRaw`
+          SELECT id, title, description, thumbnail, "videoUrl", price, "createdAt", "updatedAt"
+          FROM "Video"
+          ${prisma.raw(`ORDER BY "createdAt" DESC LIMIT ${pageSize} OFFSET ${offset}`)}
+        `
 
-    return NextResponse.json({ videos, total, page, pageSize })
+        const countRaw: any = await prisma.$queryRaw`SELECT COUNT(*)::int AS count FROM "Video"`
+        const total = Array.isArray(countRaw) && countRaw[0] && (countRaw[0].count ?? countRaw[0].COUNT) ? Number(countRaw[0].count ?? countRaw[0].COUNT) : videos.length
+        return NextResponse.json({ videos, total, page, pageSize, fallback: true })
+      } catch (err2: any) {
+        console.error('STREAMING API fallback failed:', err2?.message || err2)
+        return NextResponse.json({ error: err2?.message || String(err2) }, { status: 500 })
+      }
+    }
   } catch (err: any) {
     console.error('STREAMING API ERROR', err?.message || err)
     return NextResponse.json({ error: err?.message || String(err) }, { status: 500 })
