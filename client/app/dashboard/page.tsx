@@ -234,54 +234,7 @@ export default function DashboardPage() {
       </section>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-        {/* Continue Watching */}
-        <section>
-          <MotionReveal>
-            <SectionHeader
-              title="Continue Watching"
-              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
-            />
-            <Carousel itemWidthPx={224} autoPlayMs={3200}>
-              {featuredContent.map((item) => (
-                <div key={item.id}>
-                  <ContentCard
-                    content={item}
-                    onPurchase={handlePurchase}
-                    onViewDetails={handleViewDetails}
-                    userCredits={credits}
-                  />
-                </div>
-              ))}
-            </Carousel>
-          </MotionReveal>
-        </section>
-
-        {/* Top Picks */}
-        <section>
-          <MotionReveal delayMs={80}>
-            <SectionHeader
-              title="Top 10 Movies To Watch"
-              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">See More</a>}
-            />
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {Array.from({ length: 10 }).map((_, idx) => {
-                const item = featuredContent[idx % featuredContent.length]
-                return (
-                  <div key={idx} className="relative">
-                    <div className="absolute -left-2 -top-2 z-10 w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-orange-500 text-white text-sm font-bold grid place-items-center shadow-lg">{idx+1}</div>
-                    <ContentCard
-                      content={item}
-                      onPurchase={handlePurchase}
-                      onViewDetails={handleViewDetails}
-                      userCredits={credits}
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          </MotionReveal>
-        </section>
-
+  
         {/* Premium Subscriptions */}
         <section>
           <MotionReveal delayMs={120}>
