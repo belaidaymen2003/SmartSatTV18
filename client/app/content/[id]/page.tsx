@@ -126,13 +126,15 @@ export default function ContentDetailPage() {
       router.push('/')
       return
     }
-    if (!contentDetails) {
-      router.push('/catalog')
-      return
-    }
 
     if (storedCredits) setCredits(parseInt(storedCredits))
     if (storedEmail) setUserEmail(storedEmail)
+
+    // only redirect to catalog if loading finished and no content found
+    if (!contentLoading && !contentDetails) {
+      router.push('/catalog')
+      return
+    }
 
     const wl = localStorage.getItem('watchlist')
     if (wl) {
@@ -142,7 +144,7 @@ export default function ContentDetailPage() {
     if (owned) {
       try { setIsOwned(JSON.parse(owned).includes(contentId)) } catch {}
     }
-  }, [router, contentDetails, contentId])
+  }, [router, contentDetails, contentId, contentLoading])
 
   const getCategoryIcon = (type: string) => {
     switch (type) {
