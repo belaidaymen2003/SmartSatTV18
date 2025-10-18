@@ -66,6 +66,7 @@ enum Status {
   ACTIVE
   EXPIRED
   CANCELLED
+  SOLD_OUT
 }
 
 enum Category {
