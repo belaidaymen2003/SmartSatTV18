@@ -124,7 +124,7 @@ export default function DashboardPage() {
         }))
 
         // Subscriptions
-        const subsRes = await fetch('/admin/api/admin/categories/category/subscription')
+        const subsRes = await fetch('/api/catalog/subscriptions')
         const subsJson = await subsRes.json().catch(() => ({}))
         const subs = Array.isArray(subsJson.subscriptions) ? subsJson.subscriptions : []
         const mappedSubs = subs.map((s: any, idx: number) => ({
