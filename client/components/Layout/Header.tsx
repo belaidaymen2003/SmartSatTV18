@@ -77,10 +77,10 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <a href="/dashboard" className="text-white/80 hover:text-white transition-colors">Home</a>
-            <a href="/catalog" className="text-white/80 hover:text-white transition-colors">Catalog</a>
-            <a href="/shop" className="text-white/80 hover:text-white transition-colors">Shop</a>
+            <a href="/streaming" className="text-white/80 hover:text-white transition-colors">Streaming</a>
+            <a href="/iptv" className="text-white/80 hover:text-white transition-colors">IPTV</a>
+            <a href="/applications" className="text-white/80 hover:text-white transition-colors">Applications</a>
             <a href="/live" className="text-white/80 hover:text-white transition-colors">Live TV</a>
-            <a href="/search" className="text-white/80 hover:text-white transition-colors">Search</a>
             <a href="/profile" className="text-white/80 hover:text-white transition-colors">My Space</a>
           </nav>
 
@@ -119,28 +119,28 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
                 Home
               </button>
               <button
-                onClick={() => { setIsMenuOpen(false); window.location.href = '/catalog' }}
+                onClick={() => { setIsMenuOpen(false); window.location.href = '/streaming' }}
                 className="text-white/80 hover:text-white transition-colors text-left"
               >
-                Catalog
+                Streaming
               </button>
               <button
-                onClick={() => { setIsMenuOpen(false); window.location.href = '/shop' }}
+                onClick={() => { setIsMenuOpen(false); window.location.href = '/iptv' }}
                 className="text-white/80 hover:text-white transition-colors text-left"
               >
-                Shop
+                IPTV
+              </button>
+              <button
+                onClick={() => { setIsMenuOpen(false); window.location.href = '/applications' }}
+                className="text-white/80 hover:text-white transition-colors text-left"
+              >
+                Applications
               </button>
               <button
                 onClick={() => { setIsMenuOpen(false); window.location.href = '/live' }}
                 className="text-white/80 hover:text-white transition-colors text-left"
               >
                 Live TV
-              </button>
-              <button
-                onClick={() => { setIsMenuOpen(false); window.location.href = '/search' }}
-                className="text-white/80 hover:text-white transition-colors text-left"
-              >
-                Search
               </button>
               <button
                 onClick={() => { setIsMenuOpen(false); window.location.href = '/profile' }}
