@@ -28,20 +28,23 @@ export async function GET(req: NextRequest) {
         status: true,
         video: { select: { id: true, title: true, thumbnail: true, videoUrl: true, createdAt: true } },
         appDownload: { select: { id: true, name: true, downloadLink: true, image: true, credit: true, version: true, createdAt: true } },
-        subscriptionplan: {
+        userSubscriptions: {
           select: {
             id: true,
             status: true,
+            code: true,
             startDate: true,
             endDate: true,
             subscription: {
               select: {
                 id: true,
                 credit: true,
-                channel: { select: { id: true, name: true, logo: true } },
+                duration: true,
+                channel: { select: { id: true, name: true, logo: true, category: true } },
               },
             },
           },
+          orderBy: { createdAt: 'desc' },
         },
       },
     })
