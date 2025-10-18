@@ -82,187 +82,73 @@ export default function DashboardPage() {
     return () => { mounted = false; clearTimeout(t) }
   }, [router])
 
-  const featuredContent: Content[] = [
-    {
-      id: 1,
-      title: "Avatar: The Way of Water",
-      type: "movie",
-      price: 18,
-      rating: 4.8,
-      image: "https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg",
-      description: "Epic sci-fi adventure in stunning underwater worlds",
-      duration: "3h 12m",
-      genre: "Sci-Fi",
-      year: 2022,
-      actors: ["Sam Worthington", "Zoe Saldana", "Sigourney Weaver"],
-      director: "James Cameron",
-      trailer: "https://videos.pexels.com/video-files/7978887/7978887-uhd_2560_1440_30fps.mp4"
-    },
-    {
-      id: 2,
-      title: "Stranger Things S4",
-      type: "series",
-      price: 25,
-      rating: 4.9,
-      image: "https://images.pexels.com/photos/7991319/pexels-photo-7991319.jpeg",
-      description: "Supernatural thriller series with mind-bending mysteries",
-      duration: "8 episodes",
-      genre: "Thriller",
-      year: 2022,
-      actors: ["Millie Bobby Brown", "Finn Wolfhard", "David Harbour"],
-      trailer: "https://videos.pexels.com/video-files/8963635/8963635-uhd_2560_1440_25fps.mp4"
-    },
-    {
-      id: 3,
-      title: "The Batman",
-      type: "movie",
-      price: 15,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/7991225/pexels-photo-7991225.jpeg",
-      description: "Dark knight returns in this thrilling superhero film",
-      duration: "2h 56m",
-      genre: "Action",
-      year: 2022,
-      actors: ["Robert Pattinson", "Zoë Kravitz", "Paul Dano"],
-      director: "Matt Reeves",
-      trailer: "https://videos.pexels.com/video-files/2897627/2897627-uhd_2732_1440_25fps.mp4"
-    },
-    {
-      id: 4,
-      title: "House of Dragon",
-      type: "series",
-      price: 20,
-      rating: 4.4,
-      image: "https://images.pexels.com/photos/7991580/pexels-photo-7991580.jpeg",
-      description: "Epic fantasy series set in the world of Westeros",
-      duration: "10 episodes",
-      genre: "Fantasy",
-      year: 2022,
-      actors: ["Paddy Considine", "Emma D'Arcy", "Matt Smith"],
-      trailer: "https://videos.pexels.com/video-files/2775949/2775949-uhd_2560_1440_25fps.mp4"
-    }
-  ]
+  const [subscriptions, setSubscriptions] = useState<Content[]>([])
+  const [appsContent, setAppsContent] = useState<Content[]>([])
+  const [iptvChannelsList, setIptvChannelsList] = useState<Content[]>([])
 
-  const liveChannels = [
-    {
-      id: 5,
-      title: "CNN Live Stream",
-      type: "live" as const,
-      price: 10,
-      rating: 4.5,
-      image: "https://images.pexels.com/photos/3944091/pexels-photo-3944091.jpeg",
-      description: "24/7 news coverage and breaking news updates",
-      duration: "Live",
-      genre: "News",
-      year: 2024
-    },
-    {
-      id: 6,
-      title: "Sports Center Live",
-      type: "live" as const,
-      price: 12,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg",
-      description: "Live sports coverage and highlights",
-      duration: "Live",
-      genre: "Sports",
-      year: 2024
-    }
-  ]
+  // Fetch production data from admin APIs and map to Content shape
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        // Apps
+        const appsRes = await fetch('/admin/api/admin/catalog/appdownload')
+        const appsJson = await appsRes.json().catch(() => ({}))
+        const apps = Array.isArray(appsJson.apps) ? appsJson.apps : []
+        const mappedApps = apps.map((a: any) => ({
+          id: a.id,
+          title: a.name || a.title || 'App',
+          type: 'app' as const,
+          price: a.credit ?? 0,
+          rating: 4.5,
+          image: a.image || '',
+          description: a.description || '',
+          duration: 'Lifetime',
+          genre: 'App'
+        }))
 
-  const appsContent = [
-    {
-      id: 7,
-      title: "IPTV Player Pro",
-      type: "app" as const,
-      price: 25,
-      rating: 4.8,
-      image: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg",
-      description: "Professional IPTV player with advanced streaming",
-      duration: "Lifetime",
-      genre: "App",
-      year: 2024
-    },
-    {
-      id: 8,
-      title: "Stream Manager",
-      type: "app" as const,
-      price: 15,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/3944091/pexels-photo-3944091.jpeg",
-      description: "Manage all your streaming subscriptions",
-      duration: "Lifetime",
-      genre: "App",
-      year: 2024
-    }
-  ]
+        // IPTV Channels
+        const chRes = await fetch('/admin/api/admin/categories/category?category=All&pageSize=12')
+        const chJson = await chRes.json().catch(() => ({}))
+        const channels = Array.isArray(chJson.channels) ? chJson.channels : []
+        const mappedChannels = channels.map((c: any) => ({
+          id: c.id,
+          title: c.name || 'Channel',
+          type: 'live' as const,
+          price: 0,
+          rating: 4.2,
+          image: c.logo || '',
+          description: c.description || '',
+          duration: 'Live',
+          genre: c.category || 'IPTV'
+        }))
 
-  const subscriptionsContent = [
-    {
-      id: 9,
-      title: "Premium Monthly Pass",
-      type: "subscription" as const,
-      price: 50,
-      rating: 4.9,
-      image: "https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg",
-      description: "One month access to all premium content",
-      duration: "30 days",
-      genre: "Subscription",
-      year: 2024
-    },
-    {
-      id: 10,
-      title: "Pro 6-Month Bundle",
-      type: "subscription" as const,
-      price: 120,
-      rating: 5.0,
-      image: "https://images.pexels.com/photos/7991319/pexels-photo-7991319.jpeg",
-      description: "Six months of premium streaming access",
-      duration: "180 days",
-      genre: "Subscription",
-      year: 2024
-    }
-  ]
+        // Subscriptions
+        const subsRes = await fetch('/admin/api/admin/categories/category/subscription')
+        const subsJson = await subsRes.json().catch(() => ({}))
+        const subs = Array.isArray(subsJson.subscriptions) ? subsJson.subscriptions : []
+        const mappedSubs = subs.map((s: any, idx: number) => ({
+          id: s.id || idx + 1000,
+          title: s.channel?.name ? `${s.channel.name} - ${s.duration ?? 'Plan'}` : 'Subscription',
+          type: 'subscription' as const,
+          price: s.credit ?? 0,
+          rating: 4.5,
+          image: s.channel?.logo || '',
+          description: s.channel?.description || '',
+          duration: s.duration ?? '1 month',
+          genre: 'Subscription'
+        }))
 
-  const iptvChannels = [
-    {
-      id: 11,
-      title: "Sports Premium Bundle",
-      type: "iptv" as const,
-      price: 35,
-      rating: 4.7,
-      image: "https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg",
-      description: "50+ sports channels including live matches",
-      duration: "Live",
-      genre: "Sports",
-      year: 2024
-    },
-    {
-      id: 12,
-      title: "International Channels",
-      type: "iptv" as const,
-      price: 40,
-      rating: 4.6,
-      image: "https://images.pexels.com/photos/3944091/pexels-photo-3944091.jpeg",
-      description: "150+ channels from around the world",
-      duration: "Live",
-      genre: "International",
-      year: 2024
-    }
-  ]
-
-  const categories = [
-    { name: 'Movies', icon: <Film className="w-6 h-6" />, count: 1250, color: 'from-blue-500 to-purple-600' },
-    { name: 'Series', icon: <Tv className="w-6 h-6" />, count: 850, color: 'from-green-500 to-teal-600' },
-    { name: 'IPTV Channels', icon: <Radio className="w-6 h-6" />, count: 180, color: 'from-red-500 to-pink-600' },
-    { name: 'Apps', icon: <Gamepad2 className="w-6 h-6" />, count: 45, color: 'from-orange-500 to-yellow-600' }
-  ]
-
-  const stats = [
-    { label: 'Total Users', value: '12,450', icon: <Users className="w-5 h-5" />, change: '+12%' },
-    { label: 'Hours Watched', value: '45,230', icon: <Eye className="w-5 h-5" />, change: '+8%' },
-    { label: 'New Content', value: '156', icon: <Calendar className="w-5 h-5" />, change: '+25%' }
-  ]
+        if (!mounted) return
+        setAppsContent(mappedApps)
+        setIptvChannelsList(mappedChannels)
+        setSubscriptions(mappedSubs)
+      } catch (err) {
+        // ignore
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
 
   const handlePurchase = (item: Content) => {
     if (credits >= item.price) {
