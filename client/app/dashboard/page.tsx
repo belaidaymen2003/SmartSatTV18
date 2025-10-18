@@ -314,7 +314,12 @@ export default function DashboardPage() {
                 action={<a href="/profile" className="text-sm text-white/60 hover:text-white">Manage</a>}
               />
               <Carousel itemWidthPx={224} autoPlayMs={3400}>
-                {featuredContent.concat(liveChannels, subscriptionsContent, iptvChannels, appsContent)
+                {[
+                  ...demoVideos,
+                  ...subscriptions,
+                  ...iptvChannelsList,
+                  ...appsContent,
+                ]
                   .filter((c) => watchlistIds.includes(c.id))
                   .map((item) => (
                     <div key={item.id}>
@@ -331,27 +336,6 @@ export default function DashboardPage() {
             </MotionReveal>
           </section>
         )}
-
-        {/* Recommendations */}
-        <section>
-          <MotionReveal delayMs={180}>
-            <SectionHeader
-              title="Recommended For You"
-              action={<a href="/profile" className="text-sm text-white/60 hover:text-white">Personalize</a>}
-            />
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-              {featuredContent.concat(liveChannels, subscriptionsContent, iptvChannels, appsContent).slice(0,12).map((item) => (
-                <ContentCard
-                  key={item.id}
-                  content={item}
-                  onPurchase={handlePurchase}
-                  onViewDetails={handleViewDetails}
-                  userCredits={credits}
-                />
-              ))}
-            </div>
-          </MotionReveal>
-        </section>
 
       </main>
 
