@@ -244,7 +244,7 @@ export default function DashboardPage() {
               action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3500}>
-              {subscriptionsContent.map((item) => (
+              {subscriptions.map((item) => (
                 <div key={item.id}>
                   <ContentCard
                     content={item}
