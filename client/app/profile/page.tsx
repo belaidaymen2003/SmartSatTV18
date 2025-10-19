@@ -226,24 +226,27 @@ export default function ProfilePage() {
             </section>
 
             {/* Apps */}
-            {data.appDownload?.length > 0 && (
+            {data.downloadedApps?.length > 0 && (
               <section className="glass rounded-2xl border border-white/20 p-8">
                 <h2 className="text-xl font-bold mb-6">Downloaded Apps</h2>
                 <div className="space-y-3">
-                  {data.appDownload.map((app: any) => (
-                    <div key={app.id} className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/10">
-                      <div className="flex items-center gap-3 flex-1">
-                        <img src={app.image} alt={app.name} className="w-12 h-12 rounded object-cover" />
-                        <div>
-                          <div className="font-semibold">{app.name}</div>
-                          <div className="text-xs text-white/60">Version {app.version}</div>
+                  {data.downloadedApps.map((userApp: any) => {
+                    const app = userApp.app
+                    return (
+                      <div key={userApp.id} className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/10">
+                        <div className="flex items-center gap-3 flex-1">
+                          <img src={app.image} alt={app.name} className="w-12 h-12 rounded object-cover" />
+                          <div>
+                            <div className="font-semibold">{app.name}</div>
+                            <div className="text-xs text-white/60">Version {app.version}</div>
+                          </div>
                         </div>
+                        <a href={app.downloadLink} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
+                          Download
+                        </a>
                       </div>
-                      <a href={app.downloadLink} className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
-                        Download
-                      </a>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </section>
             )}
