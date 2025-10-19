@@ -95,7 +95,7 @@ model User {
   auth              Auth                  @default(DISCONNECTED)
   beinJobs          BeInSportActivation[] @relation("BeInByUser")
   userSubscriptions UserSubscription[]
-  appDownload       CatalogApp[]
+  downloadedApps    UserCatalogApp[]
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
 
@@ -141,17 +141,16 @@ model Video {
 }
 
 model CatalogApp {
-  id           Int      @id @default(autoincrement())
+  id           Int              @id @default(autoincrement())
   name         String
   description  String
   downloadLink String
   image        String
   credit       Float
   version      String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  userId       Int?
-  user         User?    @relation(fields: [userId], references: [id])
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  downloadedBy UserCatalogApp[]
 }
 
 /**
