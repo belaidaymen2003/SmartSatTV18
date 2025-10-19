@@ -80,6 +80,7 @@ enum Category {
   IPTV
   STREAMING
 }
+
 //ss
 model User {
   id                Int                   @id @default(autoincrement())
@@ -95,7 +96,7 @@ model User {
   auth              Auth                  @default(DISCONNECTED)
   beinJobs          BeInSportActivation[] @relation("BeInByUser")
   userSubscriptions UserSubscription[]
-  appDownload       CatalogApp[]
+  downloadedApps    UserCatalogApp[]
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
 
@@ -141,17 +142,29 @@ model Video {
 }
 
 model CatalogApp {
-  id           Int      @id @default(autoincrement())
+  id           Int              @id @default(autoincrement())
   name         String
   description  String
   downloadLink String
   image        String
   credit       Float
   version      String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  userId       Int?
-  user         User?    @relation(fields: [userId], references: [id])
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  downloadedBy UserCatalogApp[]
+}
+
+model UserCatalogApp {
+  id          Int        @id @default(autoincrement())
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  app         CatalogApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+  appId       Int
+  purchasedAt DateTime   @default(now())
+
+  @@unique([userId, appId])
+  @@index([userId])
+  @@index([appId])
 }
 
 /**
@@ -257,16 +270,16 @@ model IPTVChannel {
 }
 
 model Subscription {
-  id                    Int                @id @default(autoincrement())
-  credit                Float              @default(0)
-  code                  String?            @unique
-  channel               IPTVChannel        @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  channelId             Int
-  duration              DurationPlan       @default(ONE_MONTH)
-  status                Status             @default(ACTIVE)
-  userSubscriptions     UserSubscription[]
-  createAt              DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  id                Int                @id @default(autoincrement())
+  credit            Float              @default(0)
+  code              String?            @unique
+  channel           IPTVChannel        @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId         Int
+  duration          DurationPlan       @default(ONE_MONTH)
+  status            Status             @default(ACTIVE)
+  userSubscriptions UserSubscription[]
+  createAt          DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 
   @@index([channelId, status])
 }

@@ -97,15 +97,8 @@ export default function ApplicationsPage() {
     ? applications 
     : applications.filter(a => a.category === selectedCategory)
 
-  const handleDownload = (app: Application) => {
-    if (credits >= app.price) {
-      const newCredits = credits - app.price
-      setCredits(newCredits)
-      localStorage.setItem('userCredits', newCredits.toString())
-      alert(`Successfully downloaded "${app.title}" for ${app.price} credits!`)
-    } else {
-      alert('Insufficient credits! Please add more credits to your account.')
-    }
+  const handleViewAppDetails = (appId: number) => {
+    router.push(`/applications/${appId}`)
   }
 
   const stats = [
@@ -220,16 +213,11 @@ export default function ApplicationsPage() {
                     <p className="text-white/60 text-xs">Credits</p>
                   </div>
                   <button
-                    onClick={() => handleDownload(app)}
-                    disabled={credits < app.price}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2 ${
-                      credits >= app.price
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:shadow-lg hover:scale-105'
-                        : 'bg-white/10 text-white/50 cursor-not-allowed'
-                    }`}
+                    onClick={() => handleViewAppDetails(app.id)}
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:shadow-lg hover:scale-105 text-white font-semibold transition-all flex items-center gap-2"
                   >
                     <Download className="w-4 h-4" />
-                    Get
+                    View
                   </button>
                 </div>
               </div>

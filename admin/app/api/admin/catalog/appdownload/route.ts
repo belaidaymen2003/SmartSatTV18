@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, description, downloadLink, image, credit, version, userId } = body || {};
+    const { name, description, downloadLink, image, credit, version } = body || {};
     if (!name || !downloadLink) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     try {
       const created = await prisma.catalogApp.create({
@@ -73,7 +73,6 @@ export async function POST(request: NextRequest) {
           image: image ? String(image) : "",
           credit: typeof credit === "number" ? credit : Number(credit) || 0,
           version: version ? String(version) : "",
-          userId: userId ? Number(userId) : undefined,
         },
       });
       return NextResponse.json({ message: "Created", app: created }, { status: 201 });
@@ -88,7 +87,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, description, downloadLink, image, credit, version, userId } = body || {};
+    const { id, name, description, downloadLink, image, credit, version } = body || {};
     const appId = Number(id);
     if (!appId || !Number.isFinite(appId)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
 
@@ -102,7 +101,6 @@ export async function PUT(request: NextRequest) {
           image: typeof image !== "undefined" ? String(image) : undefined,
           credit: typeof credit !== "undefined" ? Number(credit) : undefined,
           version: typeof version !== "undefined" ? String(version) : undefined,
-          userId: typeof userId !== "undefined" ? (userId ? Number(userId) : null) : undefined,
         },
       });
       return NextResponse.json({ message: "Updated", app: updated });

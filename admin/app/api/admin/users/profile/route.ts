@@ -24,10 +24,11 @@ export async function GET(request: NextRequest) {
             },
             orderBy: { startDate: 'desc' },
           },
-     
-
-          appDownload: {
-            orderBy: { createdAt: 'desc' },
+          downloadedApps: {
+            include: {
+              app: true,
+            },
+            orderBy: { purchasedAt: 'desc' },
           },
           beinJobs: {
             orderBy: { createdAt: 'desc' },
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest) {
         updatedAt: user.updatedAt,
         stats: {
           subscriptions: user.subscriptions.length,
-          appDownloads: user.appDownload.length,
+          appDownloads: user.downloadedApps.length,
           beinJobs: user.beinJobs.length,
         },
         subscriptions: user.subscriptions.map(sub => ({
@@ -67,14 +68,13 @@ export async function GET(request: NextRequest) {
           endDate: sub.endDate,
           credit: sub.credit,
         })),
-
- 
-        appDownloads: user.appDownload.map(app => ({
-          id: app.id,
-          name: app.name,
-          description: app.description,
-          version: app.version,
-          createdAt: app.createdAt,
+        appDownloads: user.downloadedApps.map(userApp => ({
+          id: userApp.app.id,
+          name: userApp.app.name,
+          description: userApp.app.description,
+          version: userApp.app.version,
+          purchasedAt: userApp.purchasedAt,
+          createdAt: userApp.app.createdAt,
         })),
         beinJobs: user.beinJobs.map(job => ({
           id: job.id,

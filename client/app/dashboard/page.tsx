@@ -147,7 +147,7 @@ export default function DashboardPage() {
   }
 
   const handleViewAppDetails = (item: Content) => {
-    router.push(`/content/${item.id}`)
+    router.push(`/applications/${item.id}`)
   }
 
   if (isPageLoading) {
