@@ -24,6 +24,9 @@ interface Application {
   image: string
   credit: number
   version: string
+  storageRequired?: string | null
+  internetConnection?: boolean
+  deviceOperatingSystems?: string | null
   createdAt: string
   updatedAt: string
 }
@@ -345,21 +348,23 @@ export default function AppDetailPage() {
             <section className="glass rounded-2xl border border-white/10 p-8">
               <h2 className="text-2xl font-bold mb-6">System Requirements</h2>
               <div className="space-y-3">
-                <div className="flex justify-between items-center pb-3 border-b border-white/10">
-                  <span className="text-white/70">Minimum iOS Version</span>
-                  <span className="font-semibold">13.0+</span>
-                </div>
-                <div className="flex justify-between items-center pb-3 border-b border-white/10">
-                  <span className="text-white/70">Minimum Android Version</span>
-                  <span className="font-semibold">8.0+</span>
-                </div>
-                <div className="flex justify-between items-center pb-3 border-b border-white/10">
-                  <span className="text-white/70">Storage Required</span>
-                  <span className="font-semibold">50MB - 200MB</span>
-                </div>
+                {app.deviceOperatingSystems && (
+                  app.deviceOperatingSystems.split(',').map((os, idx) => (
+                    <div key={idx} className="flex justify-between items-center pb-3 border-b border-white/10">
+                      <span className="text-white/70">{os.trim().split(/\s+/)[0]}</span>
+                      <span className="font-semibold">{os.trim()}</span>
+                    </div>
+                  ))
+                )}
+                {app.storageRequired && (
+                  <div className="flex justify-between items-center pb-3 border-b border-white/10">
+                    <span className="text-white/70">Storage Required</span>
+                    <span className="font-semibold">{app.storageRequired}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="text-white/70">Internet Connection</span>
-                  <span className="font-semibold">Required</span>
+                  <span className="font-semibold">{app.internetConnection ? 'Required' : 'Optional'}</span>
                 </div>
               </div>
             </section>
