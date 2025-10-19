@@ -5,7 +5,7 @@ dotenv.config({ path: path.resolve(process.cwd(), '../admin/.env') })
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['ik.imagekit.io', 'images.pexels.com', 'cdn.builder.io'],
+    domains: ['ik.imagekit.io', 'images.pexels.com', 'cdn.builder.io', 'picsum.photos'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -19,6 +19,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'ik.imagekit.io',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
         pathname: '/**'
       },
     ],
