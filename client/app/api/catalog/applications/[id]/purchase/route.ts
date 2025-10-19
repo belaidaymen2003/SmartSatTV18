@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@/lib/generated/prisma'
-import { jwtDecode } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
+const JWT_SECRET = process.env.JWT_SECRET || ''
 
 export async function POST(
   req: NextRequest,
@@ -20,10 +21,11 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    let payload: any
     let userId: number
     try {
-      const decoded: any = jwtDecode(token)
-      userId = decoded?.userId
+      payload = jwt.verify(token, JWT_SECRET)
+      userId = Number(payload.sub)
       if (!userId) {
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
       }
@@ -57,10 +59,12 @@ export async function POST(
     }
 
     // Check if user already owns this app
-    const existingAppDownload = await prisma.catalogApp.findFirst({
+    const existingAppDownload = await prisma.userCatalogApp.findUnique({
       where: {
-        id: appId,
-        userId: userId
+        userId_appId: {
+          userId: userId,
+          appId: appId
+        }
       }
     })
 
@@ -71,21 +75,22 @@ export async function POST(
       )
     }
 
-    // Update user credits and add app to user's downloads
+    // Update user credits
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
         credits: {
-          decrement: app.credit
+          decrement: Math.floor(app.credit)
         }
       }
     })
 
-    // Link app to user
-    await prisma.catalogApp.update({
-      where: { id: appId },
+    // Create junction record linking user to app
+    await prisma.userCatalogApp.create({
       data: {
-        userId: userId
+        userId: userId,
+        appId: appId,
+        purchasedAt: new Date()
       }
     })
 
