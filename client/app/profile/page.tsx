@@ -115,7 +115,7 @@ export default function ProfilePage() {
           </div>
           <div className="glass rounded-xl p-4 border border-white/20">
             <p className="text-white/60 text-sm mb-1">Downloads</p>
-            <p className="text-3xl font-bold text-blue-400">{data.appDownload?.length || 0}</p>
+            <p className="text-3xl font-bold text-blue-400">{data.downloadedApps?.length || 0}</p>
           </div>
           <div className="glass rounded-xl p-4 border border-white/20">
             <p className="text-white/60 text-sm mb-1">Status</p>
@@ -279,7 +279,7 @@ export default function ProfilePage() {
                 </li>
                 <li className="flex justify-between">
                   <span className="text-white/70">Apps Downloaded</span>
-                  <span className="font-semibold">{data.appDownload?.length || 0}</span>
+                  <span className="font-semibold">{data.downloadedApps?.length || 0}</span>
                 </li>
               </ul>
             </section>
