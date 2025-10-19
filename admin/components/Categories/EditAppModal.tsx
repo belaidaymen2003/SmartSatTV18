@@ -9,10 +9,12 @@ type AppItem = {
   image?: string | null;
   credit?: number;
   version?: string | null;
-  storageRequired?: string | null;
+  storageRequired?: number | null;
   internetConnection?: boolean;
-  deviceOperatingSystems?: string | null;
+  deviceOperatingSystems?: string[];
 };
+
+const AVAILABLE_OS = ['iOS', 'Android', 'Windows', 'macOS', 'Linux'];
 
 export default function EditAppModal(props: {
   open: boolean;
@@ -28,9 +30,9 @@ export default function EditAppModal(props: {
     { name: "version", label: "Version", type: "text" },
     { name: "credit", label: "Credit", type: "number" },
     { name: "downloadLink", label: "Download Link", type: "url" },
-    { name: "storageRequired", label: "Storage Required (e.g., 50MB - 200MB)", type: "text" },
+    { name: "storageRequired", label: "Storage Required (MB)", type: "number" },
     { name: "internetConnection", label: "Internet Connection Required", type: "checkbox" },
-    { name: "deviceOperatingSystems", label: "Device Operating Systems (comma-separated, e.g., iOS 13.0+, Android 8.0+)", type: "textarea" },
+    { name: "deviceOperatingSystems", label: "Device Operating Systems", type: "multiselect", options: AVAILABLE_OS },
     { name: "image", label: "Image", type: "file" },
     { name: "description", label: "Description", type: "textarea" },
   ];
@@ -41,9 +43,9 @@ export default function EditAppModal(props: {
     version: initialData?.version || "",
     credit: typeof initialData?.credit !== "undefined" ? initialData.credit : 0,
     downloadLink: initialData?.downloadLink || "",
-    storageRequired: initialData?.storageRequired || "",
+    storageRequired: initialData?.storageRequired || 0,
     internetConnection: initialData?.internetConnection || false,
-    deviceOperatingSystems: initialData?.deviceOperatingSystems || "",
+    deviceOperatingSystems: Array.isArray(initialData?.deviceOperatingSystems) ? initialData.deviceOperatingSystems : [],
     image: initialData?.image || "",
     description: initialData?.description || "",
   };
@@ -55,9 +57,9 @@ export default function EditAppModal(props: {
       version: values.version,
       credit: Number(values.credit || 0),
       downloadLink: values.downloadLink,
-      storageRequired: values.storageRequired || undefined,
-      internetConnection: values.internetConnection || false,
-      deviceOperatingSystems: values.deviceOperatingSystems || undefined,
+      storageRequired: values.storageRequired ? Number(values.storageRequired) : null,
+      internetConnection: Boolean(values.internetConnection),
+      deviceOperatingSystems: Array.isArray(values.deviceOperatingSystems) ? values.deviceOperatingSystems : [],
       image: values.image || undefined,
       description: values.description || undefined,
     };
