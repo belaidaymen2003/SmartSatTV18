@@ -142,16 +142,19 @@ model Video {
 }
 
 model CatalogApp {
-  id           Int              @id @default(autoincrement())
-  name         String
-  description  String
-  downloadLink String
-  image        String
-  credit       Float
-  version      String
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  downloadedBy UserCatalogApp[]
+  id                   Int              @id @default(autoincrement())
+  name                 String
+  description          String
+  downloadLink         String
+  image                String
+  credit               Float
+  version              String
+  storageRequired      String?
+  internetConnection   Boolean          @default(false)
+  deviceOperatingSystems String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  downloadedBy         UserCatalogApp[]
 }
 
 model UserCatalogApp {
