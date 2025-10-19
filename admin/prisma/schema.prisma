@@ -153,6 +153,19 @@ model CatalogApp {
   downloadedBy UserCatalogApp[]
 }
 
+model UserCatalogApp {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  app         CatalogApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+  appId       Int
+  purchasedAt DateTime @default(now())
+
+  @@unique([userId, appId])
+  @@index([userId])
+  @@index([appId])
+}
+
 /**
  * model Genre {
  * id        Int         @id @default(autoincrement())
