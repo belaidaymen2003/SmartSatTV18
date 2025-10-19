@@ -97,15 +97,8 @@ export default function ApplicationsPage() {
     ? applications 
     : applications.filter(a => a.category === selectedCategory)
 
-  const handleDownload = (app: Application) => {
-    if (credits >= app.price) {
-      const newCredits = credits - app.price
-      setCredits(newCredits)
-      localStorage.setItem('userCredits', newCredits.toString())
-      alert(`Successfully downloaded "${app.title}" for ${app.price} credits!`)
-    } else {
-      alert('Insufficient credits! Please add more credits to your account.')
-    }
+  const handleViewAppDetails = (appId: number) => {
+    router.push(`/applications/${appId}`)
   }
 
   const stats = [
