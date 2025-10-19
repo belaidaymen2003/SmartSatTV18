@@ -73,9 +73,9 @@ export async function POST(request: NextRequest) {
           image: image ? String(image) : "",
           credit: typeof credit === "number" ? credit : Number(credit) || 0,
           version: version ? String(version) : "",
-          storageRequired: storageRequired ? String(storageRequired) : null,
+          storageRequired: storageRequired ? Number(storageRequired) : null,
           internetConnection: Boolean(internetConnection),
-          deviceOperatingSystems: deviceOperatingSystems ? String(deviceOperatingSystems) : null,
+          deviceOperatingSystems: Array.isArray(deviceOperatingSystems) ? deviceOperatingSystems : [],
         },
       });
       return NextResponse.json({ message: "Created", app: created }, { status: 201 });
@@ -104,9 +104,9 @@ export async function PUT(request: NextRequest) {
           image: typeof image !== "undefined" ? String(image) : undefined,
           credit: typeof credit !== "undefined" ? Number(credit) : undefined,
           version: typeof version !== "undefined" ? String(version) : undefined,
-          storageRequired: typeof storageRequired !== "undefined" ? (storageRequired ? String(storageRequired) : null) : undefined,
+          storageRequired: typeof storageRequired !== "undefined" ? (storageRequired ? Number(storageRequired) : null) : undefined,
           internetConnection: typeof internetConnection !== "undefined" ? Boolean(internetConnection) : undefined,
-          deviceOperatingSystems: typeof deviceOperatingSystems !== "undefined" ? (deviceOperatingSystems ? String(deviceOperatingSystems) : null) : undefined,
+          deviceOperatingSystems: typeof deviceOperatingSystems !== "undefined" ? (Array.isArray(deviceOperatingSystems) ? deviceOperatingSystems : []) : undefined,
         },
       });
       return NextResponse.json({ message: "Updated", app: updated });
