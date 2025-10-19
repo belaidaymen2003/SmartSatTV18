@@ -11,6 +11,11 @@ const nextConfig = {
         hostname: 'cdn.builder.io',
         pathname: '/**'
       },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        pathname: '/**'
+      },
     ],
   },
   // Allow Builder preview and localhost origins during development (for HMR/RSC and assets)
