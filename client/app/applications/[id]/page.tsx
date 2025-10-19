@@ -24,9 +24,9 @@ interface Application {
   image: string
   credit: number
   version: string
-  storageRequired?: string | null
+  storageRequired?: number | null
   internetConnection?: boolean
-  deviceOperatingSystems?: string | null
+  deviceOperatingSystems?: string[]
   createdAt: string
   updatedAt: string
 }
@@ -348,18 +348,16 @@ export default function AppDetailPage() {
             <section className="glass rounded-2xl border border-white/10 p-8">
               <h2 className="text-2xl font-bold mb-6">System Requirements</h2>
               <div className="space-y-3">
-                {app.deviceOperatingSystems && (
-                  app.deviceOperatingSystems.split(',').map((os, idx) => (
-                    <div key={idx} className="flex justify-between items-center pb-3 border-b border-white/10">
-                      <span className="text-white/70">{os.trim().split(/\s+/)[0]}</span>
-                      <span className="font-semibold">{os.trim()}</span>
-                    </div>
-                  ))
+                {Array.isArray(app.deviceOperatingSystems) && app.deviceOperatingSystems.length > 0 && (
+                  <div className="flex justify-between items-center pb-3 border-b border-white/10">
+                    <span className="text-white/70">Supported Platforms</span>
+                    <span className="font-semibold">{app.deviceOperatingSystems.join(', ')}</span>
+                  </div>
                 )}
                 {app.storageRequired && (
                   <div className="flex justify-between items-center pb-3 border-b border-white/10">
                     <span className="text-white/70">Storage Required</span>
-                    <span className="font-semibold">{app.storageRequired}</span>
+                    <span className="font-semibold">{app.storageRequired} MB</span>
                   </div>
                 )}
                 <div className="flex justify-between items-center">
