@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@/lib/generated/prisma'
-import { jwtDecode } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
+const JWT_SECRET = process.env.JWT_SECRET || ''
 
 export async function GET(
   req: NextRequest,
@@ -26,12 +27,15 @@ export async function GET(
     try {
       const token = req.cookies.get('token')?.value
       if (token) {
-        const decoded: any = jwtDecode(token)
-        if (decoded?.userId) {
-          const userApp = await prisma.catalogApp.findFirst({
+        const payload: any = jwt.verify(token, JWT_SECRET)
+        const userId = Number(payload.sub)
+        if (userId) {
+          const userApp = await prisma.userCatalogApp.findUnique({
             where: {
-              id: appId,
-              userId: decoded.userId
+              userId_appId: {
+                userId: userId,
+                appId: appId
+              }
             }
           })
           isOwned = !!userApp
