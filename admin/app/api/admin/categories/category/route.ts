@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { title, category, description,  logoUrl } =
+    const { title, category, description, logoUrl, type } =
       await request.json();
 
     try {
@@ -78,6 +78,7 @@ export async function POST(request: NextRequest) {
           category: category,
           description: description,
           logo: logoUrl,
+          type: type || 'OTHER',
         },
       });
 
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, title, url, logo, logoUrl, description, category, cost } =
+    const { id, name, title, url, logo, logoUrl, description, category, cost, type } =
       body || {};
     const channelId = Number(id);
     if (!Number.isFinite(channelId)) {
@@ -111,6 +112,7 @@ export async function PUT(request: NextRequest) {
            description ,
            category ,
            logo: logo ?? logoUrl ,
+           type,
         },
       });
 
