@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@/lib/generated/prisma'
+import prisma from '@/lib/prisma'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient()
 const JWT_SECRET = process.env.JWT_SECRET || ''
 
 export async function GET(req: NextRequest) {
