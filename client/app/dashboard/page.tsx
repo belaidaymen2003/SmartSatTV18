@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Header from '../../components/Layout/Header'
 import ContentCard, { Content } from '../../components/Content/ContentCard'
 import ChannelCard from '../../components/Content/ChannelCard'
+import VideoHero from '../../components/UI/VideoHero'
 import Loading3D from '../../components/Loading3D'
 import SectionHeader from '../../components/UI/SectionHeader'
 import Carousel from '../../components/UI/Carousel'
@@ -31,6 +32,21 @@ interface Channel {
   }>
 }
 
+interface Video {
+  id: number
+  title: string
+  description?: string
+  thumbnail?: string
+  videoUrl: string
+  price: number
+  createdAt: string
+  user?: {
+    id: number
+    name: string
+    email: string
+  }
+}
+
 export default function DashboardPage() {
   const [credits, setCredits] = useState(150)
   const [userEmail, setUserEmail] = useState('')
@@ -40,6 +56,8 @@ export default function DashboardPage() {
   const [streamingChannels, setStreamingChannels] = useState<Channel[]>([])
   const [iptvChannels, setIptvChannels] = useState<Channel[]>([])
   const [appsContent, setAppsContent] = useState<Content[]>([])
+  const [introductionVideos, setIntroductionVideos] = useState<Video[]>([])
+  const [featuredVideo, setFeaturedVideo] = useState<Video | null>(null)
 
   useEffect(() => {
     const storedCredits = localStorage.getItem('userCredits')
@@ -127,6 +145,25 @@ export default function DashboardPage() {
   }, [])
 
   useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const videosRes = await fetch('/api/catalog/videos?page=1&pageSize=6')
+        const videosJson = await videosRes.json().catch(() => ({}))
+        const videos = Array.isArray(videosJson.videos) ? videosJson.videos : []
+        if (!mounted) return
+        setIntroductionVideos(videos)
+        if (videos.length > 0) {
+          setFeaturedVideo(videos[0])
+        }
+      } catch (err) {
+        console.error('Error fetching introduction videos:', err)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
+  useEffect(() => {
     const t = setTimeout(() => setIsPageLoading(false), 400)
     return () => clearTimeout(t)
   }, [])
@@ -164,54 +201,109 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-slate-900 text-white">
       <Header credits={credits} userEmail={userEmail} />
 
-      {/* HERO */}
-      <section className="relative w-full h-[560px] md:h-[720px] overflow-hidden">
-        {featuredChannel?.logo ? (
-          <Image
-            src={featuredChannel.logo}
-            alt={featuredChannel.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 1600px"
-            className="object-cover brightness-50"
-          />
-        ) : (
-          <Image
-            src={"https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg"}
-            alt="Featured background"
-            fill
-            sizes="(max-width: 768px) 100vw, 1600px"
-            className="object-cover brightness-50 animate-kenburns"
-          />
-        )}
+      {/* HERO - Video or Channel Fallback */}
+      {featuredVideo ? (
+        <VideoHero video={featuredVideo} />
+      ) : (
+        <section className="relative w-full h-[560px] md:h-[720px] overflow-hidden">
+          {featuredChannel?.logo ? (
+            <Image
+              src={featuredChannel.logo}
+              alt={featuredChannel.name}
+              fill
+              sizes="(max-width: 768px) 100vw, 1600px"
+              className="object-cover brightness-50"
+            />
+          ) : (
+            <Image
+              src={"https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg"}
+              alt="Featured background"
+              fill
+              sizes="(max-width: 768px) 100vw, 1600px"
+              className="object-cover brightness-50 animate-kenburns"
+            />
+          )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-        <div className="absolute inset-0 max-w-7xl mx-auto px-6 md:px-12 flex items-end md:items-center">
-          <div className="py-12 md:py-20 w-full md:w-2/3 lg:w-1/2">
-            <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">{featuredChannel?.name ?? 'Welcome to SMART SAT TV'}</h1>
-            <p className="mt-4 text-white/80 max-w-xl">{featuredChannel?.description ?? 'Experience premium streaming and IPTV services with unlimited access to your favorite content.'}</p>
+          <div className="absolute inset-0 max-w-7xl mx-auto px-6 md:px-12 flex items-end md:items-center">
+            <div className="py-12 md:py-20 w-full md:w-2/3 lg:w-1/2">
+              <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">{featuredChannel?.name ?? 'Welcome to SMART SAT TV'}</h1>
+              <p className="mt-4 text-white/80 max-w-xl">{featuredChannel?.description ?? 'Experience premium streaming and IPTV services with unlimited access to your favorite content.'}</p>
 
-            <div className="mt-8 flex items-center gap-4">
-              <MagneticButton
-                href={featuredChannel ? `/subscription/${featuredChannel.id}` : '/streaming'}
-                className="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 px-5 py-3 rounded-full font-semibold shadow-lg"
-              >
-                <Play className="w-5 h-5" /> View Plans
-              </MagneticButton>
+              <div className="mt-8 flex items-center gap-4">
+                <MagneticButton
+                  href={featuredChannel ? `/subscription/${featuredChannel.id}` : '/streaming'}
+                  className="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 px-5 py-3 rounded-full font-semibold shadow-lg"
+                >
+                  <Play className="w-5 h-5" /> View Plans
+                </MagneticButton>
 
-              <div className="text-sm text-white/70">Premium Quality • No Ads</div>
-            </div>
+                <div className="text-sm text-white/70">Premium Quality • No Ads</div>
+              </div>
 
-            <div className="mt-6 flex items-center gap-4 text-sm text-white/60">
-              <div className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400"/> 4.8</div>
-              <div className="px-2 py-1 bg-white/5 rounded">{new Date().getFullYear()}</div>
-              <div className="px-2 py-1 bg-white/5 rounded">Premium</div>
+              <div className="mt-6 flex items-center gap-4 text-sm text-white/60">
+                <div className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400"/> 4.8</div>
+                <div className="px-2 py-1 bg-white/5 rounded">{new Date().getFullYear()}</div>
+                <div className="px-2 py-1 bg-white/5 rounded">Premium</div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        {/* Introduction Videos */}
+        {introductionVideos.length > 0 && (
+          <section>
+            <MotionReveal delayMs={80}>
+              <SectionHeader
+                title="Introduction Videos"
+                subtitle="Watch introduction and demonstration videos"
+                action={<a href="#" className="text-sm text-white/60 hover:text-white">View All</a>}
+              />
+              <Carousel itemWidthPx={320} autoPlayMs={4000}>
+                {introductionVideos.map((video) => (
+                  <div key={video.id} className="group cursor-pointer">
+                    <div className="relative w-full h-48 rounded-lg overflow-hidden bg-slate-800">
+                      {video.thumbnail ? (
+                        <Image
+                          src={video.thumbnail}
+                          alt={video.title}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
+                          <Play className="w-12 h-12 text-white/30" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center">
+                        <div className="w-14 h-14 rounded-full bg-red-600 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 opacity-0 group-hover:opacity-100">
+                          <Play className="w-6 h-6 text-white fill-white ml-1" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <h3 className="text-sm font-semibold text-white truncate group-hover:text-red-400 transition-colors">
+                        {video.title}
+                      </h3>
+                      <p className="text-xs text-white/60 mt-1 line-clamp-2">
+                        {video.description || 'Introduction video'}
+                      </p>
+                      {video.price > 0 && (
+                        <div className="mt-2 text-xs font-semibold text-yellow-400">
+                          {video.price} Credits
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </Carousel>
+            </MotionReveal>
+          </section>
+        )}
 
         {/* Streaming Preview */}
         <section>
