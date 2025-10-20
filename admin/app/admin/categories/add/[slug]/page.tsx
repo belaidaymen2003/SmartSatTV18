@@ -10,13 +10,14 @@ import {
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Hls from "hls.js";
-import { CATEGORIES as categories } from "@/lib/constants";
+import { CATEGORIES as categories, CHANNEL_TYPES } from "@/lib/constants";
 import Toast from "@/components/UI/Toast";
 type Props = { params: { category: string } };
 type data = {
   title: string;
   category: string;
   description: string;
+  type?: string;
 };
 const formData = new FormData();
 export default function CategoryPage({ params }: { params: { slug: string } }) {
@@ -27,6 +28,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
     title: "",
     category: "",
     description: "",
+    type: "",
   });
   const [gift, setGift] = useState({ title: "", description: "" });
   const [loading, setLoading] = useState(false);
@@ -172,6 +174,22 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
                 {categories.map((q) => (
                   <option key={q} value={q}>
                     {q}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="md:col-span-5">
+              <label className="block text-sm text-white/70 mb-1">Type</label>
+              <select
+                value={data.type}
+                onChange={(e) => setData({ ...data, type: e.target.value })}
+                className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+              >
+                <option value="">Select a type</option>
+                {CHANNEL_TYPES.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
                   </option>
                 ))}
               </select>
