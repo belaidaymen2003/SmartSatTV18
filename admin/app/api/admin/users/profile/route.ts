@@ -18,9 +18,13 @@ export async function GET(request: NextRequest) {
       const user = await prisma.user.findUnique({
         where: { id: userId },
         include: {
-          subscriptions: {
+          userSubscriptions: {
             include: {
-              channel: true,
+              subscription: {
+                include: {
+                  channel: true,
+                },
+              },
             },
             orderBy: { startDate: 'desc' },
           },
@@ -54,19 +58,19 @@ export async function GET(request: NextRequest) {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         stats: {
-          subscriptions: user.subscriptions.length,
+          subscriptions: user.userSubscriptions.length,
           appDownloads: user.downloadedApps.length,
           beinJobs: user.beinJobs.length,
         },
-        subscriptions: user.subscriptions.map(sub => ({
+        subscriptions: user.userSubscriptions.map(sub => ({
           id: sub.id,
-          channelName: sub.channel.name,
-          channelCategory: sub.channel.category,
-          duration: sub.duration,
+          channelName: sub.subscription.channel.name,
+          channelCategory: sub.subscription.channel.category,
+          duration: sub.subscription.duration,
           status: sub.status,
           startDate: sub.startDate,
           endDate: sub.endDate,
-          credit: sub.credit,
+          credit: sub.subscription.credit,
         })),
         appDownloads: user.downloadedApps.map(userApp => ({
           id: userApp.app.id,
@@ -89,31 +93,7 @@ export async function GET(request: NextRequest) {
     } catch (dbError: any) {
       console.error('Database error:', dbError.message)
       
-      return NextResponse.json({
-        id: userId,
-        name: 'User ' + userId,
-        email: `user${userId}@example.com`,
-        username: `user${userId}`,
-        credits: 100,
-        status: 'Approved',
-        role: 'USER',
-        auth: 'DISCONNECTED',
-        authLastAt: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        stats: {
-          comments: 0,
-          reviews: 0,
-          subscriptions: 0,
-          appDownloads: 0,
-          beinJobs: 0,
-        },
-        subscriptions: [],
-        comments: [],
-        reviews: [],
-        appDownloads: [],
-        beinJobs: [],
-      })
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })

@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, description, downloadLink, image, credit, version } = body || {};
+    const { name, description, downloadLink, image, credit, version, storageRequired, internetConnection, deviceOperatingSystems } = body || {};
     if (!name || !downloadLink) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     try {
       const created = await prisma.catalogApp.create({
@@ -73,6 +73,9 @@ export async function POST(request: NextRequest) {
           image: image ? String(image) : "",
           credit: typeof credit === "number" ? credit : Number(credit) || 0,
           version: version ? String(version) : "",
+          storageRequired: storageRequired ? Number(storageRequired) : null,
+          internetConnection: Boolean(internetConnection),
+          deviceOperatingSystems: Array.isArray(deviceOperatingSystems) ? deviceOperatingSystems : [],
         },
       });
       return NextResponse.json({ message: "Created", app: created }, { status: 201 });
@@ -87,7 +90,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, description, downloadLink, image, credit, version } = body || {};
+    const { id, name, description, downloadLink, image, credit, version, storageRequired, internetConnection, deviceOperatingSystems } = body || {};
     const appId = Number(id);
     if (!appId || !Number.isFinite(appId)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
 
@@ -101,6 +104,9 @@ export async function PUT(request: NextRequest) {
           image: typeof image !== "undefined" ? String(image) : undefined,
           credit: typeof credit !== "undefined" ? Number(credit) : undefined,
           version: typeof version !== "undefined" ? String(version) : undefined,
+          storageRequired: typeof storageRequired !== "undefined" ? (storageRequired ? Number(storageRequired) : null) : undefined,
+          internetConnection: typeof internetConnection !== "undefined" ? Boolean(internetConnection) : undefined,
+          deviceOperatingSystems: typeof deviceOperatingSystems !== "undefined" ? (Array.isArray(deviceOperatingSystems) ? deviceOperatingSystems : []) : undefined,
         },
       });
       return NextResponse.json({ message: "Updated", app: updated });

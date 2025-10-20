@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { X, Image as ImageIcon } from "lucide-react";
 import Spinner from "@/components/UI/Spinner";
 import Toast from "@/components/UI/Toast";
+import MultiSelectDropdown from "@/components/UI/MultiSelectDropdown";
 
 type Field =
-  | { name: string; label: string; type: "text" | "number" | "textarea" | "select" | "file" | "url"; options?: string[] }
+  | { name: string; label: string; type: "text" | "number" | "textarea" | "select" | "multiselect" | "file" | "url" | "checkbox"; options?: string[] }
   | any;
 
 type Props = {
@@ -46,7 +47,7 @@ export default function EntityModal({ open, title = "Edit", fields, initialValue
     const name = f.name;
     const label = f.label || name;
     const type = f.type || "text";
-    const val = values[name] ?? "";
+    const val = values[name] ?? (type === "multiselect" ? [] : type === "checkbox" ? false : "");
 
     if (type === "textarea") {
       return (
@@ -57,11 +58,42 @@ export default function EntityModal({ open, title = "Edit", fields, initialValue
       );
     }
 
+    if (type === "checkbox") {
+      return (
+        <div key={name} className="w-full">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={Boolean(val)}
+              onChange={(e) => setValues({ ...values, [name]: e.target.checked })}
+              className="w-4 h-4 rounded border border-white/20 bg-black/40 accent-orange-500 cursor-pointer"
+            />
+            <span className="text-sm text-white/70">{label}</span>
+          </label>
+        </div>
+      );
+    }
+
+    if (type === "multiselect") {
+      return (
+        <div key={name} className="w-full">
+          <label className="block text-sm text-white/70 mb-1">{label}</label>
+          <MultiSelectDropdown
+            options={f.options || []}
+            selected={Array.isArray(val) ? val : []}
+            onChange={(selected) => setValues({ ...values, [name]: selected })}
+            placeholder={`Select ${label.toLowerCase()}...`}
+          />
+        </div>
+      );
+    }
+
     if (type === "select") {
       return (
         <div key={name} className="w-full">
           <label className="block text-sm text-white/70 mb-1">{label}</label>
           <select value={val} onChange={(e) => setValues({ ...values, [name]: e.target.value })} className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white">
+            <option value="">Select an option...</option>
             {(f.options || []).map((opt: string) => (
               <option key={opt} value={opt}>{opt}</option>
             ))}
