@@ -192,7 +192,7 @@ body::before {
   perspective: 1200px;
 }
 .content-card:hover {
-  transform: translateY(-8px) rotateX(3deg) rotateY(-2deg) scale(1.01);
+  transform: translateY(-8px) rotateX(3deg) rotateY(-2deg) scale(1);
 }
 
 /* Make images slightly pop on hover with 3d effect */

@@ -155,9 +155,18 @@ exports.Prisma.CatalogAppScalarFieldEnum = {
   image: 'image',
   credit: 'credit',
   version: 'version',
+  storageRequired: 'storageRequired',
+  internetConnection: 'internetConnection',
+  deviceOperatingSystems: 'deviceOperatingSystems',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  userId: 'userId'
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserCatalogAppScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  appId: 'appId',
+  purchasedAt: 'purchasedAt'
 };
 
 exports.Prisma.SettingsScalarFieldEnum = {
@@ -262,6 +271,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   Video: 'Video',
   CatalogApp: 'CatalogApp',
+  UserCatalogApp: 'UserCatalogApp',
   Settings: 'Settings',
   BeInSportActivation: 'BeInSportActivation',
   IPTVChannel: 'IPTVChannel',
