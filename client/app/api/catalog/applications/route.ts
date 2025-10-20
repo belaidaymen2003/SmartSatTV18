@@ -16,7 +16,26 @@ export async function GET(req: NextRequest) {
 
     const [total, apps] = await Promise.all([
       prisma.catalogApp.count({ where }),
-      prisma.catalogApp.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * pageSize, take: pageSize }),
+      prisma.catalogApp.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          downloadLink: true,
+          image: true,
+          credit: true,
+          version: true,
+          storageRequired: true,
+          internetConnection: true,
+          deviceOperatingSystems: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      }),
     ])
 
     return NextResponse.json({ apps, total, page, pageSize })
