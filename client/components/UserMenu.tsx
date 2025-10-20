@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
-import { User, LogOut, Settings, Clock, Heart } from 'lucide-react'
+import { User, LogOut, Settings } from 'lucide-react'
 
 export default function UserMenu({ email }: { email?: string }) {
   const [open, setOpen] = useState(false)
@@ -25,8 +25,6 @@ export default function UserMenu({ email }: { email?: string }) {
         <div className="absolute right-0 mt-2 w-48 bg-slate-800/90 border border-white/10 rounded-lg shadow-lg py-2 z-50">
           <Link href="/profile" className="block px-4 py-2 hover:bg-white/5">Profile</Link>
           <Link href="/profile/settings" className="block px-4 py-2 hover:bg-white/5">Settings</Link>
-          <Link href="/profile/history" className="block px-4 py-2 hover:bg-white/5">History</Link>
-          <Link href="/profile/favorites" className="block px-4 py-2 hover:bg-white/5">Favorites</Link>
           <button onClick={handleLogout} className="w-full text-left px-4 py-2 hover:bg-white/5">Logout</button>
         </div>
       )}

@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
-import { Bell, User, LogOut, Settings, Clock, Heart, CreditCard } from 'lucide-react'
+import { Bell, User, LogOut, Settings, CreditCard } from 'lucide-react'
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false)
@@ -99,8 +99,6 @@ export default function ProfileDropdown() {
           <div className="p-3 border-t border-white/5 grid grid-cols-2 gap-2">
             <Link href="/profile" className="block text-center py-2 rounded bg-white/5 hover:bg-white/10">Profile</Link>
             <Link href="/profile/settings" className="block text-center py-2 rounded bg-white/5 hover:bg-white/10">Settings</Link>
-            <Link href="/profile/history" className="block text-center py-2 rounded bg-white/5 hover:bg-white/10">History</Link>
-            <Link href="/profile/favorites" className="block text-center py-2 rounded bg-white/5 hover:bg-white/10">Favorites</Link>
           </div>
 
           <div className="p-3 border-t border-white/5">
