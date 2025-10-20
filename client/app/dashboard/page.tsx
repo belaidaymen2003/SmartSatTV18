@@ -32,6 +32,16 @@ interface Channel {
   }>
 }
 
+interface Video {
+  id: number
+  title: string
+  description: string | null
+  thumbnail: string | null
+  videoUrl: string
+  price: number
+  createdAt: string
+}
+
 export default function DashboardPage() {
   const [credits, setCredits] = useState(150)
   const [userEmail, setUserEmail] = useState('')
@@ -41,6 +51,7 @@ export default function DashboardPage() {
   const [streamingChannels, setStreamingChannels] = useState<Channel[]>([])
   const [iptvChannels, setIptvChannels] = useState<Channel[]>([])
   const [appsContent, setAppsContent] = useState<Content[]>([])
+  const [featuredVideo, setFeaturedVideo] = useState<Video | null>(null)
 
   useEffect(() => {
     const storedCredits = localStorage.getItem('userCredits')
