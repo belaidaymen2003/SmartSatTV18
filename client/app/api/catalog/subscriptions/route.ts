@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const subs = await prisma.subscription.findMany({ select: { id: true, credit: true, code: true, channelId: true, duration: true, status: true, createAt: true, updatedAt: true }, orderBy: { startDate: 'desc' } })
     // fetch channel data for listed subscriptions
     const channelIds = Array.from(new Set(subs.map(s => s.channelId).filter(Boolean)))
-    const channels = channelIds.length ? await prisma.iPTVChannel.findMany({ where: { id: { in: channelIds } }, select: { id: true, name: true, logo: true, description: true } }) : []
+    const channels = channelIds.length ? await prisma.iPTVChannel.findMany({ where: { id: { in: channelIds } }, select: { id: true, name: true, logo: true, description: true, type: true } }) : []
     const channelMap: Record<number, any> = {}
     channels.forEach(c => { channelMap[c.id] = c })
     const enriched = subs.map(s => ({ ...s, channel: channelMap[s.channelId] ?? null }))
