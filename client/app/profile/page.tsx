@@ -114,8 +114,8 @@ export default function ProfilePage() {
             <p className="text-3xl font-bold text-green-400">{activeSubscriptions.length}</p>
           </div>
           <div className="glass rounded-xl p-4 border border-white/20">
-            <p className="text-white/60 text-sm mb-1">Downloads</p>
-            <p className="text-3xl font-bold text-blue-400">{data.downloadedApps?.length || 0}</p>
+            <p className="text-white/60 text-sm mb-1">Videos</p>
+            <p className="text-3xl font-bold text-blue-400">{data.video?.length || 0}</p>
           </div>
           <div className="glass rounded-xl p-4 border border-white/20">
             <p className="text-white/60 text-sm mb-1">Status</p>
@@ -225,31 +225,6 @@ export default function ProfilePage() {
               </div>
             </section>
 
-            {/* Apps */}
-            {data.downloadedApps?.length > 0 && (
-              <section className="glass rounded-2xl border border-white/20 p-8">
-                <h2 className="text-xl font-bold mb-6">Downloaded Apps</h2>
-                <div className="space-y-3">
-                  {data.downloadedApps.map((userApp: any) => {
-                    const app = userApp.app
-                    return (
-                      <div key={userApp.id} className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/10">
-                        <div className="flex items-center gap-3 flex-1">
-                          <img src={app.image} alt={app.name} className="w-12 h-12 rounded object-cover" />
-                          <div>
-                            <div className="font-semibold">{app.name}</div>
-                            <div className="text-xs text-white/60">Version {app.version}</div>
-                          </div>
-                        </div>
-                        <a href={app.downloadLink} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
-                          Download
-                        </a>
-                      </div>
-                    )
-                  })}
-                </div>
-              </section>
-            )}
           </div>
 
           {/* Sidebar */}
@@ -276,10 +251,6 @@ export default function ProfilePage() {
                 <li className="flex justify-between">
                   <span className="text-white/70">Subscriptions</span>
                   <span className="font-semibold">{data.userSubscriptions?.length || 0}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span className="text-white/70">Apps Downloaded</span>
-                  <span className="font-semibold">{data.downloadedApps?.length || 0}</span>
                 </li>
               </ul>
             </section>
