@@ -27,13 +27,6 @@ export async function GET(req: NextRequest) {
         credits: true,
         status: true,
         video: { select: { id: true, title: true, thumbnail: true, videoUrl: true, createdAt: true } },
-        downloadedApps: {
-          select: {
-            id: true,
-            purchasedAt: true,
-            app: { select: { id: true, name: true, downloadLink: true, image: true, credit: true, version: true, createdAt: true } }
-          }
-        },
         userSubscriptions: {
           select: {
             id: true,
