@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { X, Image as ImageIcon } from "lucide-react";
+import { CHANNEL_TYPES } from "@/lib/constants";
 import Spinner from "@/components/UI/Spinner";
 import Toast from "@/components/UI/Toast";
 import UploadPreview from "@/components/UI/UploadPreview";
@@ -11,6 +12,7 @@ export type Channel = {
   logo?: string | null;
   description?: string | null;
   category?: string | null;
+  type?: string | null;
 };
 
 type ChannelData = {
@@ -19,6 +21,7 @@ type ChannelData = {
   logo?: string | null;
   description?: string | null;
   category?: string | null;
+  type?: string | null;
 };
 
 type LegacyProps = {
@@ -72,6 +75,7 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
       name: initialData?.name || "",
       description: initialData?.description || "",
       category: initialData?.category || (categories?.[0] || ""),
+      type: initialData?.type || (CHANNEL_TYPES?.[0] || ""),
     });
     setLogoPreview(initialData?.logo || "");
     setLogoFile(null);
@@ -216,6 +220,25 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
                   {categories.map((c) => (
                     <option key={c} value={c}>
                       {c}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            <div className="sm:col-span-1">
+              <label className="block text-sm text-white/70 mb-1">Type</label>
+              {legacyMode ? (
+                <input className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white focus:outline-none" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} />
+              ) : (
+                <select
+                  className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500/40"
+                  value={form.type}
+                  onChange={(e) => setForm({ ...form, type: e.target.value })}
+                >
+                  {CHANNEL_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
                     </option>
                   ))}
                 </select>
