@@ -7,6 +7,7 @@ export type Channel = {
   logo: string | null;
   description: string | null;
   category: string | null;
+  type?: string | null;
 };
 
 interface Props {
