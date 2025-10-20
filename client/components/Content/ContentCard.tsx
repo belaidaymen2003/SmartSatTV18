@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import {
   Star,
@@ -13,14 +13,14 @@ import {
   Gamepad2,
   Clock,
   Heart,
-  Info
+  Info,
+  DownloadCloud
 } from 'lucide-react'
-import { useEffect } from 'react'
 
 export interface Content {
   id: number
   title: string
-  type: 'movie' | 'series' | 'live' | 'gaming'
+  type: 'movie' | 'series' | 'live' | 'gaming' | 'app'
   price: number
   rating: number
   image: string
@@ -95,6 +95,7 @@ export default function ContentCard({
       case 'series': return <Tv className="w-4 h-4" />
       case 'live': return <Radio className="w-4 h-4" />
       case 'gaming': return <Gamepad2 className="w-4 h-4" />
+      case 'app': return <DownloadCloud className="w-4 h-4" />
       default: return <Play className="w-4 h-4" />
     }
   }
@@ -114,9 +115,17 @@ export default function ContentCard({
     })
   }
 
+  const isApp = content.type === 'app'
+  const destinationHref = isApp ? `/applications/${content.id}` : `/content/${content.id}`
+
   return (
-    <div className="glass rounded-2xl overflow-hidden content-card group" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
-      <div className="relative h-48 overflow-hidden">
+    <article
+      className="glass rounded-2xl overflow-hidden content-card group shadow-2xl hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-shadow duration-300"
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      aria-labelledby={`content-${content.id}-title`}
+    >
+      <div className="relative h-56 md:h-48 overflow-hidden bg-gradient-to-b from-slate-800/20 to-transparent">
         {/* Image / Trailer preview */}
         {content.trailer && hovering ? (
           <video
@@ -124,110 +133,112 @@ export default function ContentCard({
             autoPlay
             loop
             playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
             src={content.trailer}
           />
         ) : (
           <Image
-            src={content.image}
+            src={content.image || '/placeholder-800x450.png'}
             alt={content.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, 400px"
+            className="object-cover group-hover:scale-105 transition-transform duration-400"
           />
         )}
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Soft gradient overlay for legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
         {/* Category Badge */}
-        <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 text-white text-xs">
+        <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 text-white text-xs backdrop-blur">
           {getCategoryIcon(content.type)}
           <span className="capitalize">{content.type}</span>
         </div>
 
         {/* Rating */}
-        <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 text-white text-xs">
-          <Star className="w-3 h-3 text-yellow-400 fill-current" />
-          <span>{avgRating ?? content.rating}</span>
-          {reviewCount > 0 ? <span className="text-white/50">({reviewCount})</span> : null}
+        <div className="absolute top-3 right-3 flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
+          <Star className="w-4 h-4 text-yellow-400" />
+          <span className="font-medium">{avgRating ?? content.rating}</span>
+          {reviewCount > 0 ? <span className="text-white/60">({reviewCount})</span> : null}
         </div>
 
-        {/* Year */}
-        {content.year && (
-          <div className="absolute bottom-3 left-3 px-2 py-1 rounded-full bg-black/50 text-white text-xs">
-            {content.year}
-          </div>
-        )}
-
-        {/* Favorite Button */}
-        <button
-          onClick={handleFavoriteToggle}
-          aria-label={isFavorite ? 'Remove from Watchlist' : 'Add to Watchlist'}
-          className="absolute bottom-3 right-3 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors opacity-0 group-hover:opacity-100"
+        {/* Quick Play / View Overlay */}
+        <a
+          href={destinationHref}
+          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          aria-label={`Open ${content.title}`}
         >
-          <Heart className={`w-4 h-4 ${isFavorite ? 'text-red-500 fill-current' : 'text-white'}`} />
-        </button>
-
-        {/* Play Button Overlay */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <a
-            href={`/content/${content.id}`}
-            className="p-4 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
-          >
-            <Play className="w-8 h-8 text-white fill-current" />
-          </a>
-        </div>
+          <div className="p-4 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors">
+            <Play className="w-10 h-10 text-white" />
+          </div>
+        </a>
       </div>
 
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{content.title}</h3>
-        <p className="text-white/60 text-sm mb-3 line-clamp-2">{content.description}</p>
+      <div className="p-5 md:p-6">
+        <h3 id={`content-${content.id}-title`} className="text-lg md:text-xl font-semibold text-white mb-1 line-clamp-2">{content.title}</h3>
+        <p className="text-sm text-white/60 mb-3 line-clamp-2">{content.description}</p>
 
         <div className="flex items-center justify-between text-sm text-white/60 mb-4">
-          <span className="flex items-center gap-1">
-            <span>{content.genre}</span>
-          </span>
-          {content.duration && (
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              <span>{content.duration}</span>
-            </span>
-          )}
-        </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg">
+              <Coins className="w-4 h-4 text-yellow-400" />
+              <span className="font-semibold">{content.price} Credits</span>
+            </div>
 
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Coins className="w-4 h-4 text-yellow-400" />
-            <span className="text-white font-semibold">{content.price} Credits</span>
+            {content.duration && (
+              <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/5">
+                <Clock className="w-4 h-4" />
+                <span className="text-sm">{content.duration}</span>
+              </div>
+            )}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleFavoriteToggle}
+              aria-label={isFavorite ? 'Remove from Watchlist' : 'Add to Watchlist'}
+              className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+            >
+              <Heart className={`w-4 h-4 ${isFavorite ? 'text-red-500' : 'text-white'}`} />
+            </button>
+
             <a
-              href={`/content/${content.id}`}
+              href={destinationHref}
               className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium flex items-center gap-2 transition-colors"
             >
               <Info className="w-4 h-4" />
               Details
             </a>
-
-            {isOwned ? (
-              <button className="px-4 py-2 rounded-xl bg-green-500/20 text-green-400 font-medium flex items-center gap-2">
-                <Play className="w-4 h-4" />
-                Watch
-              </button>
-            ) : (
-              <button
-                onClick={() => onPurchase(content)}
-                disabled={userCredits < content.price}
-                className="px-4 py-2 rounded-xl btn-primary text-white font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                Buy
-              </button>
-            )}
           </div>
         </div>
+
+        <div className="flex items-center justify-between gap-3">
+          {isOwned ? (
+            <a href={destinationHref} className="flex-1 text-center px-4 py-2 rounded-xl bg-green-500/20 text-green-300 font-semibold">Watch</a>
+          ) : isApp ? (
+            // For apps we use View to go to the single downloadable app page
+            <button
+              onClick={() => onViewDetails(content)}
+              className="flex-1 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center justify-center gap-2 transition-colors"
+            >
+              <DownloadCloud className="w-4 h-4" />
+              View
+            </button>
+          ) : (
+            <button
+              onClick={() => onPurchase(content)}
+              disabled={userCredits < content.price}
+              className="flex-1 px-4 py-2 rounded-xl btn-primary text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Buy
+            </button>
+          )}
+
+          <a href={destinationHref} className="px-3 py-2 rounded-xl bg-white/6 hover:bg-white/12 text-white/90 font-medium">More</a>
+        </div>
       </div>
-    </div>
+    </article>
   )
 }
