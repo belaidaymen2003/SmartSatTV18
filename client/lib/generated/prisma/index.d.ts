@@ -20,7 +20,30 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
  * Model Video
- * 
+ * *
+ *  * model CatalogItem {
+ *  * id            Int          @id @default(autoincrement())
+ *  * title         String
+ *  * rating        Float        @default(0)
+ *  * category      ItemCategory
+ *  * views         Int          @default(0)
+ *  * status        ItemStatus   @default(VISIBLE)
+ *  * mediaUrl      String?
+ *  * quality       Quality?
+ *  * age           String?
+ *  * description   String?
+ *  * runtime       String?
+ *  * premiereDate  DateTime?
+ *  * coverUrl      String?
+ *  * backgroundUrl String?
+ *  * country       String?
+ *  * director      String?
+ *  * actors        String[] // simple string array; switch to relation if needed
+ *  * createdAt     DateTime     @default(now())
+ *  * updatedAt     DateTime     @updatedAt
+ *  * @@index([category, status])
+ *  * @@index([title])
+ *  * }
  */
 export type Video = $Result.DefaultSelection<Prisma.$VideoPayload>
 /**
@@ -28,6 +51,11 @@ export type Video = $Result.DefaultSelection<Prisma.$VideoPayload>
  * 
  */
 export type CatalogApp = $Result.DefaultSelection<Prisma.$CatalogAppPayload>
+/**
+ * Model UserCatalogApp
+ * 
+ */
+export type UserCatalogApp = $Result.DefaultSelection<Prisma.$UserCatalogAppPayload>
 /**
  * Model Settings
  * 
@@ -349,6 +377,16 @@ export class PrismaClient<
     * ```
     */
   get catalogApp(): Prisma.CatalogAppDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.userCatalogApp`: Exposes CRUD operations for the **UserCatalogApp** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserCatalogApps
+    * const userCatalogApps = await prisma.userCatalogApp.findMany()
+    * ```
+    */
+  get userCatalogApp(): Prisma.UserCatalogAppDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.settings`: Exposes CRUD operations for the **Settings** model.
@@ -842,6 +880,7 @@ export namespace Prisma {
     User: 'User',
     Video: 'Video',
     CatalogApp: 'CatalogApp',
+    UserCatalogApp: 'UserCatalogApp',
     Settings: 'Settings',
     BeInSportActivation: 'BeInSportActivation',
     IPTVChannel: 'IPTVChannel',
@@ -865,7 +904,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "video" | "catalogApp" | "settings" | "beInSportActivation" | "iPTVChannel" | "subscription" | "userSubscription"
+      modelProps: "user" | "video" | "catalogApp" | "userCatalogApp" | "settings" | "beInSportActivation" | "iPTVChannel" | "subscription" | "userSubscription"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1088,6 +1127,80 @@ export namespace Prisma {
           count: {
             args: Prisma.CatalogAppCountArgs<ExtArgs>
             result: $Utils.Optional<CatalogAppCountAggregateOutputType> | number
+          }
+        }
+      }
+      UserCatalogApp: {
+        payload: Prisma.$UserCatalogAppPayload<ExtArgs>
+        fields: Prisma.UserCatalogAppFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserCatalogAppFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserCatalogAppFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload>
+          }
+          findFirst: {
+            args: Prisma.UserCatalogAppFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserCatalogAppFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload>
+          }
+          findMany: {
+            args: Prisma.UserCatalogAppFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload>[]
+          }
+          create: {
+            args: Prisma.UserCatalogAppCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload>
+          }
+          createMany: {
+            args: Prisma.UserCatalogAppCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UserCatalogAppCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload>[]
+          }
+          delete: {
+            args: Prisma.UserCatalogAppDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload>
+          }
+          update: {
+            args: Prisma.UserCatalogAppUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserCatalogAppDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserCatalogAppUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UserCatalogAppUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload>[]
+          }
+          upsert: {
+            args: Prisma.UserCatalogAppUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserCatalogAppPayload>
+          }
+          aggregate: {
+            args: Prisma.UserCatalogAppAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserCatalogApp>
+          }
+          groupBy: {
+            args: Prisma.UserCatalogAppGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserCatalogAppGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UserCatalogAppCountArgs<ExtArgs>
+            result: $Utils.Optional<UserCatalogAppCountAggregateOutputType> | number
           }
         }
       }
@@ -1560,6 +1673,7 @@ export namespace Prisma {
     user?: UserOmit
     video?: VideoOmit
     catalogApp?: CatalogAppOmit
+    userCatalogApp?: UserCatalogAppOmit
     settings?: SettingsOmit
     beInSportActivation?: BeInSportActivationOmit
     iPTVChannel?: IPTVChannelOmit
@@ -1648,14 +1762,14 @@ export namespace Prisma {
     video: number
     beinJobs: number
     userSubscriptions: number
-    appDownload: number
+    downloadedApps: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     video?: boolean | UserCountOutputTypeCountVideoArgs
     beinJobs?: boolean | UserCountOutputTypeCountBeinJobsArgs
     userSubscriptions?: boolean | UserCountOutputTypeCountUserSubscriptionsArgs
-    appDownload?: boolean | UserCountOutputTypeCountAppDownloadArgs
+    downloadedApps?: boolean | UserCountOutputTypeCountDownloadedAppsArgs
   }
 
   // Custom InputTypes
@@ -1693,8 +1807,39 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountAppDownloadArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CatalogAppWhereInput
+  export type UserCountOutputTypeCountDownloadedAppsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserCatalogAppWhereInput
+  }
+
+
+  /**
+   * Count Type CatalogAppCountOutputType
+   */
+
+  export type CatalogAppCountOutputType = {
+    downloadedBy: number
+  }
+
+  export type CatalogAppCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    downloadedBy?: boolean | CatalogAppCountOutputTypeCountDownloadedByArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CatalogAppCountOutputType without action
+   */
+  export type CatalogAppCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CatalogAppCountOutputType
+     */
+    select?: CatalogAppCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CatalogAppCountOutputType without action
+   */
+  export type CatalogAppCountOutputTypeCountDownloadedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserCatalogAppWhereInput
   }
 
 
@@ -2025,7 +2170,7 @@ export namespace Prisma {
     video?: boolean | User$videoArgs<ExtArgs>
     beinJobs?: boolean | User$beinJobsArgs<ExtArgs>
     userSubscriptions?: boolean | User$userSubscriptionsArgs<ExtArgs>
-    appDownload?: boolean | User$appDownloadArgs<ExtArgs>
+    downloadedApps?: boolean | User$downloadedAppsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2079,7 +2224,7 @@ export namespace Prisma {
     video?: boolean | User$videoArgs<ExtArgs>
     beinJobs?: boolean | User$beinJobsArgs<ExtArgs>
     userSubscriptions?: boolean | User$userSubscriptionsArgs<ExtArgs>
-    appDownload?: boolean | User$appDownloadArgs<ExtArgs>
+    downloadedApps?: boolean | User$downloadedAppsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2091,7 +2236,7 @@ export namespace Prisma {
       video: Prisma.$VideoPayload<ExtArgs>[]
       beinJobs: Prisma.$BeInSportActivationPayload<ExtArgs>[]
       userSubscriptions: Prisma.$UserSubscriptionPayload<ExtArgs>[]
-      appDownload: Prisma.$CatalogAppPayload<ExtArgs>[]
+      downloadedApps: Prisma.$UserCatalogAppPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2503,7 +2648,7 @@ export namespace Prisma {
     video<T extends User$videoArgs<ExtArgs> = {}>(args?: Subset<T, User$videoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VideoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     beinJobs<T extends User$beinJobsArgs<ExtArgs> = {}>(args?: Subset<T, User$beinJobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BeInSportActivationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     userSubscriptions<T extends User$userSubscriptionsArgs<ExtArgs> = {}>(args?: Subset<T, User$userSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    appDownload<T extends User$appDownloadArgs<ExtArgs> = {}>(args?: Subset<T, User$appDownloadArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CatalogAppPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    downloadedApps<T extends User$downloadedAppsArgs<ExtArgs> = {}>(args?: Subset<T, User$downloadedAppsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3005,27 +3150,27 @@ export namespace Prisma {
   }
 
   /**
-   * User.appDownload
+   * User.downloadedApps
    */
-  export type User$appDownloadArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$downloadedAppsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the CatalogApp
+     * Select specific fields to fetch from the UserCatalogApp
      */
-    select?: CatalogAppSelect<ExtArgs> | null
+    select?: UserCatalogAppSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the CatalogApp
+     * Omit specific fields from the UserCatalogApp
      */
-    omit?: CatalogAppOmit<ExtArgs> | null
+    omit?: UserCatalogAppOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: CatalogAppInclude<ExtArgs> | null
-    where?: CatalogAppWhereInput
-    orderBy?: CatalogAppOrderByWithRelationInput | CatalogAppOrderByWithRelationInput[]
-    cursor?: CatalogAppWhereUniqueInput
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    where?: UserCatalogAppWhereInput
+    orderBy?: UserCatalogAppOrderByWithRelationInput | UserCatalogAppOrderByWithRelationInput[]
+    cursor?: UserCatalogAppWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: CatalogAppScalarFieldEnum | CatalogAppScalarFieldEnum[]
+    distinct?: UserCatalogAppScalarFieldEnum | UserCatalogAppScalarFieldEnum[]
   }
 
   /**
@@ -4233,13 +4378,13 @@ export namespace Prisma {
   export type CatalogAppAvgAggregateOutputType = {
     id: number | null
     credit: number | null
-    userId: number | null
+    storageRequired: number | null
   }
 
   export type CatalogAppSumAggregateOutputType = {
     id: number | null
     credit: number | null
-    userId: number | null
+    storageRequired: number | null
   }
 
   export type CatalogAppMinAggregateOutputType = {
@@ -4250,9 +4395,10 @@ export namespace Prisma {
     image: string | null
     credit: number | null
     version: string | null
+    storageRequired: number | null
+    internetConnection: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
-    userId: number | null
   }
 
   export type CatalogAppMaxAggregateOutputType = {
@@ -4263,9 +4409,10 @@ export namespace Prisma {
     image: string | null
     credit: number | null
     version: string | null
+    storageRequired: number | null
+    internetConnection: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
-    userId: number | null
   }
 
   export type CatalogAppCountAggregateOutputType = {
@@ -4276,9 +4423,11 @@ export namespace Prisma {
     image: number
     credit: number
     version: number
+    storageRequired: number
+    internetConnection: number
+    deviceOperatingSystems: number
     createdAt: number
     updatedAt: number
-    userId: number
     _all: number
   }
 
@@ -4286,13 +4435,13 @@ export namespace Prisma {
   export type CatalogAppAvgAggregateInputType = {
     id?: true
     credit?: true
-    userId?: true
+    storageRequired?: true
   }
 
   export type CatalogAppSumAggregateInputType = {
     id?: true
     credit?: true
-    userId?: true
+    storageRequired?: true
   }
 
   export type CatalogAppMinAggregateInputType = {
@@ -4303,9 +4452,10 @@ export namespace Prisma {
     image?: true
     credit?: true
     version?: true
+    storageRequired?: true
+    internetConnection?: true
     createdAt?: true
     updatedAt?: true
-    userId?: true
   }
 
   export type CatalogAppMaxAggregateInputType = {
@@ -4316,9 +4466,10 @@ export namespace Prisma {
     image?: true
     credit?: true
     version?: true
+    storageRequired?: true
+    internetConnection?: true
     createdAt?: true
     updatedAt?: true
-    userId?: true
   }
 
   export type CatalogAppCountAggregateInputType = {
@@ -4329,9 +4480,11 @@ export namespace Prisma {
     image?: true
     credit?: true
     version?: true
+    storageRequired?: true
+    internetConnection?: true
+    deviceOperatingSystems?: true
     createdAt?: true
     updatedAt?: true
-    userId?: true
     _all?: true
   }
 
@@ -4429,9 +4582,11 @@ export namespace Prisma {
     image: string
     credit: number
     version: string
+    storageRequired: number | null
+    internetConnection: boolean
+    deviceOperatingSystems: string[]
     createdAt: Date
     updatedAt: Date
-    userId: number | null
     _count: CatalogAppCountAggregateOutputType | null
     _avg: CatalogAppAvgAggregateOutputType | null
     _sum: CatalogAppSumAggregateOutputType | null
@@ -4461,10 +4616,13 @@ export namespace Prisma {
     image?: boolean
     credit?: boolean
     version?: boolean
+    storageRequired?: boolean
+    internetConnection?: boolean
+    deviceOperatingSystems?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    userId?: boolean
-    user?: boolean | CatalogApp$userArgs<ExtArgs>
+    downloadedBy?: boolean | CatalogApp$downloadedByArgs<ExtArgs>
+    _count?: boolean | CatalogAppCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["catalogApp"]>
 
   export type CatalogAppSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4475,10 +4633,11 @@ export namespace Prisma {
     image?: boolean
     credit?: boolean
     version?: boolean
+    storageRequired?: boolean
+    internetConnection?: boolean
+    deviceOperatingSystems?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    userId?: boolean
-    user?: boolean | CatalogApp$userArgs<ExtArgs>
   }, ExtArgs["result"]["catalogApp"]>
 
   export type CatalogAppSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4489,10 +4648,11 @@ export namespace Prisma {
     image?: boolean
     credit?: boolean
     version?: boolean
+    storageRequired?: boolean
+    internetConnection?: boolean
+    deviceOperatingSystems?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    userId?: boolean
-    user?: boolean | CatalogApp$userArgs<ExtArgs>
   }, ExtArgs["result"]["catalogApp"]>
 
   export type CatalogAppSelectScalar = {
@@ -4503,26 +4663,25 @@ export namespace Prisma {
     image?: boolean
     credit?: boolean
     version?: boolean
+    storageRequired?: boolean
+    internetConnection?: boolean
+    deviceOperatingSystems?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    userId?: boolean
   }
 
-  export type CatalogAppOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "downloadLink" | "image" | "credit" | "version" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["catalogApp"]>
+  export type CatalogAppOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "downloadLink" | "image" | "credit" | "version" | "storageRequired" | "internetConnection" | "deviceOperatingSystems" | "createdAt" | "updatedAt", ExtArgs["result"]["catalogApp"]>
   export type CatalogAppInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | CatalogApp$userArgs<ExtArgs>
+    downloadedBy?: boolean | CatalogApp$downloadedByArgs<ExtArgs>
+    _count?: boolean | CatalogAppCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type CatalogAppIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | CatalogApp$userArgs<ExtArgs>
-  }
-  export type CatalogAppIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | CatalogApp$userArgs<ExtArgs>
-  }
+  export type CatalogAppIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type CatalogAppIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $CatalogAppPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "CatalogApp"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs> | null
+      downloadedBy: Prisma.$UserCatalogAppPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -4532,9 +4691,11 @@ export namespace Prisma {
       image: string
       credit: number
       version: string
+      storageRequired: number | null
+      internetConnection: boolean
+      deviceOperatingSystems: string[]
       createdAt: Date
       updatedAt: Date
-      userId: number | null
     }, ExtArgs["result"]["catalogApp"]>
     composites: {}
   }
@@ -4929,7 +5090,7 @@ export namespace Prisma {
    */
   export interface Prisma__CatalogAppClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends CatalogApp$userArgs<ExtArgs> = {}>(args?: Subset<T, CatalogApp$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    downloadedBy<T extends CatalogApp$downloadedByArgs<ExtArgs> = {}>(args?: Subset<T, CatalogApp$downloadedByArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4966,9 +5127,11 @@ export namespace Prisma {
     readonly image: FieldRef<"CatalogApp", 'String'>
     readonly credit: FieldRef<"CatalogApp", 'Float'>
     readonly version: FieldRef<"CatalogApp", 'String'>
+    readonly storageRequired: FieldRef<"CatalogApp", 'Int'>
+    readonly internetConnection: FieldRef<"CatalogApp", 'Boolean'>
+    readonly deviceOperatingSystems: FieldRef<"CatalogApp", 'String[]'>
     readonly createdAt: FieldRef<"CatalogApp", 'DateTime'>
     readonly updatedAt: FieldRef<"CatalogApp", 'DateTime'>
-    readonly userId: FieldRef<"CatalogApp", 'Int'>
   }
     
 
@@ -5218,10 +5381,6 @@ export namespace Prisma {
      */
     data: CatalogAppCreateManyInput | CatalogAppCreateManyInput[]
     skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CatalogAppIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5292,10 +5451,6 @@ export namespace Prisma {
      * Limit how many CatalogApps to update.
      */
     limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CatalogAppIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5365,22 +5520,27 @@ export namespace Prisma {
   }
 
   /**
-   * CatalogApp.user
+   * CatalogApp.downloadedBy
    */
-  export type CatalogApp$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type CatalogApp$downloadedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the UserCatalogApp
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: UserCatalogAppSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the UserCatalogApp
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: UserCatalogAppOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    where?: UserCatalogAppWhereInput
+    orderBy?: UserCatalogAppOrderByWithRelationInput | UserCatalogAppOrderByWithRelationInput[]
+    cursor?: UserCatalogAppWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserCatalogAppScalarFieldEnum | UserCatalogAppScalarFieldEnum[]
   }
 
   /**
@@ -5399,6 +5559,1101 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: CatalogAppInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model UserCatalogApp
+   */
+
+  export type AggregateUserCatalogApp = {
+    _count: UserCatalogAppCountAggregateOutputType | null
+    _avg: UserCatalogAppAvgAggregateOutputType | null
+    _sum: UserCatalogAppSumAggregateOutputType | null
+    _min: UserCatalogAppMinAggregateOutputType | null
+    _max: UserCatalogAppMaxAggregateOutputType | null
+  }
+
+  export type UserCatalogAppAvgAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    appId: number | null
+  }
+
+  export type UserCatalogAppSumAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    appId: number | null
+  }
+
+  export type UserCatalogAppMinAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    appId: number | null
+    purchasedAt: Date | null
+  }
+
+  export type UserCatalogAppMaxAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    appId: number | null
+    purchasedAt: Date | null
+  }
+
+  export type UserCatalogAppCountAggregateOutputType = {
+    id: number
+    userId: number
+    appId: number
+    purchasedAt: number
+    _all: number
+  }
+
+
+  export type UserCatalogAppAvgAggregateInputType = {
+    id?: true
+    userId?: true
+    appId?: true
+  }
+
+  export type UserCatalogAppSumAggregateInputType = {
+    id?: true
+    userId?: true
+    appId?: true
+  }
+
+  export type UserCatalogAppMinAggregateInputType = {
+    id?: true
+    userId?: true
+    appId?: true
+    purchasedAt?: true
+  }
+
+  export type UserCatalogAppMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    appId?: true
+    purchasedAt?: true
+  }
+
+  export type UserCatalogAppCountAggregateInputType = {
+    id?: true
+    userId?: true
+    appId?: true
+    purchasedAt?: true
+    _all?: true
+  }
+
+  export type UserCatalogAppAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserCatalogApp to aggregate.
+     */
+    where?: UserCatalogAppWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserCatalogApps to fetch.
+     */
+    orderBy?: UserCatalogAppOrderByWithRelationInput | UserCatalogAppOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserCatalogAppWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserCatalogApps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserCatalogApps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserCatalogApps
+    **/
+    _count?: true | UserCatalogAppCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UserCatalogAppAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UserCatalogAppSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserCatalogAppMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserCatalogAppMaxAggregateInputType
+  }
+
+  export type GetUserCatalogAppAggregateType<T extends UserCatalogAppAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserCatalogApp]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserCatalogApp[P]>
+      : GetScalarType<T[P], AggregateUserCatalogApp[P]>
+  }
+
+
+
+
+  export type UserCatalogAppGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserCatalogAppWhereInput
+    orderBy?: UserCatalogAppOrderByWithAggregationInput | UserCatalogAppOrderByWithAggregationInput[]
+    by: UserCatalogAppScalarFieldEnum[] | UserCatalogAppScalarFieldEnum
+    having?: UserCatalogAppScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserCatalogAppCountAggregateInputType | true
+    _avg?: UserCatalogAppAvgAggregateInputType
+    _sum?: UserCatalogAppSumAggregateInputType
+    _min?: UserCatalogAppMinAggregateInputType
+    _max?: UserCatalogAppMaxAggregateInputType
+  }
+
+  export type UserCatalogAppGroupByOutputType = {
+    id: number
+    userId: number
+    appId: number
+    purchasedAt: Date
+    _count: UserCatalogAppCountAggregateOutputType | null
+    _avg: UserCatalogAppAvgAggregateOutputType | null
+    _sum: UserCatalogAppSumAggregateOutputType | null
+    _min: UserCatalogAppMinAggregateOutputType | null
+    _max: UserCatalogAppMaxAggregateOutputType | null
+  }
+
+  type GetUserCatalogAppGroupByPayload<T extends UserCatalogAppGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserCatalogAppGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserCatalogAppGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserCatalogAppGroupByOutputType[P]>
+            : GetScalarType<T[P], UserCatalogAppGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserCatalogAppSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    appId?: boolean
+    purchasedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    app?: boolean | CatalogAppDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userCatalogApp"]>
+
+  export type UserCatalogAppSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    appId?: boolean
+    purchasedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    app?: boolean | CatalogAppDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userCatalogApp"]>
+
+  export type UserCatalogAppSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    appId?: boolean
+    purchasedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    app?: boolean | CatalogAppDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userCatalogApp"]>
+
+  export type UserCatalogAppSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    appId?: boolean
+    purchasedAt?: boolean
+  }
+
+  export type UserCatalogAppOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "appId" | "purchasedAt", ExtArgs["result"]["userCatalogApp"]>
+  export type UserCatalogAppInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    app?: boolean | CatalogAppDefaultArgs<ExtArgs>
+  }
+  export type UserCatalogAppIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    app?: boolean | CatalogAppDefaultArgs<ExtArgs>
+  }
+  export type UserCatalogAppIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    app?: boolean | CatalogAppDefaultArgs<ExtArgs>
+  }
+
+  export type $UserCatalogAppPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserCatalogApp"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      app: Prisma.$CatalogAppPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: number
+      appId: number
+      purchasedAt: Date
+    }, ExtArgs["result"]["userCatalogApp"]>
+    composites: {}
+  }
+
+  type UserCatalogAppGetPayload<S extends boolean | null | undefined | UserCatalogAppDefaultArgs> = $Result.GetResult<Prisma.$UserCatalogAppPayload, S>
+
+  type UserCatalogAppCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserCatalogAppFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UserCatalogAppCountAggregateInputType | true
+    }
+
+  export interface UserCatalogAppDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserCatalogApp'], meta: { name: 'UserCatalogApp' } }
+    /**
+     * Find zero or one UserCatalogApp that matches the filter.
+     * @param {UserCatalogAppFindUniqueArgs} args - Arguments to find a UserCatalogApp
+     * @example
+     * // Get one UserCatalogApp
+     * const userCatalogApp = await prisma.userCatalogApp.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserCatalogAppFindUniqueArgs>(args: SelectSubset<T, UserCatalogAppFindUniqueArgs<ExtArgs>>): Prisma__UserCatalogAppClient<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UserCatalogApp that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UserCatalogAppFindUniqueOrThrowArgs} args - Arguments to find a UserCatalogApp
+     * @example
+     * // Get one UserCatalogApp
+     * const userCatalogApp = await prisma.userCatalogApp.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserCatalogAppFindUniqueOrThrowArgs>(args: SelectSubset<T, UserCatalogAppFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserCatalogAppClient<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserCatalogApp that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserCatalogAppFindFirstArgs} args - Arguments to find a UserCatalogApp
+     * @example
+     * // Get one UserCatalogApp
+     * const userCatalogApp = await prisma.userCatalogApp.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserCatalogAppFindFirstArgs>(args?: SelectSubset<T, UserCatalogAppFindFirstArgs<ExtArgs>>): Prisma__UserCatalogAppClient<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserCatalogApp that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserCatalogAppFindFirstOrThrowArgs} args - Arguments to find a UserCatalogApp
+     * @example
+     * // Get one UserCatalogApp
+     * const userCatalogApp = await prisma.userCatalogApp.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserCatalogAppFindFirstOrThrowArgs>(args?: SelectSubset<T, UserCatalogAppFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserCatalogAppClient<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UserCatalogApps that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserCatalogAppFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserCatalogApps
+     * const userCatalogApps = await prisma.userCatalogApp.findMany()
+     * 
+     * // Get first 10 UserCatalogApps
+     * const userCatalogApps = await prisma.userCatalogApp.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const userCatalogAppWithIdOnly = await prisma.userCatalogApp.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UserCatalogAppFindManyArgs>(args?: SelectSubset<T, UserCatalogAppFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UserCatalogApp.
+     * @param {UserCatalogAppCreateArgs} args - Arguments to create a UserCatalogApp.
+     * @example
+     * // Create one UserCatalogApp
+     * const UserCatalogApp = await prisma.userCatalogApp.create({
+     *   data: {
+     *     // ... data to create a UserCatalogApp
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserCatalogAppCreateArgs>(args: SelectSubset<T, UserCatalogAppCreateArgs<ExtArgs>>): Prisma__UserCatalogAppClient<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UserCatalogApps.
+     * @param {UserCatalogAppCreateManyArgs} args - Arguments to create many UserCatalogApps.
+     * @example
+     * // Create many UserCatalogApps
+     * const userCatalogApp = await prisma.userCatalogApp.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserCatalogAppCreateManyArgs>(args?: SelectSubset<T, UserCatalogAppCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UserCatalogApps and returns the data saved in the database.
+     * @param {UserCatalogAppCreateManyAndReturnArgs} args - Arguments to create many UserCatalogApps.
+     * @example
+     * // Create many UserCatalogApps
+     * const userCatalogApp = await prisma.userCatalogApp.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UserCatalogApps and only return the `id`
+     * const userCatalogAppWithIdOnly = await prisma.userCatalogApp.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UserCatalogAppCreateManyAndReturnArgs>(args?: SelectSubset<T, UserCatalogAppCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a UserCatalogApp.
+     * @param {UserCatalogAppDeleteArgs} args - Arguments to delete one UserCatalogApp.
+     * @example
+     * // Delete one UserCatalogApp
+     * const UserCatalogApp = await prisma.userCatalogApp.delete({
+     *   where: {
+     *     // ... filter to delete one UserCatalogApp
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserCatalogAppDeleteArgs>(args: SelectSubset<T, UserCatalogAppDeleteArgs<ExtArgs>>): Prisma__UserCatalogAppClient<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UserCatalogApp.
+     * @param {UserCatalogAppUpdateArgs} args - Arguments to update one UserCatalogApp.
+     * @example
+     * // Update one UserCatalogApp
+     * const userCatalogApp = await prisma.userCatalogApp.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserCatalogAppUpdateArgs>(args: SelectSubset<T, UserCatalogAppUpdateArgs<ExtArgs>>): Prisma__UserCatalogAppClient<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UserCatalogApps.
+     * @param {UserCatalogAppDeleteManyArgs} args - Arguments to filter UserCatalogApps to delete.
+     * @example
+     * // Delete a few UserCatalogApps
+     * const { count } = await prisma.userCatalogApp.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserCatalogAppDeleteManyArgs>(args?: SelectSubset<T, UserCatalogAppDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserCatalogApps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserCatalogAppUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserCatalogApps
+     * const userCatalogApp = await prisma.userCatalogApp.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserCatalogAppUpdateManyArgs>(args: SelectSubset<T, UserCatalogAppUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserCatalogApps and returns the data updated in the database.
+     * @param {UserCatalogAppUpdateManyAndReturnArgs} args - Arguments to update many UserCatalogApps.
+     * @example
+     * // Update many UserCatalogApps
+     * const userCatalogApp = await prisma.userCatalogApp.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UserCatalogApps and only return the `id`
+     * const userCatalogAppWithIdOnly = await prisma.userCatalogApp.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UserCatalogAppUpdateManyAndReturnArgs>(args: SelectSubset<T, UserCatalogAppUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one UserCatalogApp.
+     * @param {UserCatalogAppUpsertArgs} args - Arguments to update or create a UserCatalogApp.
+     * @example
+     * // Update or create a UserCatalogApp
+     * const userCatalogApp = await prisma.userCatalogApp.upsert({
+     *   create: {
+     *     // ... data to create a UserCatalogApp
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserCatalogApp we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserCatalogAppUpsertArgs>(args: SelectSubset<T, UserCatalogAppUpsertArgs<ExtArgs>>): Prisma__UserCatalogAppClient<$Result.GetResult<Prisma.$UserCatalogAppPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UserCatalogApps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserCatalogAppCountArgs} args - Arguments to filter UserCatalogApps to count.
+     * @example
+     * // Count the number of UserCatalogApps
+     * const count = await prisma.userCatalogApp.count({
+     *   where: {
+     *     // ... the filter for the UserCatalogApps we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserCatalogAppCountArgs>(
+      args?: Subset<T, UserCatalogAppCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserCatalogAppCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserCatalogApp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserCatalogAppAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserCatalogAppAggregateArgs>(args: Subset<T, UserCatalogAppAggregateArgs>): Prisma.PrismaPromise<GetUserCatalogAppAggregateType<T>>
+
+    /**
+     * Group by UserCatalogApp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserCatalogAppGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserCatalogAppGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserCatalogAppGroupByArgs['orderBy'] }
+        : { orderBy?: UserCatalogAppGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserCatalogAppGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserCatalogAppGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserCatalogApp model
+   */
+  readonly fields: UserCatalogAppFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserCatalogApp.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserCatalogAppClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    app<T extends CatalogAppDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CatalogAppDefaultArgs<ExtArgs>>): Prisma__CatalogAppClient<$Result.GetResult<Prisma.$CatalogAppPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserCatalogApp model
+   */
+  interface UserCatalogAppFieldRefs {
+    readonly id: FieldRef<"UserCatalogApp", 'Int'>
+    readonly userId: FieldRef<"UserCatalogApp", 'Int'>
+    readonly appId: FieldRef<"UserCatalogApp", 'Int'>
+    readonly purchasedAt: FieldRef<"UserCatalogApp", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserCatalogApp findUnique
+   */
+  export type UserCatalogAppFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    /**
+     * Filter, which UserCatalogApp to fetch.
+     */
+    where: UserCatalogAppWhereUniqueInput
+  }
+
+  /**
+   * UserCatalogApp findUniqueOrThrow
+   */
+  export type UserCatalogAppFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    /**
+     * Filter, which UserCatalogApp to fetch.
+     */
+    where: UserCatalogAppWhereUniqueInput
+  }
+
+  /**
+   * UserCatalogApp findFirst
+   */
+  export type UserCatalogAppFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    /**
+     * Filter, which UserCatalogApp to fetch.
+     */
+    where?: UserCatalogAppWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserCatalogApps to fetch.
+     */
+    orderBy?: UserCatalogAppOrderByWithRelationInput | UserCatalogAppOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserCatalogApps.
+     */
+    cursor?: UserCatalogAppWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserCatalogApps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserCatalogApps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserCatalogApps.
+     */
+    distinct?: UserCatalogAppScalarFieldEnum | UserCatalogAppScalarFieldEnum[]
+  }
+
+  /**
+   * UserCatalogApp findFirstOrThrow
+   */
+  export type UserCatalogAppFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    /**
+     * Filter, which UserCatalogApp to fetch.
+     */
+    where?: UserCatalogAppWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserCatalogApps to fetch.
+     */
+    orderBy?: UserCatalogAppOrderByWithRelationInput | UserCatalogAppOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserCatalogApps.
+     */
+    cursor?: UserCatalogAppWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserCatalogApps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserCatalogApps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserCatalogApps.
+     */
+    distinct?: UserCatalogAppScalarFieldEnum | UserCatalogAppScalarFieldEnum[]
+  }
+
+  /**
+   * UserCatalogApp findMany
+   */
+  export type UserCatalogAppFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    /**
+     * Filter, which UserCatalogApps to fetch.
+     */
+    where?: UserCatalogAppWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserCatalogApps to fetch.
+     */
+    orderBy?: UserCatalogAppOrderByWithRelationInput | UserCatalogAppOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserCatalogApps.
+     */
+    cursor?: UserCatalogAppWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserCatalogApps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserCatalogApps.
+     */
+    skip?: number
+    distinct?: UserCatalogAppScalarFieldEnum | UserCatalogAppScalarFieldEnum[]
+  }
+
+  /**
+   * UserCatalogApp create
+   */
+  export type UserCatalogAppCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UserCatalogApp.
+     */
+    data: XOR<UserCatalogAppCreateInput, UserCatalogAppUncheckedCreateInput>
+  }
+
+  /**
+   * UserCatalogApp createMany
+   */
+  export type UserCatalogAppCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserCatalogApps.
+     */
+    data: UserCatalogAppCreateManyInput | UserCatalogAppCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UserCatalogApp createManyAndReturn
+   */
+  export type UserCatalogAppCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * The data used to create many UserCatalogApps.
+     */
+    data: UserCatalogAppCreateManyInput | UserCatalogAppCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserCatalogApp update
+   */
+  export type UserCatalogAppUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UserCatalogApp.
+     */
+    data: XOR<UserCatalogAppUpdateInput, UserCatalogAppUncheckedUpdateInput>
+    /**
+     * Choose, which UserCatalogApp to update.
+     */
+    where: UserCatalogAppWhereUniqueInput
+  }
+
+  /**
+   * UserCatalogApp updateMany
+   */
+  export type UserCatalogAppUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserCatalogApps.
+     */
+    data: XOR<UserCatalogAppUpdateManyMutationInput, UserCatalogAppUncheckedUpdateManyInput>
+    /**
+     * Filter which UserCatalogApps to update
+     */
+    where?: UserCatalogAppWhereInput
+    /**
+     * Limit how many UserCatalogApps to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserCatalogApp updateManyAndReturn
+   */
+  export type UserCatalogAppUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * The data used to update UserCatalogApps.
+     */
+    data: XOR<UserCatalogAppUpdateManyMutationInput, UserCatalogAppUncheckedUpdateManyInput>
+    /**
+     * Filter which UserCatalogApps to update
+     */
+    where?: UserCatalogAppWhereInput
+    /**
+     * Limit how many UserCatalogApps to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserCatalogApp upsert
+   */
+  export type UserCatalogAppUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UserCatalogApp to update in case it exists.
+     */
+    where: UserCatalogAppWhereUniqueInput
+    /**
+     * In case the UserCatalogApp found by the `where` argument doesn't exist, create a new UserCatalogApp with this data.
+     */
+    create: XOR<UserCatalogAppCreateInput, UserCatalogAppUncheckedCreateInput>
+    /**
+     * In case the UserCatalogApp was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserCatalogAppUpdateInput, UserCatalogAppUncheckedUpdateInput>
+  }
+
+  /**
+   * UserCatalogApp delete
+   */
+  export type UserCatalogAppDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
+    /**
+     * Filter which UserCatalogApp to delete.
+     */
+    where: UserCatalogAppWhereUniqueInput
+  }
+
+  /**
+   * UserCatalogApp deleteMany
+   */
+  export type UserCatalogAppDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserCatalogApps to delete
+     */
+    where?: UserCatalogAppWhereInput
+    /**
+     * Limit how many UserCatalogApps to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserCatalogApp without action
+   */
+  export type UserCatalogAppDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCatalogApp
+     */
+    select?: UserCatalogAppSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserCatalogApp
+     */
+    omit?: UserCatalogAppOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserCatalogAppInclude<ExtArgs> | null
   }
 
 
@@ -11090,12 +12345,24 @@ export namespace Prisma {
     image: 'image',
     credit: 'credit',
     version: 'version',
+    storageRequired: 'storageRequired',
+    internetConnection: 'internetConnection',
+    deviceOperatingSystems: 'deviceOperatingSystems',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    userId: 'userId'
+    updatedAt: 'updatedAt'
   };
 
   export type CatalogAppScalarFieldEnum = (typeof CatalogAppScalarFieldEnum)[keyof typeof CatalogAppScalarFieldEnum]
+
+
+  export const UserCatalogAppScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    appId: 'appId',
+    purchasedAt: 'purchasedAt'
+  };
+
+  export type UserCatalogAppScalarFieldEnum = (typeof UserCatalogAppScalarFieldEnum)[keyof typeof UserCatalogAppScalarFieldEnum]
 
 
   export const SettingsScalarFieldEnum: {
@@ -11362,7 +12629,7 @@ export namespace Prisma {
     video?: VideoListRelationFilter
     beinJobs?: BeInSportActivationListRelationFilter
     userSubscriptions?: UserSubscriptionListRelationFilter
-    appDownload?: CatalogAppListRelationFilter
+    downloadedApps?: UserCatalogAppListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -11381,7 +12648,7 @@ export namespace Prisma {
     video?: VideoOrderByRelationAggregateInput
     beinJobs?: BeInSportActivationOrderByRelationAggregateInput
     userSubscriptions?: UserSubscriptionOrderByRelationAggregateInput
-    appDownload?: CatalogAppOrderByRelationAggregateInput
+    downloadedApps?: UserCatalogAppOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -11403,7 +12670,7 @@ export namespace Prisma {
     video?: VideoListRelationFilter
     beinJobs?: BeInSportActivationListRelationFilter
     userSubscriptions?: UserSubscriptionListRelationFilter
-    appDownload?: CatalogAppListRelationFilter
+    downloadedApps?: UserCatalogAppListRelationFilter
   }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -11532,10 +12799,12 @@ export namespace Prisma {
     image?: StringFilter<"CatalogApp"> | string
     credit?: FloatFilter<"CatalogApp"> | number
     version?: StringFilter<"CatalogApp"> | string
+    storageRequired?: IntNullableFilter<"CatalogApp"> | number | null
+    internetConnection?: BoolFilter<"CatalogApp"> | boolean
+    deviceOperatingSystems?: StringNullableListFilter<"CatalogApp">
     createdAt?: DateTimeFilter<"CatalogApp"> | Date | string
     updatedAt?: DateTimeFilter<"CatalogApp"> | Date | string
-    userId?: IntNullableFilter<"CatalogApp"> | number | null
-    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    downloadedBy?: UserCatalogAppListRelationFilter
   }
 
   export type CatalogAppOrderByWithRelationInput = {
@@ -11546,10 +12815,12 @@ export namespace Prisma {
     image?: SortOrder
     credit?: SortOrder
     version?: SortOrder
+    storageRequired?: SortOrderInput | SortOrder
+    internetConnection?: SortOrder
+    deviceOperatingSystems?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userId?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
+    downloadedBy?: UserCatalogAppOrderByRelationAggregateInput
   }
 
   export type CatalogAppWhereUniqueInput = Prisma.AtLeast<{
@@ -11563,10 +12834,12 @@ export namespace Prisma {
     image?: StringFilter<"CatalogApp"> | string
     credit?: FloatFilter<"CatalogApp"> | number
     version?: StringFilter<"CatalogApp"> | string
+    storageRequired?: IntNullableFilter<"CatalogApp"> | number | null
+    internetConnection?: BoolFilter<"CatalogApp"> | boolean
+    deviceOperatingSystems?: StringNullableListFilter<"CatalogApp">
     createdAt?: DateTimeFilter<"CatalogApp"> | Date | string
     updatedAt?: DateTimeFilter<"CatalogApp"> | Date | string
-    userId?: IntNullableFilter<"CatalogApp"> | number | null
-    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    downloadedBy?: UserCatalogAppListRelationFilter
   }, "id">
 
   export type CatalogAppOrderByWithAggregationInput = {
@@ -11577,9 +12850,11 @@ export namespace Prisma {
     image?: SortOrder
     credit?: SortOrder
     version?: SortOrder
+    storageRequired?: SortOrderInput | SortOrder
+    internetConnection?: SortOrder
+    deviceOperatingSystems?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userId?: SortOrderInput | SortOrder
     _count?: CatalogAppCountOrderByAggregateInput
     _avg?: CatalogAppAvgOrderByAggregateInput
     _max?: CatalogAppMaxOrderByAggregateInput
@@ -11598,9 +12873,67 @@ export namespace Prisma {
     image?: StringWithAggregatesFilter<"CatalogApp"> | string
     credit?: FloatWithAggregatesFilter<"CatalogApp"> | number
     version?: StringWithAggregatesFilter<"CatalogApp"> | string
+    storageRequired?: IntNullableWithAggregatesFilter<"CatalogApp"> | number | null
+    internetConnection?: BoolWithAggregatesFilter<"CatalogApp"> | boolean
+    deviceOperatingSystems?: StringNullableListFilter<"CatalogApp">
     createdAt?: DateTimeWithAggregatesFilter<"CatalogApp"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CatalogApp"> | Date | string
-    userId?: IntNullableWithAggregatesFilter<"CatalogApp"> | number | null
+  }
+
+  export type UserCatalogAppWhereInput = {
+    AND?: UserCatalogAppWhereInput | UserCatalogAppWhereInput[]
+    OR?: UserCatalogAppWhereInput[]
+    NOT?: UserCatalogAppWhereInput | UserCatalogAppWhereInput[]
+    id?: IntFilter<"UserCatalogApp"> | number
+    userId?: IntFilter<"UserCatalogApp"> | number
+    appId?: IntFilter<"UserCatalogApp"> | number
+    purchasedAt?: DateTimeFilter<"UserCatalogApp"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    app?: XOR<CatalogAppScalarRelationFilter, CatalogAppWhereInput>
+  }
+
+  export type UserCatalogAppOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    appId?: SortOrder
+    purchasedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    app?: CatalogAppOrderByWithRelationInput
+  }
+
+  export type UserCatalogAppWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    userId_appId?: UserCatalogAppUserIdAppIdCompoundUniqueInput
+    AND?: UserCatalogAppWhereInput | UserCatalogAppWhereInput[]
+    OR?: UserCatalogAppWhereInput[]
+    NOT?: UserCatalogAppWhereInput | UserCatalogAppWhereInput[]
+    userId?: IntFilter<"UserCatalogApp"> | number
+    appId?: IntFilter<"UserCatalogApp"> | number
+    purchasedAt?: DateTimeFilter<"UserCatalogApp"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    app?: XOR<CatalogAppScalarRelationFilter, CatalogAppWhereInput>
+  }, "id" | "userId_appId">
+
+  export type UserCatalogAppOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    appId?: SortOrder
+    purchasedAt?: SortOrder
+    _count?: UserCatalogAppCountOrderByAggregateInput
+    _avg?: UserCatalogAppAvgOrderByAggregateInput
+    _max?: UserCatalogAppMaxOrderByAggregateInput
+    _min?: UserCatalogAppMinOrderByAggregateInput
+    _sum?: UserCatalogAppSumOrderByAggregateInput
+  }
+
+  export type UserCatalogAppScalarWhereWithAggregatesInput = {
+    AND?: UserCatalogAppScalarWhereWithAggregatesInput | UserCatalogAppScalarWhereWithAggregatesInput[]
+    OR?: UserCatalogAppScalarWhereWithAggregatesInput[]
+    NOT?: UserCatalogAppScalarWhereWithAggregatesInput | UserCatalogAppScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"UserCatalogApp"> | number
+    userId?: IntWithAggregatesFilter<"UserCatalogApp"> | number
+    appId?: IntWithAggregatesFilter<"UserCatalogApp"> | number
+    purchasedAt?: DateTimeWithAggregatesFilter<"UserCatalogApp"> | Date | string
   }
 
   export type SettingsWhereInput = {
@@ -11962,7 +13295,7 @@ export namespace Prisma {
     video?: VideoCreateNestedManyWithoutUserInput
     beinJobs?: BeInSportActivationCreateNestedManyWithoutAuthorInput
     userSubscriptions?: UserSubscriptionCreateNestedManyWithoutUserInput
-    appDownload?: CatalogAppCreateNestedManyWithoutUserInput
+    downloadedApps?: UserCatalogAppCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -11981,7 +13314,7 @@ export namespace Prisma {
     video?: VideoUncheckedCreateNestedManyWithoutUserInput
     beinJobs?: BeInSportActivationUncheckedCreateNestedManyWithoutAuthorInput
     userSubscriptions?: UserSubscriptionUncheckedCreateNestedManyWithoutUserInput
-    appDownload?: CatalogAppUncheckedCreateNestedManyWithoutUserInput
+    downloadedApps?: UserCatalogAppUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -11999,7 +13332,7 @@ export namespace Prisma {
     video?: VideoUpdateManyWithoutUserNestedInput
     beinJobs?: BeInSportActivationUpdateManyWithoutAuthorNestedInput
     userSubscriptions?: UserSubscriptionUpdateManyWithoutUserNestedInput
-    appDownload?: CatalogAppUpdateManyWithoutUserNestedInput
+    downloadedApps?: UserCatalogAppUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -12018,7 +13351,7 @@ export namespace Prisma {
     video?: VideoUncheckedUpdateManyWithoutUserNestedInput
     beinJobs?: BeInSportActivationUncheckedUpdateManyWithoutAuthorNestedInput
     userSubscriptions?: UserSubscriptionUncheckedUpdateManyWithoutUserNestedInput
-    appDownload?: CatalogAppUncheckedUpdateManyWithoutUserNestedInput
+    downloadedApps?: UserCatalogAppUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -12152,9 +13485,12 @@ export namespace Prisma {
     image: string
     credit: number
     version: string
+    storageRequired?: number | null
+    internetConnection?: boolean
+    deviceOperatingSystems?: CatalogAppCreatedeviceOperatingSystemsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    user?: UserCreateNestedOneWithoutAppDownloadInput
+    downloadedBy?: UserCatalogAppCreateNestedManyWithoutAppInput
   }
 
   export type CatalogAppUncheckedCreateInput = {
@@ -12165,9 +13501,12 @@ export namespace Prisma {
     image: string
     credit: number
     version: string
+    storageRequired?: number | null
+    internetConnection?: boolean
+    deviceOperatingSystems?: CatalogAppCreatedeviceOperatingSystemsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    userId?: number | null
+    downloadedBy?: UserCatalogAppUncheckedCreateNestedManyWithoutAppInput
   }
 
   export type CatalogAppUpdateInput = {
@@ -12177,9 +13516,12 @@ export namespace Prisma {
     image?: StringFieldUpdateOperationsInput | string
     credit?: FloatFieldUpdateOperationsInput | number
     version?: StringFieldUpdateOperationsInput | string
+    storageRequired?: NullableIntFieldUpdateOperationsInput | number | null
+    internetConnection?: BoolFieldUpdateOperationsInput | boolean
+    deviceOperatingSystems?: CatalogAppUpdatedeviceOperatingSystemsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneWithoutAppDownloadNestedInput
+    downloadedBy?: UserCatalogAppUpdateManyWithoutAppNestedInput
   }
 
   export type CatalogAppUncheckedUpdateInput = {
@@ -12190,9 +13532,12 @@ export namespace Prisma {
     image?: StringFieldUpdateOperationsInput | string
     credit?: FloatFieldUpdateOperationsInput | number
     version?: StringFieldUpdateOperationsInput | string
+    storageRequired?: NullableIntFieldUpdateOperationsInput | number | null
+    internetConnection?: BoolFieldUpdateOperationsInput | boolean
+    deviceOperatingSystems?: CatalogAppUpdatedeviceOperatingSystemsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    downloadedBy?: UserCatalogAppUncheckedUpdateManyWithoutAppNestedInput
   }
 
   export type CatalogAppCreateManyInput = {
@@ -12203,9 +13548,11 @@ export namespace Prisma {
     image: string
     credit: number
     version: string
+    storageRequired?: number | null
+    internetConnection?: boolean
+    deviceOperatingSystems?: CatalogAppCreatedeviceOperatingSystemsInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    userId?: number | null
   }
 
   export type CatalogAppUpdateManyMutationInput = {
@@ -12215,6 +13562,9 @@ export namespace Prisma {
     image?: StringFieldUpdateOperationsInput | string
     credit?: FloatFieldUpdateOperationsInput | number
     version?: StringFieldUpdateOperationsInput | string
+    storageRequired?: NullableIntFieldUpdateOperationsInput | number | null
+    internetConnection?: BoolFieldUpdateOperationsInput | boolean
+    deviceOperatingSystems?: CatalogAppUpdatedeviceOperatingSystemsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12227,9 +13577,55 @@ export namespace Prisma {
     image?: StringFieldUpdateOperationsInput | string
     credit?: FloatFieldUpdateOperationsInput | number
     version?: StringFieldUpdateOperationsInput | string
+    storageRequired?: NullableIntFieldUpdateOperationsInput | number | null
+    internetConnection?: BoolFieldUpdateOperationsInput | boolean
+    deviceOperatingSystems?: CatalogAppUpdatedeviceOperatingSystemsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type UserCatalogAppCreateInput = {
+    purchasedAt?: Date | string
+    user: UserCreateNestedOneWithoutDownloadedAppsInput
+    app: CatalogAppCreateNestedOneWithoutDownloadedByInput
+  }
+
+  export type UserCatalogAppUncheckedCreateInput = {
+    id?: number
+    userId: number
+    appId: number
+    purchasedAt?: Date | string
+  }
+
+  export type UserCatalogAppUpdateInput = {
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutDownloadedAppsNestedInput
+    app?: CatalogAppUpdateOneRequiredWithoutDownloadedByNestedInput
+  }
+
+  export type UserCatalogAppUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    appId?: IntFieldUpdateOperationsInput | number
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCatalogAppCreateManyInput = {
+    id?: number
+    userId: number
+    appId: number
+    purchasedAt?: Date | string
+  }
+
+  export type UserCatalogAppUpdateManyMutationInput = {
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCatalogAppUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    appId?: IntFieldUpdateOperationsInput | number
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SettingsCreateInput = {
@@ -12668,10 +14064,10 @@ export namespace Prisma {
     none?: UserSubscriptionWhereInput
   }
 
-  export type CatalogAppListRelationFilter = {
-    every?: CatalogAppWhereInput
-    some?: CatalogAppWhereInput
-    none?: CatalogAppWhereInput
+  export type UserCatalogAppListRelationFilter = {
+    every?: UserCatalogAppWhereInput
+    some?: UserCatalogAppWhereInput
+    none?: UserCatalogAppWhereInput
   }
 
   export type SortOrderInput = {
@@ -12691,7 +14087,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type CatalogAppOrderByRelationAggregateInput = {
+  export type UserCatalogAppOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12982,6 +14378,19 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type CatalogAppCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -12990,15 +14399,17 @@ export namespace Prisma {
     image?: SortOrder
     credit?: SortOrder
     version?: SortOrder
+    storageRequired?: SortOrder
+    internetConnection?: SortOrder
+    deviceOperatingSystems?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userId?: SortOrder
   }
 
   export type CatalogAppAvgOrderByAggregateInput = {
     id?: SortOrder
     credit?: SortOrder
-    userId?: SortOrder
+    storageRequired?: SortOrder
   }
 
   export type CatalogAppMaxOrderByAggregateInput = {
@@ -13009,9 +14420,10 @@ export namespace Prisma {
     image?: SortOrder
     credit?: SortOrder
     version?: SortOrder
+    storageRequired?: SortOrder
+    internetConnection?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userId?: SortOrder
   }
 
   export type CatalogAppMinOrderByAggregateInput = {
@@ -13022,20 +14434,72 @@ export namespace Prisma {
     image?: SortOrder
     credit?: SortOrder
     version?: SortOrder
+    storageRequired?: SortOrder
+    internetConnection?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userId?: SortOrder
   }
 
   export type CatalogAppSumOrderByAggregateInput = {
     id?: SortOrder
     credit?: SortOrder
-    userId?: SortOrder
+    storageRequired?: SortOrder
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type CatalogAppScalarRelationFilter = {
+    is?: CatalogAppWhereInput
+    isNot?: CatalogAppWhereInput
+  }
+
+  export type UserCatalogAppUserIdAppIdCompoundUniqueInput = {
+    userId: number
+    appId: number
+  }
+
+  export type UserCatalogAppCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    appId?: SortOrder
+    purchasedAt?: SortOrder
+  }
+
+  export type UserCatalogAppAvgOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    appId?: SortOrder
+  }
+
+  export type UserCatalogAppMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    appId?: SortOrder
+    purchasedAt?: SortOrder
+  }
+
+  export type UserCatalogAppMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    appId?: SortOrder
+    purchasedAt?: SortOrder
+  }
+
+  export type UserCatalogAppSumOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    appId?: SortOrder
   }
 
   export type SettingsCountOrderByAggregateInput = {
@@ -13071,14 +14535,6 @@ export namespace Prisma {
 
   export type SettingsSumOrderByAggregateInput = {
     id?: SortOrder
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type BeInSportActivationCountOrderByAggregateInput = {
@@ -13269,11 +14725,6 @@ export namespace Prisma {
     _max?: NestedEnumStatusFilter<$PrismaModel>
   }
 
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
-  }
-
   export type SubscriptionScalarRelationFilter = {
     is?: SubscriptionWhereInput
     isNot?: SubscriptionWhereInput
@@ -13353,11 +14804,11 @@ export namespace Prisma {
     connect?: UserSubscriptionWhereUniqueInput | UserSubscriptionWhereUniqueInput[]
   }
 
-  export type CatalogAppCreateNestedManyWithoutUserInput = {
-    create?: XOR<CatalogAppCreateWithoutUserInput, CatalogAppUncheckedCreateWithoutUserInput> | CatalogAppCreateWithoutUserInput[] | CatalogAppUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CatalogAppCreateOrConnectWithoutUserInput | CatalogAppCreateOrConnectWithoutUserInput[]
-    createMany?: CatalogAppCreateManyUserInputEnvelope
-    connect?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
+  export type UserCatalogAppCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserCatalogAppCreateWithoutUserInput, UserCatalogAppUncheckedCreateWithoutUserInput> | UserCatalogAppCreateWithoutUserInput[] | UserCatalogAppUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserCatalogAppCreateOrConnectWithoutUserInput | UserCatalogAppCreateOrConnectWithoutUserInput[]
+    createMany?: UserCatalogAppCreateManyUserInputEnvelope
+    connect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
   }
 
   export type VideoUncheckedCreateNestedManyWithoutUserInput = {
@@ -13381,11 +14832,11 @@ export namespace Prisma {
     connect?: UserSubscriptionWhereUniqueInput | UserSubscriptionWhereUniqueInput[]
   }
 
-  export type CatalogAppUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<CatalogAppCreateWithoutUserInput, CatalogAppUncheckedCreateWithoutUserInput> | CatalogAppCreateWithoutUserInput[] | CatalogAppUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CatalogAppCreateOrConnectWithoutUserInput | CatalogAppCreateOrConnectWithoutUserInput[]
-    createMany?: CatalogAppCreateManyUserInputEnvelope
-    connect?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
+  export type UserCatalogAppUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserCatalogAppCreateWithoutUserInput, UserCatalogAppUncheckedCreateWithoutUserInput> | UserCatalogAppCreateWithoutUserInput[] | UserCatalogAppUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserCatalogAppCreateOrConnectWithoutUserInput | UserCatalogAppCreateOrConnectWithoutUserInput[]
+    createMany?: UserCatalogAppCreateManyUserInputEnvelope
+    connect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -13462,18 +14913,18 @@ export namespace Prisma {
     deleteMany?: UserSubscriptionScalarWhereInput | UserSubscriptionScalarWhereInput[]
   }
 
-  export type CatalogAppUpdateManyWithoutUserNestedInput = {
-    create?: XOR<CatalogAppCreateWithoutUserInput, CatalogAppUncheckedCreateWithoutUserInput> | CatalogAppCreateWithoutUserInput[] | CatalogAppUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CatalogAppCreateOrConnectWithoutUserInput | CatalogAppCreateOrConnectWithoutUserInput[]
-    upsert?: CatalogAppUpsertWithWhereUniqueWithoutUserInput | CatalogAppUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: CatalogAppCreateManyUserInputEnvelope
-    set?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
-    disconnect?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
-    delete?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
-    connect?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
-    update?: CatalogAppUpdateWithWhereUniqueWithoutUserInput | CatalogAppUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: CatalogAppUpdateManyWithWhereWithoutUserInput | CatalogAppUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: CatalogAppScalarWhereInput | CatalogAppScalarWhereInput[]
+  export type UserCatalogAppUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserCatalogAppCreateWithoutUserInput, UserCatalogAppUncheckedCreateWithoutUserInput> | UserCatalogAppCreateWithoutUserInput[] | UserCatalogAppUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserCatalogAppCreateOrConnectWithoutUserInput | UserCatalogAppCreateOrConnectWithoutUserInput[]
+    upsert?: UserCatalogAppUpsertWithWhereUniqueWithoutUserInput | UserCatalogAppUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserCatalogAppCreateManyUserInputEnvelope
+    set?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    disconnect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    delete?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    connect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    update?: UserCatalogAppUpdateWithWhereUniqueWithoutUserInput | UserCatalogAppUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserCatalogAppUpdateManyWithWhereWithoutUserInput | UserCatalogAppUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserCatalogAppScalarWhereInput | UserCatalogAppScalarWhereInput[]
   }
 
   export type VideoUncheckedUpdateManyWithoutUserNestedInput = {
@@ -13518,18 +14969,18 @@ export namespace Prisma {
     deleteMany?: UserSubscriptionScalarWhereInput | UserSubscriptionScalarWhereInput[]
   }
 
-  export type CatalogAppUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<CatalogAppCreateWithoutUserInput, CatalogAppUncheckedCreateWithoutUserInput> | CatalogAppCreateWithoutUserInput[] | CatalogAppUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CatalogAppCreateOrConnectWithoutUserInput | CatalogAppCreateOrConnectWithoutUserInput[]
-    upsert?: CatalogAppUpsertWithWhereUniqueWithoutUserInput | CatalogAppUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: CatalogAppCreateManyUserInputEnvelope
-    set?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
-    disconnect?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
-    delete?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
-    connect?: CatalogAppWhereUniqueInput | CatalogAppWhereUniqueInput[]
-    update?: CatalogAppUpdateWithWhereUniqueWithoutUserInput | CatalogAppUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: CatalogAppUpdateManyWithWhereWithoutUserInput | CatalogAppUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: CatalogAppScalarWhereInput | CatalogAppScalarWhereInput[]
+  export type UserCatalogAppUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserCatalogAppCreateWithoutUserInput, UserCatalogAppUncheckedCreateWithoutUserInput> | UserCatalogAppCreateWithoutUserInput[] | UserCatalogAppUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserCatalogAppCreateOrConnectWithoutUserInput | UserCatalogAppCreateOrConnectWithoutUserInput[]
+    upsert?: UserCatalogAppUpsertWithWhereUniqueWithoutUserInput | UserCatalogAppUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserCatalogAppCreateManyUserInputEnvelope
+    set?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    disconnect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    delete?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    connect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    update?: UserCatalogAppUpdateWithWhereUniqueWithoutUserInput | UserCatalogAppUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserCatalogAppUpdateManyWithWhereWithoutUserInput | UserCatalogAppUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserCatalogAppScalarWhereInput | UserCatalogAppScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutVideoInput = {
@@ -13568,24 +15019,87 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserCreateNestedOneWithoutAppDownloadInput = {
-    create?: XOR<UserCreateWithoutAppDownloadInput, UserUncheckedCreateWithoutAppDownloadInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAppDownloadInput
-    connect?: UserWhereUniqueInput
+  export type CatalogAppCreatedeviceOperatingSystemsInput = {
+    set: string[]
   }
 
-  export type UserUpdateOneWithoutAppDownloadNestedInput = {
-    create?: XOR<UserCreateWithoutAppDownloadInput, UserUncheckedCreateWithoutAppDownloadInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAppDownloadInput
-    upsert?: UserUpsertWithoutAppDownloadInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAppDownloadInput, UserUpdateWithoutAppDownloadInput>, UserUncheckedUpdateWithoutAppDownloadInput>
+  export type UserCatalogAppCreateNestedManyWithoutAppInput = {
+    create?: XOR<UserCatalogAppCreateWithoutAppInput, UserCatalogAppUncheckedCreateWithoutAppInput> | UserCatalogAppCreateWithoutAppInput[] | UserCatalogAppUncheckedCreateWithoutAppInput[]
+    connectOrCreate?: UserCatalogAppCreateOrConnectWithoutAppInput | UserCatalogAppCreateOrConnectWithoutAppInput[]
+    createMany?: UserCatalogAppCreateManyAppInputEnvelope
+    connect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+  }
+
+  export type UserCatalogAppUncheckedCreateNestedManyWithoutAppInput = {
+    create?: XOR<UserCatalogAppCreateWithoutAppInput, UserCatalogAppUncheckedCreateWithoutAppInput> | UserCatalogAppCreateWithoutAppInput[] | UserCatalogAppUncheckedCreateWithoutAppInput[]
+    connectOrCreate?: UserCatalogAppCreateOrConnectWithoutAppInput | UserCatalogAppCreateOrConnectWithoutAppInput[]
+    createMany?: UserCatalogAppCreateManyAppInputEnvelope
+    connect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
   }
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type CatalogAppUpdatedeviceOperatingSystemsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserCatalogAppUpdateManyWithoutAppNestedInput = {
+    create?: XOR<UserCatalogAppCreateWithoutAppInput, UserCatalogAppUncheckedCreateWithoutAppInput> | UserCatalogAppCreateWithoutAppInput[] | UserCatalogAppUncheckedCreateWithoutAppInput[]
+    connectOrCreate?: UserCatalogAppCreateOrConnectWithoutAppInput | UserCatalogAppCreateOrConnectWithoutAppInput[]
+    upsert?: UserCatalogAppUpsertWithWhereUniqueWithoutAppInput | UserCatalogAppUpsertWithWhereUniqueWithoutAppInput[]
+    createMany?: UserCatalogAppCreateManyAppInputEnvelope
+    set?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    disconnect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    delete?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    connect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    update?: UserCatalogAppUpdateWithWhereUniqueWithoutAppInput | UserCatalogAppUpdateWithWhereUniqueWithoutAppInput[]
+    updateMany?: UserCatalogAppUpdateManyWithWhereWithoutAppInput | UserCatalogAppUpdateManyWithWhereWithoutAppInput[]
+    deleteMany?: UserCatalogAppScalarWhereInput | UserCatalogAppScalarWhereInput[]
+  }
+
+  export type UserCatalogAppUncheckedUpdateManyWithoutAppNestedInput = {
+    create?: XOR<UserCatalogAppCreateWithoutAppInput, UserCatalogAppUncheckedCreateWithoutAppInput> | UserCatalogAppCreateWithoutAppInput[] | UserCatalogAppUncheckedCreateWithoutAppInput[]
+    connectOrCreate?: UserCatalogAppCreateOrConnectWithoutAppInput | UserCatalogAppCreateOrConnectWithoutAppInput[]
+    upsert?: UserCatalogAppUpsertWithWhereUniqueWithoutAppInput | UserCatalogAppUpsertWithWhereUniqueWithoutAppInput[]
+    createMany?: UserCatalogAppCreateManyAppInputEnvelope
+    set?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    disconnect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    delete?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    connect?: UserCatalogAppWhereUniqueInput | UserCatalogAppWhereUniqueInput[]
+    update?: UserCatalogAppUpdateWithWhereUniqueWithoutAppInput | UserCatalogAppUpdateWithWhereUniqueWithoutAppInput[]
+    updateMany?: UserCatalogAppUpdateManyWithWhereWithoutAppInput | UserCatalogAppUpdateManyWithWhereWithoutAppInput[]
+    deleteMany?: UserCatalogAppScalarWhereInput | UserCatalogAppScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutDownloadedAppsInput = {
+    create?: XOR<UserCreateWithoutDownloadedAppsInput, UserUncheckedCreateWithoutDownloadedAppsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDownloadedAppsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CatalogAppCreateNestedOneWithoutDownloadedByInput = {
+    create?: XOR<CatalogAppCreateWithoutDownloadedByInput, CatalogAppUncheckedCreateWithoutDownloadedByInput>
+    connectOrCreate?: CatalogAppCreateOrConnectWithoutDownloadedByInput
+    connect?: CatalogAppWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutDownloadedAppsNestedInput = {
+    create?: XOR<UserCreateWithoutDownloadedAppsInput, UserUncheckedCreateWithoutDownloadedAppsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDownloadedAppsInput
+    upsert?: UserUpsertWithoutDownloadedAppsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDownloadedAppsInput, UserUpdateWithoutDownloadedAppsInput>, UserUncheckedUpdateWithoutDownloadedAppsInput>
+  }
+
+  export type CatalogAppUpdateOneRequiredWithoutDownloadedByNestedInput = {
+    create?: XOR<CatalogAppCreateWithoutDownloadedByInput, CatalogAppUncheckedCreateWithoutDownloadedByInput>
+    connectOrCreate?: CatalogAppCreateOrConnectWithoutDownloadedByInput
+    upsert?: CatalogAppUpsertWithoutDownloadedByInput
+    connect?: CatalogAppWhereUniqueInput
+    update?: XOR<XOR<CatalogAppUpdateToOneWithWhereWithoutDownloadedByInput, CatalogAppUpdateWithoutDownloadedByInput>, CatalogAppUncheckedUpdateWithoutDownloadedByInput>
   }
 
   export type UserCreateNestedOneWithoutBeinJobsInput = {
@@ -14148,36 +15662,24 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type CatalogAppCreateWithoutUserInput = {
-    name: string
-    description: string
-    downloadLink: string
-    image: string
-    credit: number
-    version: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type UserCatalogAppCreateWithoutUserInput = {
+    purchasedAt?: Date | string
+    app: CatalogAppCreateNestedOneWithoutDownloadedByInput
   }
 
-  export type CatalogAppUncheckedCreateWithoutUserInput = {
+  export type UserCatalogAppUncheckedCreateWithoutUserInput = {
     id?: number
-    name: string
-    description: string
-    downloadLink: string
-    image: string
-    credit: number
-    version: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
+    appId: number
+    purchasedAt?: Date | string
   }
 
-  export type CatalogAppCreateOrConnectWithoutUserInput = {
-    where: CatalogAppWhereUniqueInput
-    create: XOR<CatalogAppCreateWithoutUserInput, CatalogAppUncheckedCreateWithoutUserInput>
+  export type UserCatalogAppCreateOrConnectWithoutUserInput = {
+    where: UserCatalogAppWhereUniqueInput
+    create: XOR<UserCatalogAppCreateWithoutUserInput, UserCatalogAppUncheckedCreateWithoutUserInput>
   }
 
-  export type CatalogAppCreateManyUserInputEnvelope = {
-    data: CatalogAppCreateManyUserInput | CatalogAppCreateManyUserInput[]
+  export type UserCatalogAppCreateManyUserInputEnvelope = {
+    data: UserCatalogAppCreateManyUserInput | UserCatalogAppCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -14271,36 +15773,30 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"UserSubscription"> | Date | string
   }
 
-  export type CatalogAppUpsertWithWhereUniqueWithoutUserInput = {
-    where: CatalogAppWhereUniqueInput
-    update: XOR<CatalogAppUpdateWithoutUserInput, CatalogAppUncheckedUpdateWithoutUserInput>
-    create: XOR<CatalogAppCreateWithoutUserInput, CatalogAppUncheckedCreateWithoutUserInput>
+  export type UserCatalogAppUpsertWithWhereUniqueWithoutUserInput = {
+    where: UserCatalogAppWhereUniqueInput
+    update: XOR<UserCatalogAppUpdateWithoutUserInput, UserCatalogAppUncheckedUpdateWithoutUserInput>
+    create: XOR<UserCatalogAppCreateWithoutUserInput, UserCatalogAppUncheckedCreateWithoutUserInput>
   }
 
-  export type CatalogAppUpdateWithWhereUniqueWithoutUserInput = {
-    where: CatalogAppWhereUniqueInput
-    data: XOR<CatalogAppUpdateWithoutUserInput, CatalogAppUncheckedUpdateWithoutUserInput>
+  export type UserCatalogAppUpdateWithWhereUniqueWithoutUserInput = {
+    where: UserCatalogAppWhereUniqueInput
+    data: XOR<UserCatalogAppUpdateWithoutUserInput, UserCatalogAppUncheckedUpdateWithoutUserInput>
   }
 
-  export type CatalogAppUpdateManyWithWhereWithoutUserInput = {
-    where: CatalogAppScalarWhereInput
-    data: XOR<CatalogAppUpdateManyMutationInput, CatalogAppUncheckedUpdateManyWithoutUserInput>
+  export type UserCatalogAppUpdateManyWithWhereWithoutUserInput = {
+    where: UserCatalogAppScalarWhereInput
+    data: XOR<UserCatalogAppUpdateManyMutationInput, UserCatalogAppUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type CatalogAppScalarWhereInput = {
-    AND?: CatalogAppScalarWhereInput | CatalogAppScalarWhereInput[]
-    OR?: CatalogAppScalarWhereInput[]
-    NOT?: CatalogAppScalarWhereInput | CatalogAppScalarWhereInput[]
-    id?: IntFilter<"CatalogApp"> | number
-    name?: StringFilter<"CatalogApp"> | string
-    description?: StringFilter<"CatalogApp"> | string
-    downloadLink?: StringFilter<"CatalogApp"> | string
-    image?: StringFilter<"CatalogApp"> | string
-    credit?: FloatFilter<"CatalogApp"> | number
-    version?: StringFilter<"CatalogApp"> | string
-    createdAt?: DateTimeFilter<"CatalogApp"> | Date | string
-    updatedAt?: DateTimeFilter<"CatalogApp"> | Date | string
-    userId?: IntNullableFilter<"CatalogApp"> | number | null
+  export type UserCatalogAppScalarWhereInput = {
+    AND?: UserCatalogAppScalarWhereInput | UserCatalogAppScalarWhereInput[]
+    OR?: UserCatalogAppScalarWhereInput[]
+    NOT?: UserCatalogAppScalarWhereInput | UserCatalogAppScalarWhereInput[]
+    id?: IntFilter<"UserCatalogApp"> | number
+    userId?: IntFilter<"UserCatalogApp"> | number
+    appId?: IntFilter<"UserCatalogApp"> | number
+    purchasedAt?: DateTimeFilter<"UserCatalogApp"> | Date | string
   }
 
   export type UserCreateWithoutVideoInput = {
@@ -14317,7 +15813,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     beinJobs?: BeInSportActivationCreateNestedManyWithoutAuthorInput
     userSubscriptions?: UserSubscriptionCreateNestedManyWithoutUserInput
-    appDownload?: CatalogAppCreateNestedManyWithoutUserInput
+    downloadedApps?: UserCatalogAppCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutVideoInput = {
@@ -14335,7 +15831,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     beinJobs?: BeInSportActivationUncheckedCreateNestedManyWithoutAuthorInput
     userSubscriptions?: UserSubscriptionUncheckedCreateNestedManyWithoutUserInput
-    appDownload?: CatalogAppUncheckedCreateNestedManyWithoutUserInput
+    downloadedApps?: UserCatalogAppUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutVideoInput = {
@@ -14368,7 +15864,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     beinJobs?: BeInSportActivationUpdateManyWithoutAuthorNestedInput
     userSubscriptions?: UserSubscriptionUpdateManyWithoutUserNestedInput
-    appDownload?: CatalogAppUpdateManyWithoutUserNestedInput
+    downloadedApps?: UserCatalogAppUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVideoInput = {
@@ -14386,10 +15882,47 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     beinJobs?: BeInSportActivationUncheckedUpdateManyWithoutAuthorNestedInput
     userSubscriptions?: UserSubscriptionUncheckedUpdateManyWithoutUserNestedInput
-    appDownload?: CatalogAppUncheckedUpdateManyWithoutUserNestedInput
+    downloadedApps?: UserCatalogAppUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type UserCreateWithoutAppDownloadInput = {
+  export type UserCatalogAppCreateWithoutAppInput = {
+    purchasedAt?: Date | string
+    user: UserCreateNestedOneWithoutDownloadedAppsInput
+  }
+
+  export type UserCatalogAppUncheckedCreateWithoutAppInput = {
+    id?: number
+    userId: number
+    purchasedAt?: Date | string
+  }
+
+  export type UserCatalogAppCreateOrConnectWithoutAppInput = {
+    where: UserCatalogAppWhereUniqueInput
+    create: XOR<UserCatalogAppCreateWithoutAppInput, UserCatalogAppUncheckedCreateWithoutAppInput>
+  }
+
+  export type UserCatalogAppCreateManyAppInputEnvelope = {
+    data: UserCatalogAppCreateManyAppInput | UserCatalogAppCreateManyAppInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserCatalogAppUpsertWithWhereUniqueWithoutAppInput = {
+    where: UserCatalogAppWhereUniqueInput
+    update: XOR<UserCatalogAppUpdateWithoutAppInput, UserCatalogAppUncheckedUpdateWithoutAppInput>
+    create: XOR<UserCatalogAppCreateWithoutAppInput, UserCatalogAppUncheckedCreateWithoutAppInput>
+  }
+
+  export type UserCatalogAppUpdateWithWhereUniqueWithoutAppInput = {
+    where: UserCatalogAppWhereUniqueInput
+    data: XOR<UserCatalogAppUpdateWithoutAppInput, UserCatalogAppUncheckedUpdateWithoutAppInput>
+  }
+
+  export type UserCatalogAppUpdateManyWithWhereWithoutAppInput = {
+    where: UserCatalogAppScalarWhereInput
+    data: XOR<UserCatalogAppUpdateManyMutationInput, UserCatalogAppUncheckedUpdateManyWithoutAppInput>
+  }
+
+  export type UserCreateWithoutDownloadedAppsInput = {
     email: string
     username: string
     name: string
@@ -14406,7 +15939,7 @@ export namespace Prisma {
     userSubscriptions?: UserSubscriptionCreateNestedManyWithoutUserInput
   }
 
-  export type UserUncheckedCreateWithoutAppDownloadInput = {
+  export type UserUncheckedCreateWithoutDownloadedAppsInput = {
     id?: number
     email: string
     username: string
@@ -14424,23 +15957,57 @@ export namespace Prisma {
     userSubscriptions?: UserSubscriptionUncheckedCreateNestedManyWithoutUserInput
   }
 
-  export type UserCreateOrConnectWithoutAppDownloadInput = {
+  export type UserCreateOrConnectWithoutDownloadedAppsInput = {
     where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutAppDownloadInput, UserUncheckedCreateWithoutAppDownloadInput>
+    create: XOR<UserCreateWithoutDownloadedAppsInput, UserUncheckedCreateWithoutDownloadedAppsInput>
   }
 
-  export type UserUpsertWithoutAppDownloadInput = {
-    update: XOR<UserUpdateWithoutAppDownloadInput, UserUncheckedUpdateWithoutAppDownloadInput>
-    create: XOR<UserCreateWithoutAppDownloadInput, UserUncheckedCreateWithoutAppDownloadInput>
+  export type CatalogAppCreateWithoutDownloadedByInput = {
+    name: string
+    description: string
+    downloadLink: string
+    image: string
+    credit: number
+    version: string
+    storageRequired?: number | null
+    internetConnection?: boolean
+    deviceOperatingSystems?: CatalogAppCreatedeviceOperatingSystemsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CatalogAppUncheckedCreateWithoutDownloadedByInput = {
+    id?: number
+    name: string
+    description: string
+    downloadLink: string
+    image: string
+    credit: number
+    version: string
+    storageRequired?: number | null
+    internetConnection?: boolean
+    deviceOperatingSystems?: CatalogAppCreatedeviceOperatingSystemsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CatalogAppCreateOrConnectWithoutDownloadedByInput = {
+    where: CatalogAppWhereUniqueInput
+    create: XOR<CatalogAppCreateWithoutDownloadedByInput, CatalogAppUncheckedCreateWithoutDownloadedByInput>
+  }
+
+  export type UserUpsertWithoutDownloadedAppsInput = {
+    update: XOR<UserUpdateWithoutDownloadedAppsInput, UserUncheckedUpdateWithoutDownloadedAppsInput>
+    create: XOR<UserCreateWithoutDownloadedAppsInput, UserUncheckedCreateWithoutDownloadedAppsInput>
     where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutAppDownloadInput = {
+  export type UserUpdateToOneWithWhereWithoutDownloadedAppsInput = {
     where?: UserWhereInput
-    data: XOR<UserUpdateWithoutAppDownloadInput, UserUncheckedUpdateWithoutAppDownloadInput>
+    data: XOR<UserUpdateWithoutDownloadedAppsInput, UserUncheckedUpdateWithoutDownloadedAppsInput>
   }
 
-  export type UserUpdateWithoutAppDownloadInput = {
+  export type UserUpdateWithoutDownloadedAppsInput = {
     email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -14457,7 +16024,7 @@ export namespace Prisma {
     userSubscriptions?: UserSubscriptionUpdateManyWithoutUserNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutAppDownloadInput = {
+  export type UserUncheckedUpdateWithoutDownloadedAppsInput = {
     id?: IntFieldUpdateOperationsInput | number
     email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -14475,6 +16042,46 @@ export namespace Prisma {
     userSubscriptions?: UserSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type CatalogAppUpsertWithoutDownloadedByInput = {
+    update: XOR<CatalogAppUpdateWithoutDownloadedByInput, CatalogAppUncheckedUpdateWithoutDownloadedByInput>
+    create: XOR<CatalogAppCreateWithoutDownloadedByInput, CatalogAppUncheckedCreateWithoutDownloadedByInput>
+    where?: CatalogAppWhereInput
+  }
+
+  export type CatalogAppUpdateToOneWithWhereWithoutDownloadedByInput = {
+    where?: CatalogAppWhereInput
+    data: XOR<CatalogAppUpdateWithoutDownloadedByInput, CatalogAppUncheckedUpdateWithoutDownloadedByInput>
+  }
+
+  export type CatalogAppUpdateWithoutDownloadedByInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    downloadLink?: StringFieldUpdateOperationsInput | string
+    image?: StringFieldUpdateOperationsInput | string
+    credit?: FloatFieldUpdateOperationsInput | number
+    version?: StringFieldUpdateOperationsInput | string
+    storageRequired?: NullableIntFieldUpdateOperationsInput | number | null
+    internetConnection?: BoolFieldUpdateOperationsInput | boolean
+    deviceOperatingSystems?: CatalogAppUpdatedeviceOperatingSystemsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CatalogAppUncheckedUpdateWithoutDownloadedByInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    downloadLink?: StringFieldUpdateOperationsInput | string
+    image?: StringFieldUpdateOperationsInput | string
+    credit?: FloatFieldUpdateOperationsInput | number
+    version?: StringFieldUpdateOperationsInput | string
+    storageRequired?: NullableIntFieldUpdateOperationsInput | number | null
+    internetConnection?: BoolFieldUpdateOperationsInput | boolean
+    deviceOperatingSystems?: CatalogAppUpdatedeviceOperatingSystemsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateWithoutBeinJobsInput = {
     email: string
     username: string
@@ -14489,7 +16096,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     video?: VideoCreateNestedManyWithoutUserInput
     userSubscriptions?: UserSubscriptionCreateNestedManyWithoutUserInput
-    appDownload?: CatalogAppCreateNestedManyWithoutUserInput
+    downloadedApps?: UserCatalogAppCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBeinJobsInput = {
@@ -14507,7 +16114,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     video?: VideoUncheckedCreateNestedManyWithoutUserInput
     userSubscriptions?: UserSubscriptionUncheckedCreateNestedManyWithoutUserInput
-    appDownload?: CatalogAppUncheckedCreateNestedManyWithoutUserInput
+    downloadedApps?: UserCatalogAppUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBeinJobsInput = {
@@ -14540,7 +16147,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     video?: VideoUpdateManyWithoutUserNestedInput
     userSubscriptions?: UserSubscriptionUpdateManyWithoutUserNestedInput
-    appDownload?: CatalogAppUpdateManyWithoutUserNestedInput
+    downloadedApps?: UserCatalogAppUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBeinJobsInput = {
@@ -14558,7 +16165,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     video?: VideoUncheckedUpdateManyWithoutUserNestedInput
     userSubscriptions?: UserSubscriptionUncheckedUpdateManyWithoutUserNestedInput
-    appDownload?: CatalogAppUncheckedUpdateManyWithoutUserNestedInput
+    downloadedApps?: UserCatalogAppUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SubscriptionCreateWithoutChannelInput = {
@@ -14737,7 +16344,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     video?: VideoCreateNestedManyWithoutUserInput
     beinJobs?: BeInSportActivationCreateNestedManyWithoutAuthorInput
-    appDownload?: CatalogAppCreateNestedManyWithoutUserInput
+    downloadedApps?: UserCatalogAppCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUserSubscriptionsInput = {
@@ -14755,7 +16362,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     video?: VideoUncheckedCreateNestedManyWithoutUserInput
     beinJobs?: BeInSportActivationUncheckedCreateNestedManyWithoutAuthorInput
-    appDownload?: CatalogAppUncheckedCreateNestedManyWithoutUserInput
+    downloadedApps?: UserCatalogAppUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUserSubscriptionsInput = {
@@ -14814,7 +16421,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     video?: VideoUpdateManyWithoutUserNestedInput
     beinJobs?: BeInSportActivationUpdateManyWithoutAuthorNestedInput
-    appDownload?: CatalogAppUpdateManyWithoutUserNestedInput
+    downloadedApps?: UserCatalogAppUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserSubscriptionsInput = {
@@ -14832,7 +16439,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     video?: VideoUncheckedUpdateManyWithoutUserNestedInput
     beinJobs?: BeInSportActivationUncheckedUpdateManyWithoutAuthorNestedInput
-    appDownload?: CatalogAppUncheckedUpdateManyWithoutUserNestedInput
+    downloadedApps?: UserCatalogAppUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SubscriptionUpsertWithoutUserSubscriptionsInput = {
@@ -14897,16 +16504,10 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type CatalogAppCreateManyUserInput = {
+  export type UserCatalogAppCreateManyUserInput = {
     id?: number
-    name: string
-    description: string
-    downloadLink: string
-    image: string
-    credit: number
-    version: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
+    appId: number
+    purchasedAt?: Date | string
   }
 
   export type VideoUpdateWithoutUserInput = {
@@ -14996,39 +16597,44 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CatalogAppUpdateWithoutUserInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    downloadLink?: StringFieldUpdateOperationsInput | string
-    image?: StringFieldUpdateOperationsInput | string
-    credit?: FloatFieldUpdateOperationsInput | number
-    version?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type UserCatalogAppUpdateWithoutUserInput = {
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    app?: CatalogAppUpdateOneRequiredWithoutDownloadedByNestedInput
   }
 
-  export type CatalogAppUncheckedUpdateWithoutUserInput = {
+  export type UserCatalogAppUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
-    name?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    downloadLink?: StringFieldUpdateOperationsInput | string
-    image?: StringFieldUpdateOperationsInput | string
-    credit?: FloatFieldUpdateOperationsInput | number
-    version?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appId?: IntFieldUpdateOperationsInput | number
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CatalogAppUncheckedUpdateManyWithoutUserInput = {
+  export type UserCatalogAppUncheckedUpdateManyWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
-    name?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    downloadLink?: StringFieldUpdateOperationsInput | string
-    image?: StringFieldUpdateOperationsInput | string
-    credit?: FloatFieldUpdateOperationsInput | number
-    version?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appId?: IntFieldUpdateOperationsInput | number
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCatalogAppCreateManyAppInput = {
+    id?: number
+    userId: number
+    purchasedAt?: Date | string
+  }
+
+  export type UserCatalogAppUpdateWithoutAppInput = {
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutDownloadedAppsNestedInput
+  }
+
+  export type UserCatalogAppUncheckedUpdateWithoutAppInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCatalogAppUncheckedUpdateManyWithoutAppInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    purchasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SubscriptionCreateManyChannelInput = {

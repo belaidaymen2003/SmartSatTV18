@@ -1,3 +1,8 @@
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
@@ -56,13 +61,14 @@ enum Auth {
   DISCONNECTED
 }
 
-//ss
+// Subscription duration plans
 enum DurationPlan {
   ONE_MONTH
   SIX_MONTHS
   ONE_YEAR
 }
 
+// Subscription status
 enum Status {
   ACTIVE
   EXPIRED
@@ -75,6 +81,7 @@ enum Category {
   STREAMING
 }
 
+//ss
 model User {
   id                Int                   @id @default(autoincrement())
   email             String                @unique
@@ -89,19 +96,44 @@ model User {
   auth              Auth                  @default(DISCONNECTED)
   beinJobs          BeInSportActivation[] @relation("BeInByUser")
   userSubscriptions UserSubscription[]
-  appDownload       CatalogApp[]
+  downloadedApps    UserCatalogApp[]
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
 
   @@index([role, status])
 }
 
+/**
+ * model CatalogItem {
+ * id            Int          @id @default(autoincrement())
+ * title         String
+ * rating        Float        @default(0)
+ * category      ItemCategory
+ * views         Int          @default(0)
+ * status        ItemStatus   @default(VISIBLE)
+ * mediaUrl      String?
+ * quality       Quality?
+ * age           String?
+ * description   String?
+ * runtime       String?
+ * premiereDate  DateTime?
+ * coverUrl      String?
+ * backgroundUrl String?
+ * country       String?
+ * director      String?
+ * actors        String[] // simple string array; switch to relation if needed
+ * createdAt     DateTime     @default(now())
+ * updatedAt     DateTime     @updatedAt
+ * @@index([category, status])
+ * @@index([title])
+ * }
+ */
 model Video {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
   thumbnail   String?
-  videoUrl    String
+  videoUrl    String // Link to the actual video file or stream
   price       Float
   userId      Int?
   user        User?    @relation(fields: [userId], references: [id])
@@ -110,18 +142,104 @@ model Video {
 }
 
 model CatalogApp {
-  id           Int      @id @default(autoincrement())
-  name         String
-  description  String
-  downloadLink String
-  image        String
-  credit       Float
-  version      String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  userId       Int?
-  user         User?    @relation(fields: [userId], references: [id])
+  id                     Int              @id @default(autoincrement())
+  name                   String
+  description            String
+  downloadLink           String
+  image                  String
+  credit                 Float
+  version                String
+  storageRequired        Int?
+  internetConnection     Boolean          @default(false)
+  deviceOperatingSystems String[]
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  downloadedBy           UserCatalogApp[]
 }
+
+model UserCatalogApp {
+  id          Int        @id @default(autoincrement())
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  app         CatalogApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+  appId       Int
+  purchasedAt DateTime   @default(now())
+
+  @@unique([userId, appId])
+  @@index([userId])
+  @@index([appId])
+}
+
+/**
+ * model Genre {
+ * id        Int         @id @default(autoincrement())
+ * name      String      @unique
+ * items     ItemGenre[]
+ * createdAt DateTime    @default(now())
+ * }
+ */
+
+/**
+ * model ItemGenre {
+ * itemId  Int
+ * genreId Int
+ * item    CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * genre   Genre       @relation(fields: [genreId], references: [id], onDelete: Cascade)
+ * @@id([itemId, genreId])
+ * }
+ */
+
+/**
+ * model Tag {
+ * id        Int       @id @default(autoincrement())
+ * // Examples: "GIFT CARDS", "beIN SPORTS", "Goosat", "CARTE INTERNET"
+ * name      String    @unique
+ * items     ItemTag[]
+ * createdAt DateTime  @default(now())
+ * }
+ */
+/**
+ * model ItemTag {
+ * itemId Int
+ * tagId  Int
+ * item   CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * tag    Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+ * @@id([itemId, tagId])
+ * }
+ */
+
+/**
+ * model Comment {
+ * id         Int           @id @default(autoincrement())
+ * itemId     Int
+ * userId     Int?
+ * authorName String
+ * content    String
+ * status     CommentStatus @default(PENDING)
+ * createdAt  DateTime      @default(now())
+ * updatedAt  DateTime      @updatedAt
+ * item CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * user User?       @relation(fields: [userId], references: [id])
+ * @@index([itemId, status])
+ * }
+ */
+
+/**
+ * model Review {
+ * id         Int          @id @default(autoincrement())
+ * itemId     Int
+ * userId     Int?
+ * authorName String
+ * rating     Float
+ * content    String?
+ * status     ReviewStatus @default(PENDING)
+ * createdAt  DateTime     @default(now())
+ * updatedAt  DateTime     @updatedAt
+ * item CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * user User?       @relation(fields: [userId], references: [id])
+ * @@index([itemId, status])
+ * }
+ */
 
 model Settings {
   id                 Int      @id @default(1)
@@ -145,13 +263,13 @@ model BeInSportActivation {
 
 model IPTVChannel {
   id            Int            @id @default(autoincrement())
-  name          String
+  name          String // Stream URL (.m3u8, etc.)
   logo          String?
   description   String?
-  category      Category
+  category      Category // Price of subscription
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  subscriptions Subscription[]
+  subscriptions Subscription[] // All users who subscribed
 }
 
 model Subscription {
