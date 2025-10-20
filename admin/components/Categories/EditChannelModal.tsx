@@ -78,7 +78,7 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
       name: initialData?.name || "",
       description: initialData?.description || "",
       category: initialData?.category || (categories?.[0] || ""),
-      type: initialData?.type || (CHANNEL_TYPES?.[0] || ""),
+      type: initialData?.type || (TYPES?.[0] || ""),
     });
     setLogoPreview(initialData?.logo || "");
     setLogoFile(null);
