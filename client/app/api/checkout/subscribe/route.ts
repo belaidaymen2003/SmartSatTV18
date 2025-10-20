@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@/lib/generated/prisma'
+import prisma from '../../../../../admin/lib/prisma'
 import jwt from 'jsonwebtoken'
-
-const prisma = new PrismaClient()
 const JWT_SECRET = process.env.JWT_SECRET || ''
 
 function calculateEndDate(duration: string, startDate: Date = new Date()): Date {
