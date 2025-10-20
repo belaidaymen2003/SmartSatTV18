@@ -75,6 +75,23 @@ export default function DashboardPage() {
     let mounted = true
     ;(async () => {
       try {
+        const videoRes = await fetch('/api/catalog/videos?featured=true')
+        const videoJson = await videoRes.json().catch(() => ({}))
+        if (!mounted) return
+        if (videoJson.featured) {
+          setFeaturedVideo(videoJson.featured)
+        }
+      } catch (err) {
+        console.error('Error fetching featured video:', err)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
         const spParams = new URLSearchParams()
         spParams.set('page', '1')
         spParams.set('pageSize', '8')
