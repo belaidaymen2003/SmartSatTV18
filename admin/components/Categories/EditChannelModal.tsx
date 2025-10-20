@@ -64,11 +64,14 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
   const externalOnDeleteLogo = legacyMode ? undefined : (props as NewProps).onDeleteLogo;
   const externalSaving = legacyMode ? false : !!(props as NewProps).saving;
 
-  const [form, setForm] = useState({ name: "", description: "", category: "" });
+  const [form, setForm] = useState({ name: "", description: "", category: "", type: "" });
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ message: string; type?: string } | null>(null);
+
+  // ensure CHANNEL_TYPES is defined
+  const TYPES: string[] = Array.isArray((CHANNEL_TYPES as any)) ? (CHANNEL_TYPES as unknown as string[]) : [];
 
   useEffect(() => {
     setForm({
