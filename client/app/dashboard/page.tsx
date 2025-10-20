@@ -193,52 +193,57 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-slate-900 text-white">
       <Header credits={credits} userEmail={userEmail} />
 
-      {/* HERO */}
-      <section className="relative w-full h-[560px] md:h-[720px] overflow-hidden">
-        {featuredChannel?.logo ? (
-          <Image
-            src={featuredChannel.logo}
-            alt={featuredChannel.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 1600px"
-            className="object-cover brightness-50"
-          />
-        ) : (
-          <Image
-            src={"https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg"}
-            alt="Featured background"
-            fill
-            sizes="(max-width: 768px) 100vw, 1600px"
-            className="object-cover brightness-50 animate-kenburns"
-          />
-        )}
+      {/* VIDEO HERO - Featured Introduction */}
+      {featuredVideo && <VideoHero featured={featuredVideo} />}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+      {/* Fallback HERO if no video */}
+      {!featuredVideo && (
+        <section className="relative w-full h-[560px] md:h-[720px] overflow-hidden">
+          {featuredChannel?.logo ? (
+            <Image
+              src={featuredChannel.logo}
+              alt={featuredChannel.name}
+              fill
+              sizes="(max-width: 768px) 100vw, 1600px"
+              className="object-cover brightness-50"
+            />
+          ) : (
+            <Image
+              src={"https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg"}
+              alt="Featured background"
+              fill
+              sizes="(max-width: 768px) 100vw, 1600px"
+              className="object-cover brightness-50 animate-kenburns"
+            />
+          )}
 
-        <div className="absolute inset-0 max-w-7xl mx-auto px-6 md:px-12 flex items-end md:items-center">
-          <div className="py-12 md:py-20 w-full md:w-2/3 lg:w-1/2">
-            <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">{featuredChannel?.name ?? 'Welcome to SMART SAT TV'}</h1>
-            <p className="mt-4 text-white/80 max-w-xl">{featuredChannel?.description ?? 'Experience premium streaming and IPTV services with unlimited access to your favorite content.'}</p>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-            <div className="mt-8 flex items-center gap-4">
-              <MagneticButton
-                href={featuredChannel ? `/subscription/${featuredChannel.id}` : '/streaming'}
-                className="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 px-5 py-3 rounded-full font-semibold shadow-lg"
-              >
-                <Play className="w-5 h-5" /> View Plans
-              </MagneticButton>
+          <div className="absolute inset-0 max-w-7xl mx-auto px-6 md:px-12 flex items-end md:items-center">
+            <div className="py-12 md:py-20 w-full md:w-2/3 lg:w-1/2">
+              <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">{featuredChannel?.name ?? 'Welcome to SMART SAT TV'}</h1>
+              <p className="mt-4 text-white/80 max-w-xl">{featuredChannel?.description ?? 'Experience premium streaming and IPTV services with unlimited access to your favorite content.'}</p>
 
-              <div className="text-sm text-white/70">Premium Quality • No Ads</div>
-            </div>
+              <div className="mt-8 flex items-center gap-4">
+                <MagneticButton
+                  href={featuredChannel ? `/subscription/${featuredChannel.id}` : '/streaming'}
+                  className="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 px-5 py-3 rounded-full font-semibold shadow-lg"
+                >
+                  <Play className="w-5 h-5" /> View Plans
+                </MagneticButton>
 
-            <div className="mt-6 flex items-center gap-4 text-sm text-white/60">
-              <div className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400"/> 4.8</div>
-              <div className="px-2 py-1 bg-white/5 rounded">{new Date().getFullYear()}</div>
-              <div className="px-2 py-1 bg-white/5 rounded">Premium</div>
+                <div className="text-sm text-white/70">Premium Quality • No Ads</div>
+              </div>
+
+              <div className="mt-6 flex items-center gap-4 text-sm text-white/60">
+                <div className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400"/> 4.8</div>
+                <div className="px-2 py-1 bg-white/5 rounded">{new Date().getFullYear()}</div>
+                <div className="px-2 py-1 bg-white/5 rounded">Premium</div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
