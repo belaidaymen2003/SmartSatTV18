@@ -261,12 +261,25 @@ model BeInSportActivation {
   author User? @relation("BeInByUser", fields: [createdBy], references: [id])
 }
 
+enum ChannelType {
+  SPORT
+  NEWS
+  ACTION
+  ENTERTAINMENT
+  KIDS
+  MUSIC
+  LIFESTYLE
+  EDUCATION
+  OTHER
+}
+
 model IPTVChannel {
   id            Int            @id @default(autoincrement())
   name          String // Stream URL (.m3u8, etc.)
   logo          String?
   description   String?
   category      Category // Price of subscription
+  type          ChannelType     @default(OTHER)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   subscriptions Subscription[] // All users who subscribed
