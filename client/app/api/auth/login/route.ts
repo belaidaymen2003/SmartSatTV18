@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@/lib/generated/prisma'
+import { PrismaClient } from '@/lib/generated/prisma/index.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
