@@ -28,7 +28,7 @@ export default function ChannelCard({ channel, onViewDetails, rating = 4.5 }: Pr
   const categoryIcon = channel.category === 'IPTV' ? <Tv className="w-3 h-3" /> : <Radio className="w-3 h-3" />
 
   return (
-    <div className="glass rounded-2xl overflow-hidden content-card group h-full flex flex-col">
+    <div className="glass rounded-2xl h-96 w-80 overflow-hidden content-card group  flex flex-col">
       {/* Channel Logo */}
       <div className="relative h-48 overflow-hidden bg-white/5">
         {channel.logo ? (
@@ -79,7 +79,7 @@ export default function ChannelCard({ channel, onViewDetails, rating = 4.5 }: Pr
         {/* Details Button */}
         <button
           onClick={() => onViewDetails(channel.id)}
-          className="mt-auto px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium flex items-center justify-center gap-2 transition-all"
+          className="mt-auto justify-center  transition-all  px-4 py-2 rounded-xl btn-primary text-white font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Info className="w-4 h-4" />
           View Details
