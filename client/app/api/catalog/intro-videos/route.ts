@@ -4,9 +4,6 @@ import prisma from '@/lib/prisma'
 export async function GET(req: NextRequest) {
   try {
     const videos = await prisma.video.findMany({
-      where: {
-        videoUrl: { not: null }
-      },
       select: {
         id: true,
         title: true,
