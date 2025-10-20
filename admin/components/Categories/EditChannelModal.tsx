@@ -239,7 +239,7 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
                 >
-                  {CHANNEL_TYPES.map((t) => (
+                  {TYPES.map((t) => (
                     <option key={t} value={t}>
                       {t}
                     </option>
