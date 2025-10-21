@@ -27,6 +27,7 @@ type IPTVChannel = {
   name: string;
   logo: string | null;
   description: string | null;
+  type: string | null;
   category: string | null;
   createdAt: string;
   updatedAt: string;
@@ -55,6 +56,7 @@ export default function IPTVPage() {
     logo: "",
     description: "",
     category: "IPTV",
+    type: "OTHER",
   });
   const [preview, setPreview] = useState<IPTVChannel | null>(null);
   const pageSize = 12;
@@ -399,6 +401,7 @@ export default function IPTVPage() {
       logo: ch.logo || "",
       description: ch.description || "",
       category: ch.category || "IPTV",
+      type: ch.type || "OTHER",
     });
   };
 
@@ -548,7 +551,7 @@ export default function IPTVPage() {
       <EditChannelModal
         open={!!edit}
         onClose={() => setEdit(null)}
-        initialData={{ id: edit?.id, name: form.name, description: form.description, category: form.category, logo: form.logo , type: 'OTHER'}}
+        initialData={{ id: edit?.id, name: form.name, description: form.description, category: form.category, logo: form.logo , type: form.type}}
         categories={CATEGORIES}
         saving={savingEdit}
         onDeleteLogo={async () => {
