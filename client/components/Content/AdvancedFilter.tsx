@@ -59,7 +59,7 @@ function Dropdown<T extends string | number | undefined>({
         <ul
           role="listbox"
           tabIndex={-1}
-          className="absolute z-50 mt-2 w-full max-h-56 overflow-auto rounded-md bg-white/5 border border-white/10 py-1 shadow-lg"
+          className="absolute z-50 mt-2 w-full max-h-56 overflow-auto backdrop-blur-3xl rounded-md bg-white/5 border border-white/10 py-1 shadow-lg"
         >
           {options.map((opt) => (
             <li
@@ -120,7 +120,7 @@ export default function AdvancedFilter({
   }
 
   return (
-    <div className="glass rounded-xl p-6 mb-8 border border-white/10">
+    <div className=" bg-white/10 rounded-xl p-6 mb-8 border border-white/20">
       <div className="flex flex-col md:flex-row gap-4 md:items-end md:justify-between">
         <div className="flex-1">
           <label className="text-sm text-white/60">Search</label>
@@ -128,7 +128,7 @@ export default function AdvancedFilter({
             aria-label="Search"
             value={q}
             onChange={e => setQ(e.target.value)}
-            className="w-full mt-2 px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white"
+            className="w-full mt-2 px-3 py-2 rounded-md outline-white/5 outline-offset-[1px]   bg-white/5 border border-white/10 text-white"
             placeholder="Search by channel name, keyword..."
           />
         </div>
@@ -187,7 +187,7 @@ export default function AdvancedFilter({
 
           <div>
             <div className="text-sm text-white/60">Sort</div>
-            <div className="flex gap-2 mt-2">
+            <div className="flex gap-2 ">
               <div className="w-44">
                 <Dropdown
                   value={sortBy}

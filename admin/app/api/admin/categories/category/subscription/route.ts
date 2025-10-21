@@ -114,8 +114,6 @@ export async function POST(request: NextRequest) {
             credit: typeof e.credit === "number" ? e.credit : Number(e.credit ?? 0),
             code: e.code,
             duration: durationEnum as any,
-            startDate: start,
-            endDate: end,
             
             // userId: resolved userId, add if needed
           };
@@ -147,9 +145,7 @@ export async function PUT(request: NextRequest) {
       if (typeof code === "string") updateData.code = code;
       if (typeof credit !== "undefined") updateData.credit = Number(credit);
       if (typeof durationMonths !== "undefined") {
-        const end = new Date(startDate ? new Date(startDate) : new Date());
-        end.setMonth(end.getMonth() + Number(durationMonths));
-        updateData.endDate = end;
+
         updateData.duration = durationEnum as any;
       }
       if (typeof status === "string") updateData.status = status;
