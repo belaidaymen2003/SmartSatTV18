@@ -548,7 +548,7 @@ export default function IPTVPage() {
       <EditChannelModal
         open={!!edit}
         onClose={() => setEdit(null)}
-        initialData={{ id: edit?.id, name: form.name, description: form.description, category: form.category, logo: form.logo }}
+        initialData={{ id: edit?.id, name: form.name, description: form.description, category: form.category, logo: form.logo , type: 'OTHER'}}
         categories={CATEGORIES}
         saving={savingEdit}
         onDeleteLogo={async () => {
@@ -568,7 +568,7 @@ export default function IPTVPage() {
               if (edit.logo) fd.append("oldLogoUrl", edit.logo);
               fileUrl = await fetch("/api/admin/categories/upload", { method: "PUT", body: fd }).then((res) => res.json());
             }
-            const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category, logo: fileUrl?.logoUrl };
+            const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category, type: d.type, logo: fileUrl?.logoUrl };
             const res = await fetch("/api/admin/categories/category", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
             if (!res.ok) {
               const cd = await res.json().catch(()=>({}));

@@ -12,7 +12,7 @@ export type Channel = {
   logo?: string | null;
   description?: string | null;
   category?: string | null;
-  type?: string | null;
+  type?: typeof CHANNEL_TYPES[number] | null;
 };
 
 type ChannelData = {
@@ -36,7 +36,7 @@ type NewProps = {
   onClose: () => void;
   initialData: ChannelData;
   categories?: string[];
-  onSave?: (data: { id?: number; name: string; description: string; category: string, logo: string }, logoFile?: File | null) => Promise<void>;
+  onSave?: (data: { id?: number; name: string; description: string; category: string, logo: string, type: string }, logoFile?: File | null) => Promise<void>;
   onDeleteLogo?: () => Promise<void>;
   saving?: boolean;
 };
@@ -56,6 +56,7 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
     name: legacyChannel.name,
     description: legacyChannel.description,
     category: legacyChannel.category,
+    type: legacyChannel.type,
     logo: legacyChannel.logo,
   } : {}) : (props as NewProps).initialData || {};
 
@@ -64,21 +65,21 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
   const externalOnDeleteLogo = legacyMode ? undefined : (props as NewProps).onDeleteLogo;
   const externalSaving = legacyMode ? false : !!(props as NewProps).saving;
 
-  const [form, setForm] = useState({ name: "", description: "", category: "", type: "" });
+  const [form, setForm] = useState({ name: "", description: "", category: "", type:  ""  });
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ message: string; type?: string } | null>(null);
 
   // ensure CHANNEL_TYPES is defined
-  const TYPES: string[] = Array.isArray((CHANNEL_TYPES as any)) ? (CHANNEL_TYPES as unknown as string[]) : [];
+  
 
   useEffect(() => {
     setForm({
       name: initialData?.name || "",
       description: initialData?.description || "",
       category: initialData?.category || (categories?.[0] || ""),
-      type: initialData?.type || (TYPES?.[0] || ""),
+      type: initialData?.type || CHANNEL_TYPES[CHANNEL_TYPES.length - 1],
     });
     setLogoPreview(initialData?.logo || "");
     setLogoFile(null);
@@ -100,6 +101,7 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
     const res = await fetch("/api/admin/categories/upload", { method: "PUT", body: fd });
     return res.json().catch(() => null);
   };
+ 
 
   const deleteLogoLegacy = async (channelId: number | undefined) => {
     if (!channelId) return;
@@ -111,13 +113,16 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
   };
 
   const handleSave = async () => {
+    
     if (legacyMode) {
       // legacy save: upload logo (if any) then PUT channel
       if (!legacyChannel) return;
       setSaving(true);
       try {
         const newLogo = await replaceLogoLegacy(legacyChannel.id);
-        const payload: any = { id: legacyChannel.id, name: form.name, description: form.description, category: form.category };
+        const payload: any = { id: legacyChannel.id, name: form.name, description: form.description, category: form.category, type: form.type };
+        
+        
         if (newLogo?.logoUrl) payload.logo = newLogo.logoUrl;
         const res = await fetch("/api/admin/categories/category", {
           method: "PUT",
@@ -139,7 +144,7 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
       if (externalOnSave) {
         setSaving(true);
         try {
-          await externalOnSave({ id: initialData?.id, name: form.name.trim(), description: form.description.trim(), category: form.category || "", logo: logoPreview }, logoFile);
+          await externalOnSave({ id: initialData?.id, name: form.name.trim(), description: form.description.trim(), category: form.category || "", type: form.type, logo: logoPreview }, logoFile);
           onClose();
         } catch (e: any) {
           setToast({ message: e?.message || "Failed to save", type: "error" });
@@ -239,7 +244,7 @@ export default function EditChannelModal(props: LegacyProps | NewProps) {
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
                 >
-                  {TYPES.map((t) => (
+                  {CHANNEL_TYPES.map((t) => (
                     <option key={t} value={t}>
                       {t}
                     </option>

@@ -36,7 +36,7 @@ export default function StreamingPage() {
   const [spinner1, setSpinner1] = useState(false);
   const [subs, setSubs] = useState<any[]>([]);
   const [message, setMessage] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", logo: "", description: "", category: "STREAMING" });
+  const [form, setForm] = useState({ name: "", logo: "", description: "", category: "STREAMING" ,type: "OTHER"});
   const [preview, setPreview] = useState<IPTVChannel | null>(null);
   const pageSize = 12;
   const [page, setPage] = useState(1);
@@ -288,7 +288,7 @@ export default function StreamingPage() {
   const openEdit = (ch: IPTVChannel) => {
     setEdit(ch);
     setChannelId(ch.id);
-    setForm({ name: ch.name || "", logo: ch.logo || "", description: ch.description || "", category: ch.category || "STREAMING" });
+    setForm({ name: ch.name || "", logo: ch.logo || "", description: ch.description || "", category: ch.category || "STREAMING", type: 'OTHER' });
   };
 
   const removeChannel = async (id: number) => {
@@ -371,7 +371,7 @@ export default function StreamingPage() {
         <EditChannelModal
           open={!!edit}
           onClose={() => setEdit(null)}
-          initialData={{ id: edit?.id, name: form.name, description: form.description, category: form.category, logo: form.logo }}
+          initialData={{ id: edit?.id, name: form.name, description: form.description, category: form.category, type: form.type, logo: form.logo }}
           categories={CATEGORIES}
           saving={savingEdit}
           onDeleteLogo={async () => {
@@ -390,7 +390,7 @@ export default function StreamingPage() {
                 if (edit.logo) fd.append("oldLogoUrl", edit.logo);
                fileUrl= await fetch("/api/admin/categories/upload", { method: "PUT", body: fd }).then((res) => res.json());
               }
-              const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category, logo: fileUrl?.logoUrl };
+              const payload: any = { id: edit.id, name: d.name, description: d.description, category: d.category, type: d.type, logo: fileUrl?.logoUrl };
               const res = await fetch("/api/admin/categories/category", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
               if (!res.ok) {
                 const cd = await res.json().catch(()=>({}));

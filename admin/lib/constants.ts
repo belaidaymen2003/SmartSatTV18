@@ -1,7 +1,7 @@
 export const CATEGORIES = [
   "IPTV",
   "STREAMING",
-] as const;
+] ;
 
 export const CHANNEL_TYPES = [
   "SPORT",
@@ -13,7 +13,7 @@ export const CHANNEL_TYPES = [
   "LIFESTYLE",
   "EDUCATION",
   "OTHER",
-] as const;
+] ;
 
 export type Category = typeof CATEGORIES[number];
 export type ChannelType = typeof CHANNEL_TYPES[number];
