@@ -23,11 +23,12 @@ export async function GET(req: NextRequest) {
 
     const q = (searchParams.get('q') || '').trim()
     const rawCategory = (searchParams.get('category') || '').trim()
+    const rawType = (searchParams.get('type') || '').trim()
     const page = Math.max(1, Number(searchParams.get('page') || 1))
     const pageSize = Math.min(100, Math.max(1, Number(searchParams.get('pageSize') || 12)))
 
     const and: any[] = []
-    
+
     if (q) {
       and.push({ name: { contains: q, mode: 'insensitive' } })
     }
@@ -38,6 +39,16 @@ export async function GET(req: NextRequest) {
         and.push({ category: 'IPTV' })
       } else if (lc === 'streaming') {
         and.push({ category: 'STREAMING' })
+      }
+    }
+
+    if (rawType) {
+      // Accept comma separated types
+      const types = rawType.split(',').map(t => t.trim().toUpperCase()).filter(Boolean)
+      if (types.length === 1) {
+        and.push({ type: types[0] })
+      } else if (types.length > 1) {
+        and.push({ type: { in: types } })
       }
     }
 

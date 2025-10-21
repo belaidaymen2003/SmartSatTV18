@@ -7,6 +7,7 @@ export type Channel = {
   logo: string | null;
   description: string | null;
   category: string | null;
+  type?: string | null;
 };
 
 interface Props {
@@ -36,7 +37,7 @@ export default function ChannelCard({ channel, onPreview, onEdit, onDelete }: Pr
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-white font-medium truncate">{channel.name}</div>
-          <div className="text-xs text-white/60 mt-0.5">{channel.category}</div>
+          <div className="text-xs text-white/60 mt-0.5">{channel.category}{channel.type ? ` • ${channel.type}` : ''}</div>
           {channel.description && (
             <div className="text-xs text-white/50 mt-1 line-clamp-2">{channel.description}</div>
           )}

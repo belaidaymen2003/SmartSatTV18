@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       try {
         const sub = await prisma.subscription.findUnique({
           where: { id: Number(id) } as any,
-          include: { user: true, channel: true },
+          include: { userSubscriptions:{include:{user:true}}, channel: true },
         });
         if (!sub)
           return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       try {
         const subs = await prisma.subscription.findMany({
           where: { channelId: cid },
-          include: { user: true },
+          include: { userSubscriptions:{include:{user:true}} },
         });
         return NextResponse.json({ subscriptions: subs });
       } catch (err: any) {
@@ -42,8 +42,8 @@ export async function GET(request: NextRequest) {
 
     try {
       const subs = await prisma.subscription.findMany({
-        include: { user: true, channel: true },
-        orderBy: { startDate: "desc" },
+        include: { userSubscriptions:{include:{user:true}}, channel: true },
+        
       });
       return NextResponse.json({ subscriptions: subs });
     } catch (err: any) {
