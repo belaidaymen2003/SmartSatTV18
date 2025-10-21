@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '../../components/Layout/Header'
 import ChannelCard from '../../components/Content/ChannelCard'
-import { 
+import AdvancedFilter from '../../components/Content/AdvancedFilter'
+import {
   Satellite,
   Users,
   Star,
@@ -46,28 +47,42 @@ export default function IPTVPage() {
   const [totalChannels, setTotalChannels] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
+  const [filters, setFilters] = useState<Record<string, any>>({
+    q: '',
+    category: 'iptv',
+    minCredit: null,
+    maxCredit: null,
+    duration: '',
+    sortBy: 'newest',
+    sortDir: 'desc',
+    page: 1,
+    pageSize: 100,
+  })
+
+  async function fetchChannels(f = filters) {
+    setIsLoading(true)
+    try {
+      const params = new URLSearchParams()
+      Object.entries(f).forEach(([k, v]) => {
+        if (v === null || v === undefined || v === '') return
+        params.set(k, String(v))
+      })
+      params.set('category', 'iptv')
+      const res = await fetch(`/api/catalog/channels?${params.toString()}`)
+      const d = await res.json().catch(() => ({}))
+      const channelList = Array.isArray(d.channels) ? d.channels : []
+      setChannels(channelList)
+      setTotalChannels(d.total || channelList.length)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
-    let mounted = true
-    ;(async () => {
-      try {
-        setIsLoading(true)
-        const params = new URLSearchParams()
-        params.set('page', '1')
-        params.set('pageSize', '100')
-        params.set('category', 'iptv')
-        const res = await fetch(`/api/catalog/channels?${params.toString()}`)
-        const d = await res.json().catch(() => ({}))
-        const channelList = Array.isArray(d.channels) ? d.channels : []
-        if (!mounted) return
-        setChannels(channelList)
-        setTotalChannels(d.total || channelList.length)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        if (mounted) setIsLoading(false)
-      }
-    })()
-    return () => { mounted = false }
+    fetchChannels()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleViewDetails = (channelId: number) => {
@@ -92,6 +107,9 @@ export default function IPTVPage() {
             Premium IPTV channels from around the world with live sports, movies, and entertainment
           </p>
         </div>
+
+        {/* Filters */}
+        <AdvancedFilter initial={{ category: 'iptv' }} onApply={(f) => { setFilters(prev => ({ ...prev, ...f, page: 1 })); fetchChannels({ ...filters, ...f, page: 1 }) }} onReset={() => { const base = { q: '', category: 'iptv', minCredit: null, maxCredit: null, duration: '', sortBy: 'newest', sortDir: 'desc', page: 1, pageSize: 100 }; setFilters(base); fetchChannels(base) }} />
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
