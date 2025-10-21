@@ -46,28 +46,46 @@ export default function StreamingPage() {
   const [totalChannels, setTotalChannels] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
+  const [filters, setFilters] = useState<Record<string, any>>({
+    q: '',
+    category: 'streaming',
+    minCredit: null,
+    maxCredit: null,
+    duration: '',
+    sortBy: 'newest',
+    sortDir: 'desc',
+    page: 1,
+    pageSize: 100,
+  })
+
+  async function fetchChannels(f = filters) {
     let mounted = true
-    ;(async () => {
-      try {
-        setIsLoading(true)
-        const params = new URLSearchParams()
-        params.set('page', '1')
-        params.set('pageSize', '100')
-        params.set('category', 'streaming')
-        const res = await fetch(`/api/catalog/channels?${params.toString()}`)
-        const d = await res.json().catch(() => ({}))
-        const channelList = Array.isArray(d.channels) ? d.channels : []
-        if (!mounted) return
-        setChannels(channelList)
-        setTotalChannels(d.total || channelList.length)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        if (mounted) setIsLoading(false)
-      }
-    })()
+    setIsLoading(true)
+    try {
+      const params = new URLSearchParams()
+      Object.entries(f).forEach(([k, v]) => {
+        if (v === null || v === undefined || v === '') return
+        params.set(k, String(v))
+      })
+      // Ensure category is streaming for this page
+      params.set('category', 'streaming')
+      const res = await fetch(`/api/catalog/channels?${params.toString()}`)
+      const d = await res.json().catch(() => ({}))
+      const channelList = Array.isArray(d.channels) ? d.channels : []
+      if (!mounted) return
+      setChannels(channelList)
+      setTotalChannels(d.total || channelList.length)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
     return () => { mounted = false }
+  }
+
+  useEffect(() => {
+    fetchChannels()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleViewDetails = (channelId: number) => {
