@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 type Filters = {
   q?: string
@@ -8,6 +8,74 @@ type Filters = {
   duration?: string
   sortBy?: 'newest' | 'price' | 'name' | 'rating'
   sortDir?: 'asc' | 'desc'
+}
+
+function useOutsideClick(handler: () => void) {
+  const ref = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (!ref.current) return
+      if (!ref.current.contains(e.target as Node)) handler()
+    }
+    document.addEventListener('mousedown', onClick)
+    return () => document.removeEventListener('mousedown', onClick)
+  }, [handler])
+  return ref
+}
+
+function Dropdown<T extends string | number | undefined>({
+  label,
+  value,
+  options,
+  onChange,
+  placeholder,
+}: {
+  label?: string
+  value: T
+  options: { value: T; label: string }[]
+  onChange: (v: T) => void
+  placeholder?: string
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useOutsideClick(() => setOpen(false))
+
+  return (
+    <div className="relative" ref={ref as any}>
+      {label && <div className="text-sm text-white/60">{label}</div>}
+      <button
+        type="button"
+        onClick={() => setOpen(s => !s)}
+        className="w-full mt-2 px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white text-left flex items-center justify-between"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span className="truncate">{options.find(o => o.value === value)?.label ?? placeholder ?? 'Select'}</span>
+        <svg className={`ml-2 w-4 h-4 text-white/60 transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {open && (
+        <ul
+          role="listbox"
+          tabIndex={-1}
+          className="absolute z-50 mt-2 w-full max-h-56 overflow-auto rounded-md bg-white/5 border border-white/10 py-1 shadow-lg"
+        >
+          {options.map((opt) => (
+            <li
+              key={String(opt.value)}
+              role="option"
+              aria-selected={opt.value === value}
+              onClick={() => { onChange(opt.value); setOpen(false) }}
+              className={`px-3 py-2 cursor-pointer hover:bg-white/10 ${opt.value === value ? 'bg-white/10' : ''}`}
+            >
+              {opt.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
 }
 
 export default function AdvancedFilter({
@@ -66,16 +134,17 @@ export default function AdvancedFilter({
         </div>
 
         <div className="w-44">
-          <label className="text-sm text-white/60">Category</label>
-          <select
+          <Dropdown
+            label="Category"
             value={category}
-            onChange={e => setCategory(e.target.value as Filters['category'])}
-            className="w-full mt-2 px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white"
-          >
-            <option value="all">All</option>
-            <option value="streaming">Streaming</option>
-            <option value="iptv">IPTV</option>
-          </select>
+            onChange={(v) => setCategory(v || 'all')}
+            placeholder="All"
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'streaming', label: 'Streaming' },
+              { value: 'iptv', label: 'IPTV' },
+            ]}
+          />
         </div>
 
         <div className="w-40">
@@ -101,42 +170,47 @@ export default function AdvancedFilter({
 
       <div className="mt-4 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
         <div className="flex gap-3 items-center">
-          <div>
-            <label className="text-sm text-white/60">Duration</label>
-            <select
+          <div className="w-40">
+            <Dropdown
+              label="Duration"
               value={duration}
-              onChange={e => setDuration(e.target.value)}
-              className="mt-2 px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white"
-            >
-              <option value="">Any</option>
-              <option value="ONE_MONTH">1 Month</option>
-              <option value="SIX_MONTHS">6 Months</option>
-              <option value="ONE_YEAR">1 Year</option>
-            </select>
+              onChange={(v) => setDuration(v || '')}
+              placeholder="Any"
+              options={[
+                { value: '', label: 'Any' },
+                { value: 'ONE_MONTH', label: '1 Month' },
+                { value: 'SIX_MONTHS', label: '6 Months' },
+                { value: 'ONE_YEAR', label: '1 Year' },
+              ]}
+            />
           </div>
 
           <div>
-            <label className="text-sm text-white/60">Sort</label>
+            <div className="text-sm text-white/60">Sort</div>
             <div className="flex gap-2 mt-2">
-              <select
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value as Filters['sortBy'])}
-                className="px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white"
-              >
-                <option value="newest">Newest</option>
-                <option value="price">Price</option>
-                <option value="name">Name</option>
-                <option value="rating">Rating</option>
-              </select>
+              <div className="w-44">
+                <Dropdown
+                  value={sortBy}
+                  onChange={(v) => setSortBy((v as any) || 'newest')}
+                  options={[
+                    { value: 'newest', label: 'Newest' },
+                    { value: 'price', label: 'Price' },
+                    { value: 'name', label: 'Name' },
+                    { value: 'rating', label: 'Rating' },
+                  ]}
+                />
+              </div>
 
-              <select
-                value={sortDir}
-                onChange={e => setSortDir(e.target.value as Filters['sortDir'])}
-                className="px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white"
-              >
-                <option value="desc">Desc</option>
-                <option value="asc">Asc</option>
-              </select>
+              <div className="w-28">
+                <Dropdown
+                  value={sortDir}
+                  onChange={(v) => setSortDir((v as any) || 'desc')}
+                  options={[
+                    { value: 'desc', label: 'Desc' },
+                    { value: 'asc', label: 'Asc' },
+                  ]}
+                />
+              </div>
             </div>
           </div>
         </div>
