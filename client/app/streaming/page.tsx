@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '../../components/Layout/Header'
 import ChannelCard from '../../components/Content/ChannelCard'
-import { 
+import AdvancedFilter from '../../components/Content/AdvancedFilter'
+import {
   Zap,
   Users,
   Star,
@@ -88,6 +89,17 @@ export default function StreamingPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  function handleApplyFilters(newFilters: Record<string, any>) {
+    setFilters(prev => ({ ...prev, ...newFilters, page: 1 }))
+    fetchChannels({ ...filters, ...newFilters, page: 1 })
+  }
+
+  function handleResetFilters() {
+    const base = { q: '', category: 'streaming', minCredit: null, maxCredit: null, duration: '', sortBy: 'newest', sortDir: 'desc', page: 1, pageSize: 100 }
+    setFilters(base)
+    fetchChannels(base)
+  }
+
   const handleViewDetails = (channelId: number) => {
     router.push(`/subscription/${channelId}`)
   }
@@ -125,6 +137,9 @@ export default function StreamingPage() {
             </div>
           ))}
         </div>
+
+        {/* Filters */}
+        <AdvancedFilter initial={{ category: 'streaming' }} onApply={handleApplyFilters} onReset={handleResetFilters} />
 
         {/* Channels Grid */}
         {isLoading ? (
