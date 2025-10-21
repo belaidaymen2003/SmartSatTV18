@@ -367,19 +367,10 @@ export default function SubscriptionDetailPage() {
 
                           {sub.code && (
                             <div className="flex items-center gap-2 text-sm text-white/60">
-                              <code className="bg-black/30 px-2 py-1 rounded font-mono text-xs">
-                                {sub.code.substring(0, 20)}...
+                              <code className="bg-black/30 px-2 blur-[4px] py-1 rounded font-mono text-xs">
+                                {sub.code.substring(0, 5)}...
                               </code>
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  copyToClipboard(sub.code || '', sub.id)
-                                }}
-                                className="text-white/50 hover:text-white/80 transition-colors"
-                                title="Copy code"
-                              >
-                                <Copy className="w-3 h-3" />
-                              </button>
+                       
                               {copiedCodeId === sub.id && (
                                 <span className="text-green-400 text-xs">Copied!</span>
                               )}

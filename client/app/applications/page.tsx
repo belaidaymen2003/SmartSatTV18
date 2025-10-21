@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '../../components/Layout/Header'
-import { 
+import AdvancedFilterApps from '../../components/Content/AdvancedFilterApps'
+import {
   Download,
   Smartphone,
   Monitor,
@@ -133,6 +134,83 @@ export default function ApplicationsPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Advanced App Filters */}
+        <div className="mb-6">
+          <AdvancedFilterApps
+            initial={{}}
+            onApply={(f) => {
+              const params = new URLSearchParams()
+              if (f.q) params.set('q', f.q)
+              if (f.minCredit != null) params.set('minCredit', String(f.minCredit))
+              if (f.maxCredit != null) params.set('maxCredit', String(f.maxCredit))
+              if (f.version) params.set('version', f.version)
+              if (f.platforms && f.platforms.length) params.set('platforms', f.platforms.join(','))
+              if (f.internetConnection != null) params.set('internet', String(f.internetConnection))
+              if (f.minStorage != null) params.set('minStorage', String(f.minStorage))
+              if (f.maxStorage != null) params.set('maxStorage', String(f.maxStorage))
+              if (f.sortBy) params.set('sortBy', f.sortBy)
+              if (f.sortDir) params.set('sortDir', f.sortDir)
+              params.set('page', '1')
+              params.set('pageSize', '100')
+
+              (async () => {
+                try {
+                  const res = await fetch(`/api/catalog/applications?${params.toString()}`)
+                  const d = await res.json().catch(() => ({}))
+                  const apps = Array.isArray(d.apps) ? d.apps : []
+                  const mapped = apps.map((a: any) => ({
+                    id: a.id,
+                    title: a.name || a.title || 'App',
+                    category: 'player',
+                    price: a.credit ?? 0,
+                    rating: 4.5,
+                    image: a.image || '',
+                    description: a.description || '',
+                    platforms: a.deviceOperatingSystems || ['iOS','Android'],
+                    version: a.version || '',
+                    size: a.storageRequired ? `${a.storageRequired} MB` : a.size || '',
+                    downloads: a.downloads || '',
+                    details: a.description || ''
+                  }))
+                  setApplications(mapped)
+                  setTotalApps(d.total || mapped.length)
+                } catch (err) {
+                  console.error('Error fetching apps with filters', err)
+                }
+              })()
+            }}
+            onReset={() => {
+              // reload default list
+              (async () => {
+                try {
+                  const params = new URLSearchParams(); params.set('page','1'); params.set('pageSize','100')
+                  const res = await fetch(`/api/catalog/applications?${params.toString()}`)
+                  const d = await res.json().catch(() => ({}))
+                  const apps = Array.isArray(d.apps) ? d.apps : []
+                  const mapped = apps.map((a: any) => ({
+                    id: a.id,
+                    title: a.name || a.title || 'App',
+                    category: 'player',
+                    price: a.credit ?? 0,
+                    rating: 4.5,
+                    image: a.image || '',
+                    description: a.description || '',
+                    platforms: a.deviceOperatingSystems || ['iOS','Android'],
+                    version: a.version || '',
+                    size: a.storageRequired ? `${a.storageRequired} MB` : a.size || '',
+                    downloads: a.downloads || '',
+                    details: a.description || ''
+                  }))
+                  setApplications(mapped)
+                  setTotalApps(d.total || mapped.length)
+                } catch (err) {
+                  console.error('Error reloading apps', err)
+                }
+              })()
+            }}
+          />
         </div>
 
         {/* Category Filter */}
