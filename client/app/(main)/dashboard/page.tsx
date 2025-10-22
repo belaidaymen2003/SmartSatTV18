@@ -87,6 +87,8 @@ export default function DashboardPage() {
         setStreamingChannels(channels)
       } catch (err) {
         console.error('Error fetching streaming channels:', err)
+      } finally {
+        if (mounted) setPendingFetches((p) => Math.max(0, p - 1))
       }
     })()
     return () => { mounted = false }
@@ -107,6 +109,8 @@ export default function DashboardPage() {
         setIptvChannels(channels)
       } catch (err) {
         console.error('Error fetching IPTV channels:', err)
+      } finally {
+        if (mounted) setPendingFetches((p) => Math.max(0, p - 1))
       }
     })()
     return () => { mounted = false }
@@ -134,6 +138,8 @@ export default function DashboardPage() {
         setAppsContent(mappedApps)
       } catch (err) {
         console.error('Error fetching apps:', err)
+      } finally {
+        if (mounted) setPendingFetches((p) => Math.max(0, p - 1))
       }
     })()
     return () => { mounted = false }
@@ -152,6 +158,8 @@ export default function DashboardPage() {
         }
       } catch (err) {
         console.error('Error fetching intro videos:', err)
+      } finally {
+        if (mounted) setPendingFetches((p) => Math.max(0, p - 1))
       }
     })()
     return () => { mounted = false }
