@@ -138,11 +138,21 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Profile Details */}
-          <section className="glass rounded-2xl border border-white/20 p-6">
+          <section className="glass rounded-2xl border border-white/10 p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <UserIcon className="w-5 h-5 text-white/80" /> Profile Details
             </h2>
             <form onSubmit={handleSave} className="space-y-4">
+              <div>
+                <label className="block text-sm text-white/70 mb-1">Email</label>
+                <input
+                  value={user?.email || userEmail}
+                  readOnly
+                  aria-readonly="true"
+                  className="w-full px-4 py-2.5 rounded-lg bg-white/3 border border-white/10 text-white/80 cursor-not-allowed"
+                />
+              </div>
+
               <div>
                 <label className="block text-sm text-white/70 mb-1">Name</label>
                 <input
@@ -166,7 +176,7 @@ export default function SettingsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="btn-primary w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-white disabled:opacity-60"
+                  className="btn-primary w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-white disabled:opacity-60 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-colors shadow-md"
                 >
                   <Save className="w-4 h-4" /> {saving ? 'Saving...' : 'Save Changes'}
                 </button>
