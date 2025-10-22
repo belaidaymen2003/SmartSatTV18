@@ -50,7 +50,7 @@ export default function DashboardPage() {
   const [streamingChannels, setStreamingChannels] = useState<Channel[]>([])
   const [iptvChannels, setIptvChannels] = useState<Channel[]>([])
   const [appsContent, setAppsContent] = useState<Content[]>([])
-  const [introVideo, setIntroVideo] = useState<IntroVideo | null>(null)
+  const [introVideos, setIntroVideos] = useState<IntroVideo[]>([])
   // Track pending fetches to show loader until all data is ready
   const [pendingFetches, setPendingFetches] = useState(4)
 
