@@ -233,17 +233,27 @@ export default function ProfilePage() {
                   {data.downloadedApps.map((userApp: any) => {
                     const app = userApp.app
                     return (
-                      <div key={userApp.id} className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/10">
-                        <div className="flex items-center gap-3 flex-1">
+                      <div key={userApp.id} className="flex flex-col md:flex-row items-center justify-between p-4 rounded-lg bg-black/20 border border-white/10">
+                        <div className="flex items-center gap-3 flex-1 w-full md:w-auto">
                           <img src={app.image} alt={app.name} className="w-12 h-12 rounded object-cover" />
-                          <div>
-                            <div className="font-semibold">{app.name}</div>
-                            <div className="text-xs text-white/60">Version {app.version}</div>
+                          <div className="min-w-0">
+                            <div className="font-semibold truncate">{app.name}</div>
+                            <div className="text-xs text-white/60">v{app.version} • {app.storageRequired ? `${app.storageRequired} MB` : app.size || '—'}</div>
+                            {userApp.purchasedAt && (
+                              <div className="text-xs text-white/50 mt-1">Purchased on {formatDate(userApp.purchasedAt)}</div>
+                            )}
                           </div>
                         </div>
-                        <a href={app.downloadLink} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
-                          Download
-                        </a>
+
+                        <div className="mt-3 md:mt-0 flex items-center gap-3">
+                          <a href={app.downloadLink} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
+                            Download
+                          </a>
+
+                          <a href={`/applications/${app.id}`} className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition-colors">
+                            View Details
+                          </a>
+                        </div>
                       </div>
                     )
                   })}
