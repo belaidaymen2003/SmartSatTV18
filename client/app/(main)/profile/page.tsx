@@ -240,9 +240,14 @@ export default function ProfilePage() {
                             <div className="text-xs text-white/60">Version {app.version}</div>
                           </div>
                         </div>
-                        <a href={app.downloadLink} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
-                          Download
-                        </a>
+                        <div className="flex items-center gap-3">
+                          <a href={app.downloadLink} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
+                            Download
+                          </a>
+                          <a href={`/applications/${app.id}`} className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white font-medium transition-colors">
+                            View Details
+                          </a>
+                        </div>
                       </div>
                     )
                   })}
