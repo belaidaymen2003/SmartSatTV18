@@ -202,7 +202,7 @@ export default function VideoHero({ videos }: VideoHeroProps) {
           {/* Right Side: Solitaire-Style Video Thumbnails */}
 
           {/* Solitaire Card Stack */}
-          <div className=" z-50  absolute bottom-8 right-8 ">
+          <div className="  absolute bottom-8 right-8 ">
             {remainingVideos.map((video, index) => {
               // Calculate rotation and position for solitaire effect
               const totalCards = remainingVideos.length;

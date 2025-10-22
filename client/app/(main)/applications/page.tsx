@@ -153,7 +153,7 @@ export default function ApplicationsPage() {
               if (f.sortBy) params.set('sortBy', f.sortBy)
               if (f.sortDir) params.set('sortDir', f.sortDir)
               params.set('page', '1')
-              params.set('pageSize', '100')
+              params.set('pageSize', '100');
 
               (async () => {
                 try {
