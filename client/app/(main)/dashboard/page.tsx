@@ -202,8 +202,8 @@ export default function DashboardPage() {
     <div className=" min-h-screen bg-slate-900 text-white">
 
       {/* VIDEO HERO */}
-      {introVideo ? (
-        <VideoHero video={introVideo} />
+      {introVideos.length > 0 ? (
+        <VideoHero videos={introVideos} />
       ) : (
         <section className="relative w-full h-[560px] md:h-[720px] overflow-hidden">
           {featuredChannel?.logo ? (
