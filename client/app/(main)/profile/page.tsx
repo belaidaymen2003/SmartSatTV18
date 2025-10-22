@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Copy, Check, Calendar, Zap, Tv, Radio, AlertCircle } from 'lucide-react'
-import Header from '../../components/Layout/Header'
+
 
 export default function ProfilePage() {
   const [data, setData] = useState<any>(null)
@@ -73,7 +73,7 @@ export default function ProfilePage() {
 
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header credits={credits} userEmail={userEmail} />
+  
       <main className="max-w-5xl mx-auto px-4 py-12 text-center">
         <p className="text-white/60">Loading...</p>
       </main>
@@ -82,7 +82,7 @@ export default function ProfilePage() {
 
   if (!data) return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header credits={credits} userEmail={userEmail} />
+
       <main className="max-w-5xl mx-auto px-4 py-12 text-center">
         <p className="text-white/60">Not authenticated</p>
       </main>
@@ -91,7 +91,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      <Header credits={credits} userEmail={userEmail} />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Page Header */}

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Header from '../../components/Layout/Header'
-import AdvancedFilterApps from '../../components/Content/AdvancedFilterApps'
+
+import AdvancedFilterApps from '../../../components/Content/AdvancedFilterApps'
 import {
   Download,
   Smartphone,
@@ -110,7 +110,7 @@ export default function ApplicationsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      <Header credits={credits} userEmail={userEmail} />
+
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Page Header */}

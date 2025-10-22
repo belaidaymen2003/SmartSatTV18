@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import Header from '../../../components/Layout/Header'
+
 import { 
   Play, 
   Pause, 
@@ -185,7 +185,7 @@ export default function PlayerPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <Header credits={credits} userEmail={userEmail} />
+
       
       <div 
         ref={playerRef}

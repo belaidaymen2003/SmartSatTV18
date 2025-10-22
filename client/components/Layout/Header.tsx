@@ -12,8 +12,10 @@ import {
   LogOut,
   Coins,
   Menu,
-  X
+  X,
+
 } from 'lucide-react'
+import Link from 'next/link'
 import logo from '../../public/Logo2.png'
 import ProfileDropdown from '../ProfileDropdown'
 
@@ -76,11 +78,11 @@ export default function Header({ credits = 0, userEmail = '', onLogout }: Header
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            <a href="/dashboard" className="text-white/80 hover:text-white transition-colors">Home</a>
-            <a href="/streaming" className="text-white/80 hover:text-white transition-colors">Streaming</a>
-            <a href="/iptv" className="text-white/80 hover:text-white transition-colors">IPTV</a>
-            <a href="/applications" className="text-white/80 hover:text-white transition-colors">Applications</a>
-            <a href="/profile" className="text-white/80 hover:text-white transition-colors">My Space</a>
+            <Link href="/dashboard" className="text-white/80 hover:text-white transition-colors">Home</Link>
+            <Link href="/streaming" className="text-white/80 hover:text-white transition-colors">Streaming</Link>
+            <Link href="/iptv" className="text-white/80 hover:text-white transition-colors">IPTV</Link>
+            <Link href="/applications" className="text-white/80 hover:text-white transition-colors">Applications</Link>
+            <Link href="/profile" className="text-white/80 hover:text-white transition-colors">My Space</Link>
           </nav>
 
           {/* User Info & Actions */}

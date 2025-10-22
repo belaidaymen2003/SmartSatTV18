@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import Header from '../../components/Layout/Header'
-import ContentCard, { Content } from '../../components/Content/ContentCard'
-import ChannelCard from '../../components/Content/ChannelCard'
-import VideoHero from '../../components/Content/VideoHero'
-import Loading3D from '../../components/Loading3D'
-import SectionHeader from '../../components/UI/SectionHeader'
-import Carousel from '../../components/UI/Carousel'
-import MagneticButton from '../../components/UI/MagneticButton'
-import MotionReveal from '../../components/UI/MotionReveal'
+
+import ContentCard, { Content } from '../../../components/Content/ContentCard'
+import ChannelCard from '../../../components/Content/ChannelCard'
+import VideoHero from '../../../components/Content/VideoHero'
+import Loading3D from '../../../components/Loading3D'
+import SectionHeader from '../../../components/UI/SectionHeader'
+import Carousel from '../../../components/UI/Carousel'
+import MagneticButton from '../../../components/UI/MagneticButton'
+import MotionReveal from '../../../components/UI/MotionReveal'
 import {
   Play,
   Star,
@@ -191,7 +191,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
-      <Header credits={credits} userEmail={userEmail} />
 
       {/* VIDEO HERO */}
       {introVideo ? (
