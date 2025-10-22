@@ -136,7 +136,7 @@ export default function SettingsPage() {
               <div className="text-sm text-white/70">Last updated: <span className="font-medium text-white">{new Date(user.updatedAt || user.createdAt).toLocaleString()}</span></div>
               <div className="flex items-center gap-3">
                 <a href="/profile" className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white">Cancel</a>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-green-500 rounded-lg text-white font-medium flex items-center gap-2">
+                <button type="submit" disabled={saving} className="w-full py-2 px-6 rounded-lg btn-primary text-white font-semibold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                   {saving ? 'Saving...' : (<><Check className="w-4 h-4" /> Save Changes</>)}
                 </button>
               </div>
