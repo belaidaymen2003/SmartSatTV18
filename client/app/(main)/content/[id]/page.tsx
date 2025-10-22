@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
-import Header from '../../../components/Layout/Header'
+
 import {
   Play,
   Star,
@@ -22,7 +22,7 @@ import {
   Gamepad2,
   X
 } from 'lucide-react'
-import ReviewsSection from '../../../components/Reviews/ReviewsSection'
+import ReviewsSection from '../../../../components/Reviews/ReviewsSection'
 
 interface ContentDetail {
   id: number
@@ -196,7 +196,6 @@ export default function ContentDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header credits={credits} userEmail={userEmail} />
 
       {!contentDetails ? (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">

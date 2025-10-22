@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Header from '../../components/Layout/Header'
-import ChannelCard from '../../components/Content/ChannelCard'
-import AdvancedFilter from '../../components/Content/AdvancedFilter'
+
+import ChannelCard from '../../../components/Content/ChannelCard'
+import AdvancedFilter from '../../../components/Content/AdvancedFilter'
 import {
-  Satellite,
+  Zap,
   Users,
   Star,
 } from 'lucide-react'
@@ -25,7 +25,7 @@ interface Channel {
   }>
 }
 
-export default function IPTVPage() {
+export default function StreamingPage() {
   const [credits, setCredits] = useState(150)
   const [userEmail, setUserEmail] = useState('')
   const router = useRouter()
@@ -49,7 +49,7 @@ export default function IPTVPage() {
 
   const [filters, setFilters] = useState<Record<string, any>>({
     q: '',
-    category: 'iptv',
+    category: 'streaming',
     minCredit: null,
     maxCredit: null,
     duration: '',
@@ -60,6 +60,7 @@ export default function IPTVPage() {
   })
 
   async function fetchChannels(f = filters) {
+    let mounted = true
     setIsLoading(true)
     try {
       const params = new URLSearchParams()
@@ -67,10 +68,12 @@ export default function IPTVPage() {
         if (v === null || v === undefined || v === '') return
         params.set(k, String(v))
       })
-      params.set('category', 'iptv')
+      // Ensure category is streaming for this page
+      params.set('category', 'streaming')
       const res = await fetch(`/api/catalog/channels?${params.toString()}`)
       const d = await res.json().catch(() => ({}))
       const channelList = Array.isArray(d.channels) ? d.channels : []
+      if (!mounted) return
       setChannels(channelList)
       setTotalChannels(d.total || channelList.length)
     } catch (err) {
@@ -78,6 +81,7 @@ export default function IPTVPage() {
     } finally {
       setIsLoading(false)
     }
+    return () => { mounted = false }
   }
 
   useEffect(() => {
@@ -85,31 +89,39 @@ export default function IPTVPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  function handleApplyFilters(newFilters: Record<string, any>) {
+    setFilters(prev => ({ ...prev, ...newFilters, page: 1 }))
+    fetchChannels({ ...filters, ...newFilters, page: 1 })
+  }
+
+  function handleResetFilters() {
+    const base = { q: '', category: 'streaming', minCredit: null, maxCredit: null, duration: '', sortBy: 'newest', sortDir: 'desc', page: 1, pageSize: 100 }
+    setFilters(base)
+    fetchChannels(base)
+  }
+
   const handleViewDetails = (channelId: number) => {
     router.push(`/subscription/${channelId}`)
   }
 
   const stats = [
-    { label: 'Total Packages', value: totalChannels.toString(), icon: <Satellite className="w-5 h-5" /> },
-    { label: 'Active Subscribers', value: '35K+', icon: <Users className="w-5 h-5" /> },
-    { label: 'Avg Rating', value: '4.7★', icon: <Star className="w-5 h-5" /> }
+    { label: 'Total Plans', value: totalChannels.toString(), icon: <Zap className="w-5 h-5" /> },
+    { label: 'Active Members', value: '500K+', icon: <Users className="w-5 h-5" /> },
+    { label: 'Avg Rating', value: '4.8★', icon: <Star className="w-5 h-5" /> }
   ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      <Header credits={credits} userEmail={userEmail} />
+ 
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Page Header */}
         <div className="mb-12">
-          <h1 className="text-5xl font-bold mb-4">IPTV Subscriptions</h1>
+          <h1 className="text-5xl font-bold mb-4">Streaming Subscriptions</h1>
           <p className="text-xl text-blue-200 max-w-2xl">
-            Premium IPTV channels from around the world with live sports, movies, and entertainment
+            Choose the perfect streaming plan with unlimited access to movies, series, and live content
           </p>
         </div>
-
-        {/* Filters */}
-        <AdvancedFilter initial={{ category: 'iptv' }} onApply={(f) => { setFilters(prev => ({ ...prev, ...f, page: 1 })); fetchChannels({ ...filters, ...f, page: 1 }) }} onReset={() => { const base = { q: '', category: 'iptv', minCredit: null, maxCredit: null, duration: '', sortBy: 'newest', sortDir: 'desc', page: 1, pageSize: 100 }; setFilters(base); fetchChannels(base) }} />
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -126,10 +138,13 @@ export default function IPTVPage() {
           ))}
         </div>
 
+        {/* Filters */}
+        <AdvancedFilter initial={{ category: 'streaming' }} onApply={handleApplyFilters} onReset={handleResetFilters} />
+
         {/* Channels Grid */}
         {isLoading ? (
           <div className="text-center py-12">
-            <p className="text-white/60">Loading IPTV channels...</p>
+            <p className="text-white/60">Loading streaming channels...</p>
           </div>
         ) : channels.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -138,13 +153,13 @@ export default function IPTVPage() {
                 key={channel.id}
                 channel={channel}
                 onViewDetails={handleViewDetails}
-                rating={4.7}
+                rating={4.8}
               />
             ))}
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-white/60">No IPTV channels available</p>
+            <p className="text-white/60">No streaming channels available</p>
           </div>
         )}
       </main>

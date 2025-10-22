@@ -63,7 +63,7 @@ export default function ProfileDropdown() {
   }
 
   return (
-    <div className="relative" ref={nodeRef}>
+    <div className="relative text-white" ref={nodeRef}>
       <button onClick={() => setOpen(!open)} className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
         <div className="relative">
           <Bell className="w-5 h-5 text-white" />
@@ -99,8 +99,6 @@ export default function ProfileDropdown() {
           <div className="p-3 border-t border-white/5 grid grid-cols-2 gap-2">
             <Link href="/profile" className="block text-center py-2 rounded bg-white/5 hover:bg-white/10">Profile</Link>
             <Link href="/profile/settings" className="block text-center py-2 rounded bg-white/5 hover:bg-white/10">Settings</Link>
-            <Link href="/profile/history" className="block text-center py-2 rounded bg-white/5 hover:bg-white/10">History</Link>
-            <Link href="/profile/favorites" className="block text-center py-2 rounded bg-white/5 hover:bg-white/10">Favorites</Link>
           </div>
 
           <div className="p-3 border-t border-white/5">

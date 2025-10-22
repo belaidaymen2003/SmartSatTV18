@@ -4,7 +4,7 @@ import { Play, Tv, Film, Radio, Gamepad2, Wifi } from 'lucide-react'
 
 export default function Loading3D() {
   return (
-    <div className="loader-3d loader-center" aria-hidden>
+    <div className="loader-3d loader-center z-50" aria-hidden>
       <div className="cube">
         <div className="front flex items-center justify-center text-white">
           <Play className="w-8 h-8" />

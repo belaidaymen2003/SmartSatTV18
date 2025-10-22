@@ -1,156 +1,188 @@
-'use client'
+"use client";
 
-import { useState, useRef, useEffect } from 'react'
-import Image from 'next/image'
-import { Play, Volume2, VolumeX, Pause, Star, Zap } from 'lucide-react'
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import { Play, Volume2, VolumeX, Pause, Star, Zap } from "lucide-react";
 
-interface VideoHeroProps {
-  video: {
-    id: number
-    title: string
-    description?: string
-    thumbnail?: string
-    videoUrl: string
-    price: number
-  } | null
+interface Video {
+  id: number;
+  title: string;
+  description?: string;
+  thumbnail?: string;
+  videoUrl: string;
+  price: number;
 }
 
-export default function VideoHero({ video }: VideoHeroProps) {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(true)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+interface VideoHeroProps {
+  videos: Video[];
+}
+
+export default function VideoHero({ videos }: VideoHeroProps) {
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(
+    videos?.[0] || null
+  );
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!videoRef.current) return
+    if (!videoRef.current) return;
 
     if (isPlaying) {
-      videoRef.current.play().catch(() => setIsPlaying(false))
+      videoRef.current.play().catch(() => setIsPlaying(false));
     } else {
-      videoRef.current.pause()
+      videoRef.current.pause();
     }
-  }, [isPlaying])
+  }, [isPlaying]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return
-    const rect = containerRef.current.getBoundingClientRect()
-    setMousePosition({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    })
-  }
-
-  if (!video) {
-    return null
+  if (!videos || videos.length === 0) {
+    return null;
   }
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying)
-  }
+    setIsPlaying(!isPlaying);
+  };
 
   const handleMuteToggle = () => {
-    setIsMuted(!isMuted)
+    setIsMuted(!isMuted);
     if (videoRef.current) {
-      videoRef.current.muted = !isMuted
+      videoRef.current.muted = !isMuted;
     }
-  }
+  };
+
+  const thumbnailVideos = videos.slice(0, 6);
+  const remainingVideos = videos.slice(0);
 
   return (
-    <section className="relative w-full overflow-hidden">
-      <div
-        ref={containerRef}
-        onMouseMove={handleMouseMove}
-        className="relative w-full h-[560px] md:h-[720px] bg-black overflow-hidden group"
-      >
-        {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-purple-950/30 to-slate-950" />
+    <section className="relative w-full h-screen overflow-hidden">
+      <div className="relative w-full h-full bg-gradient-to-br from-slate-950 via-purple-950/30 to-slate-900 overflow-hidden">
+        {/* Main Featured Video Section */}
 
-        {/* Animated gradient orb (follows mouse) */}
-        <div
-          className="absolute w-96 h-96 rounded-full blur-3xl opacity-20 transition-all duration-300 pointer-events-none"
-          style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            left: `${mousePosition.x - 25}%`,
-            top: `${mousePosition.y - 25}%`,
-          }}
-        />
+        {/* Large Featured Video */}
+        <div className=" flex  w-full h-full  px-10  flex-col justify-center  animate-fade-in">
+          {/* Featured Video Container */}
 
-        {/* Video Background */}
-        {isPlaying ? (
-          <video
-            ref={videoRef}
-            src={video.videoUrl}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            muted={isMuted}
-            autoPlay
-            playsInline
-          />
-        ) : video.thumbnail ? (
-          <Image
-            src={video.thumbnail}
-            alt={video.title}
-            fill
-            sizes="(max-width: 768px) 100vw, 1600px"
-            className="object-cover brightness-40 group-hover:brightness-50 transition-all duration-700"
-            priority
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-slate-900" />
-        )}
+          {/* Video/Thumbnail Background */}
+          {isPlaying && selectedVideo ? (
+            <video
+              ref={videoRef}
+              src={selectedVideo.videoUrl}
+              className="absolute inset-0 w-full h-full object-cover"
+              muted={isMuted}
+              autoPlay
+              playsInline
+            />
+          ) : selectedVideo?.thumbnail ? (
+            <Image
+              src={selectedVideo.thumbnail}
+              alt={selectedVideo.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 1200px"
+              className="object-contain group-hover:scale-105 transition-transform duration-500"
+              priority
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-blue-900/40 to-slate-900" />
+          )}
 
-        {/* Premium Overlay Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
+          {/* Overlay Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-        {/* Animated Light Rays (on video play) */}
-        {isPlaying && (
-          <>
-            <div className="absolute top-0 left-1/4 w-1 h-full bg-gradient-to-b from-white/20 via-transparent to-transparent blur-xl opacity-30 animate-pulse" />
-            <div className="absolute top-0 right-1/3 w-1 h-full bg-gradient-to-b from-purple-400/10 via-transparent to-transparent blur-xl opacity-20 animate-pulse" />
-          </>
-        )}
-
-        {/* Content Container */}
-        <div className="absolute inset-0 max-w-7xl mx-auto px-6 md:px-12 flex flex-col justify-end md:justify-center pb-16 md:pb-24">
-          <div className="w-full md:w-3/5 lg:w-1/2 space-y-8 animate-slide-in">
-            {/* Premium Badge */}
-            <div className="inline-flex items-center gap-2 w-fit">
-              <div className="glass px-3 py-1.5 rounded-full flex items-center gap-2 backdrop-blur-xl border border-white/20">
-                <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                <span className="text-xs font-bold text-white/90 uppercase tracking-wide">Premium Introduction</span>
-              </div>
-            </div>
-
-            {/* Title with Gradient */}
-            <div className="space-y-2">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight text-white drop-shadow-2xl">
-                {video.title}
-              </h1>
-              <div className="h-1 w-24 bg-gradient-to-r from-purple-500 via-blue-500 to-transparent rounded-full" />
-            </div>
-
-            {/* Description */}
-            {video.description && (
-              <p className="text-lg md:text-xl text-white/85 max-w-2xl drop-shadow-lg leading-relaxed font-light tracking-wide">
-                {video.description}
-              </p>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex items-center gap-4 pt-6 flex-wrap">
-              {/* Primary Button - Play */}
+          {/* Play Button Overlay */}
+          {!isPlaying && (
+            <div className="absolute inset-0 flex items-center justify-center group-hover:bg-black/20 transition-colors duration-300">
               <button
                 onClick={handlePlayPause}
-                className="group relative inline-flex items-center gap-3 px-8 md:px-10 py-4 md:py-5 rounded-full font-bold text-white text-base md:text-lg transition-all duration-300 overflow-hidden shadow-2xl hover:shadow-purple-500/50 hover:shadow-2xl"
+                className="relative group/btn inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-xl border border-white/30 transition-all duration-300 shadow-2xl"
+              >
+                <Play className="w-8 h-8 md:w-10 md:h-10 text-white fill-white ml-1 group-hover/btn:scale-110 transition-transform" />
+              </button>
+            </div>
+          )}
+
+          {/* Controls Bar */}
+          {isPlaying && (
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between">
+              <div className="flex items-center gap-2 text-white/80 text-sm font-semibold">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                Now Playing
+              </div>
+              <button
+                onClick={handleMuteToggle}
+                className="p-2 rounded-full hover:bg-white/20 transition-colors"
+              >
+                {isMuted ? (
+                  <VolumeX className="w-5 h-5 text-white" />
+                ) : (
+                  <Volume2 className="w-5 h-5 text-white" />
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Video Info */}
+          {selectedVideo && (
+            <div className="space-y-7  z-50  absolute animate-slide-in">
+              {/* Premium Badge */}
+              <div className="inline-flex items-center gap-2">
+                <div className="glass px-3 py-1.5 rounded-full flex items-center gap-2 backdrop-blur-xl border border-white/20">
+                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                  <span className="text-xs font-bold text-white/90 uppercase tracking-wide">
+                    Premium Introduction
+                  </span>
+                </div>
+              </div>
+
+              {/* Title */}
+              <div className="space-y-2">
+                <h1 className="text-4xl md:text-5xl font-black leading-tight text-white drop-shadow-2xl">
+                  {selectedVideo.title}
+                </h1>
+                <div className="h-1 w-20 bg-gradient-to-r from-purple-500 via-blue-500 to-transparent rounded-full" />
+              </div>
+
+              {/* Description */}
+              {selectedVideo.description && (
+                <p className="text-base md:text-lg text-white/85 max-w-2xl drop-shadow-lg leading-relaxed font-light">
+                  {selectedVideo.description}
+                </p>
+              )}
+
+              {/* Info Stats */}
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="glass px-4 py-2.5 rounded-full backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-yellow-400" />
+                    <span className="text-white/90 font-semibold text-sm">
+                      4K Ultra HD
+                    </span>
+                  </div>
+                </div>
+
+                <div className="glass px-4 py-2.5 rounded-full backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all">
+                  <span className="text-white/90 font-semibold text-sm">
+                    Premium Quality
+                  </span>
+                </div>
+
+                <div className="glass px-4 py-2.5 rounded-full backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all">
+                  <span className="text-white/90 font-semibold text-sm">
+                    No Ads
+                  </span>
+                </div>
+              </div>
+
+              {/* Watch Now Button */}
+              <button
+                onClick={handlePlayPause}
+                className="group relative inline-flex items-center gap-3 px-8 md:px-10 py-4 rounded-full font-bold text-white text-base transition-all duration-300 overflow-hidden shadow-2xl hover:shadow-purple-500/50 w-fit"
                 style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                 }}
               >
-                {/* Shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-
-                {/* Button content */}
                 <div className="relative flex items-center gap-3">
                   <div className="p-1 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors">
                     {isPlaying ? (
@@ -159,61 +191,170 @@ export default function VideoHero({ video }: VideoHeroProps) {
                       <Play className="w-5 h-5 md:w-6 md:h-6 ml-0.5" />
                     )}
                   </div>
-                  <span className="font-bold tracking-wide">{isPlaying ? 'Pause' : 'Watch Now'}</span>
+                  <span className="font-bold tracking-wide">
+                    {isPlaying ? "Pause" : "Watch Now"}
+                  </span>
                 </div>
               </button>
+            </div>
+          )}
 
-              {/* Secondary Button - Volume */}
-              {isPlaying && (
-                <button
-                  onClick={handleMuteToggle}
-                  className="group relative inline-flex items-center justify-center p-4 rounded-full transition-all duration-300 overflow-hidden backdrop-blur-xl border border-white/20 hover:border-white/40 hover:bg-white/10"
+          {/* Right Side: Solitaire-Style Video Thumbnails */}
+
+          {/* Solitaire Card Stack */}
+          <div className="  absolute bottom-8 right-8 ">
+            {remainingVideos.map((video, index) => {
+              // Calculate rotation and position for solitaire effect
+              const totalCards = remainingVideos.length;
+              const angle = (index - Math.floor(totalCards / 2)) * 20; // Spread cards in a fan
+              const offsetX = index * 12 - (totalCards - 1) * 6; // Slight horizontal offset
+              const offsetY = Math.abs(index - Math.floor(totalCards / 2)) ; // Vertical fan effect
+
+              return (
+                <div
+                  key={video.id}
+                  onClick={() => setSelectedVideo(video)}
+                  className={`absolute transition-all duration-300 cursor-pointer group ${
+                    selectedVideo?.id === video.id
+                      ? "z-40"
+                      : "z-" + (30 - index)
+                  }`}
+                  style={{
+                    transform: `translate(${offsetX}px, ${offsetY}px) rotate(${angle}deg)`,
+                    width: "140px",
+                    height: "200px",
+                    right: `${index * 8}px`,
+                    bottom: "0px",
+                  }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/20 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative">
-                    {isMuted ? (
-                      <VolumeX className="w-5 h-5 md:w-6 md:h-6 text-white transition-transform group-hover:scale-110" />
+                  {/* Card Container */}
+                  <div className="relative w-full h-full rounded-xl overflow-hidden border-2 border-white/20 shadow-2xl group-hover:border-blue-400 group-hover:shadow-blue-500/30 group-hover:scale-110 transition-all duration-300 bg-slate-900">
+                    {/* Thumbnail Image */}
+                    {video.thumbnail ? (
+                      <Image
+                        src={video.thumbnail}
+                        alt={video.title}
+                        fill
+                        sizes="140px"
+                        className="object-contain group-hover:brightness-110 transition-all duration-300"
+                      />
                     ) : (
-                      <Volume2 className="w-5 h-5 md:w-6 md:h-6 text-white transition-transform group-hover:scale-110" />
+                      <div className="w-full h-full bg-gradient-to-br from-purple-900/60 via-blue-900/60 to-slate-900" />
                     )}
+
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    {/* Play Icon on Hover */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="w-10 h-10 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                        <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                      </div>
+                    </div>
+
+                    {/* Video Title Tooltip */}
+                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <p className="text-xs font-semibold text-white line-clamp-2">
+                        {video.title}
+                      </p>
+                    </div>
                   </div>
-                </button>
-              )}
-            </div>
-
-            {/* Info Stats */}
-            <div className="flex items-center gap-6 pt-6 flex-wrap text-sm">
-              <div className="glass px-4 py-2.5 rounded-full backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all group/stat">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-yellow-400" />
-                  <span className="text-white/90 font-semibold">4K Ultra HD</span>
                 </div>
-              </div>
-
-              <div className="glass px-4 py-2.5 rounded-full backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all group/stat">
-                <span className="text-white/90 font-semibold">Premium Quality</span>
-              </div>
-
-              <div className="glass px-4 py-2.5 rounded-full backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all group/stat">
-                <span className="text-white/90 font-semibold">No Ads</span>
-              </div>
-            </div>
+              );
+            })}
           </div>
+
+          {/* Decorative Gradient Orb */}
+          <div
+            className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-10 pointer-events-none"
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            }}
+          />
         </div>
 
-        {/* Playing Indicator */}
-        {isPlaying && (
-          <div className="absolute top-8 left-8 z-20 animate-slide-in">
-            <div className="glass px-4 py-2.5 rounded-full flex items-center gap-2.5 backdrop-blur-xl border border-red-500/30 bg-red-500/10">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50" />
-              <span className="text-sm font-bold text-white uppercase tracking-wider">Now Playing</span>
+        {/* Mobile: Carousel-style Thumbnails */}
+        <div className="lg:hidden max-w-7xl mx-auto px-6 md:px-12 pb-8">
+          {remainingVideos.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-white font-semibold text-sm uppercase tracking-widest">
+                More Videos
+              </h3>
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {remainingVideos.map((video) => (
+                  <button
+                    key={video.id}
+                    onClick={() => setSelectedVideo(video)}
+                    className={`flex-shrink-0 relative rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                      selectedVideo?.id === video.id
+                        ? "w-24 h-32 border-blue-400 shadow-lg shadow-blue-500/30"
+                        : "w-20 h-28 border-white/20 hover:border-white/40"
+                    }`}
+                  >
+                    {video.thumbnail ? (
+                      <Image
+                        src={video.thumbnail}
+                        alt={video.title}
+                        fill
+                        sizes="96px"
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-purple-900/60 to-slate-900" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <Play className="w-4 h-4 text-white fill-white" />
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Vignette effect */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
+        {/* Vignette Effect */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.3)_100%)]" />
       </div>
+
+      {/* CSS for fade-in animation */}
+      <style>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        
+        @keyframes slide-in {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out;
+        }
+        
+        .animate-slide-in {
+          animation: slide-in 0.8s ease-out 0.2s both;
+        }
+        
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
-  )
+  );
 }
