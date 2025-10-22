@@ -50,7 +50,7 @@ export default function DashboardPage() {
   const [streamingChannels, setStreamingChannels] = useState<Channel[]>([])
   const [iptvChannels, setIptvChannels] = useState<Channel[]>([])
   const [appsContent, setAppsContent] = useState<Content[]>([])
-  const [introVideo, setIntroVideo] = useState<IntroVideo | null>(null)
+  const [introVideos, setIntroVideos] = useState<IntroVideo[]>([])
   // Track pending fetches to show loader until all data is ready
   const [pendingFetches, setPendingFetches] = useState(4)
 
@@ -153,9 +153,7 @@ export default function DashboardPage() {
         const videoJson = await videoRes.json().catch(() => ({}))
         const videos = Array.isArray(videoJson.videos) ? videoJson.videos : []
         if (!mounted) return
-        if (videos.length > 0) {
-          setIntroVideo(videos[0])
-        }
+        setIntroVideos(videos)
       } catch (err) {
         console.error('Error fetching intro videos:', err)
       } finally {
@@ -204,8 +202,8 @@ export default function DashboardPage() {
     <div className=" min-h-screen bg-slate-900 text-white">
 
       {/* VIDEO HERO */}
-      {introVideo ? (
-        <VideoHero video={introVideo} />
+      {introVideos.length > 0 ? (
+        <VideoHero videos={introVideos} />
       ) : (
         <section className="relative w-full h-[560px] md:h-[720px] overflow-hidden">
           {featuredChannel?.logo ? (

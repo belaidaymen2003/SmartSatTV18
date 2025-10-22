@@ -1,0 +1,15 @@
+{
+  "name": "smartsattv",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "admin",
+    "client"
+  ],
+  "scripts": {
+    "dev": "cd client && npm run dev",
+    "dev:all": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces"
+  }
+}
