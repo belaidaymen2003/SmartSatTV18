@@ -185,6 +185,11 @@ export default function DashboardPage() {
     router.push(`/applications/${item.id}`)
   }
 
+  // Show loader while any of the main data fetches are pending
+  useEffect(() => {
+    setIsPageLoading(pendingFetches > 0)
+  }, [pendingFetches])
+
   if (isPageLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
