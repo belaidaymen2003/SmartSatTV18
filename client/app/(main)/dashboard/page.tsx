@@ -192,7 +192,7 @@ export default function DashboardPage() {
 
   if (isPageLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+      <div className="min-h-screen fixed inset-0  z-50 flex items-center justify-center bg-slate-900 text-white">
         <Loading3D />
       </div>
     )
@@ -201,7 +201,7 @@ export default function DashboardPage() {
   const featuredChannel = streamingChannels.length > 0 ? streamingChannels[0] : null
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
+    <div className=" min-h-screen bg-slate-900 text-white">
 
       {/* VIDEO HERO */}
       {introVideo ? (
