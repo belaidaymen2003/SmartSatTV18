@@ -153,9 +153,7 @@ export default function DashboardPage() {
         const videoJson = await videoRes.json().catch(() => ({}))
         const videos = Array.isArray(videoJson.videos) ? videoJson.videos : []
         if (!mounted) return
-        if (videos.length > 0) {
-          setIntroVideo(videos[0])
-        }
+        setIntroVideos(videos)
       } catch (err) {
         console.error('Error fetching intro videos:', err)
       } finally {
