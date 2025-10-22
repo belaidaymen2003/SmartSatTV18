@@ -157,10 +157,6 @@ export default function DashboardPage() {
     return () => { mounted = false }
   }, [])
 
-  useEffect(() => {
-    const t = setTimeout(() => setIsPageLoading(false), 400)
-    return () => clearTimeout(t)
-  }, [])
 
   const handleViewChannelDetails = (channelId: number) => {
     router.push(`/subscription/${channelId}`)
