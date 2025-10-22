@@ -51,6 +51,8 @@ export default function DashboardPage() {
   const [iptvChannels, setIptvChannels] = useState<Channel[]>([])
   const [appsContent, setAppsContent] = useState<Content[]>([])
   const [introVideo, setIntroVideo] = useState<IntroVideo | null>(null)
+  // Track pending fetches to show loader until all data is ready
+  const [pendingFetches, setPendingFetches] = useState(4)
 
   useEffect(() => {
     const storedCredits = localStorage.getItem('userCredits')
