@@ -19,9 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@/lib/generated/*": ["./lib/generated/*"],
-      "@/lib/prisma": ["./lib/prisma"]
+    "@/*": ["./*"],
+  "@/lib/prisma": ["./lib/prisma"],
+  "@/lib/generated/*": ["./lib/generated/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
