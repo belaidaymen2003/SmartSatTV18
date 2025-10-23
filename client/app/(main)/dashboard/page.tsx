@@ -17,6 +17,7 @@ import {
   Star,
   Clock,
 } from 'lucide-react'
+import Link from 'next/link'
 
 interface Channel {
   id: number
@@ -260,7 +261,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="Streaming"
               subtitle="Preview streaming channels and plans from the catalog"
-              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
+              action={<Link href="/streaming" className="text-sm text-white/60 hover:text-white">View All</Link>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3500}>
               {streamingChannels.map((channel) => (
@@ -282,7 +283,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="IPTV Subscriptions"
               subtitle="Available IPTV subscription plans and channels"
-              action={<a href="/iptv" className="text-sm text-white/60 hover:text-white">Explore</a>}
+              action={<Link href="/iptv" className="text-sm text-white/60 hover:text-white">Explore</Link>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3200}>
               {iptvChannels.map((channel) => (
@@ -304,7 +305,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="Available Apps"
               subtitle="Download powerful apps to enhance your experience"
-              action={<a href="/applications" className="text-sm text-white/60 hover:text-white">View All</a>}
+              action={<Link href="/applications" className="text-sm text-white/60 hover:text-white">View All</Link>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3800}>
               {appsContent.map((item) => (
@@ -328,7 +329,7 @@ export default function DashboardPage() {
               <SectionHeader
                 title="My List"
                 subtitle="Your saved channels and apps"
-                action={<a href="/profile" className="text-sm text-white/60 hover:text-white">Manage</a>}
+                action={<Link href="/profile" className="text-sm text-white/60 hover:text-white">Manage</Link>}
               />
               <Carousel itemWidthPx={224} autoPlayMs={3400}>
                 {[
@@ -356,7 +357,7 @@ export default function DashboardPage() {
       <footer className="border-t border-white/10 mt-12">
         <div className="max-w-7xl mx-auto px-4 py-8 flex items-center justify-between text-sm text-white/60">
           <div>© 2025 SMART SAT TV. All rights reserved.</div>
-          <div>Need help? <a href="/support" className="underline">Contact Support</a></div>
+          <div>Need help? <Link href="/support" className="underline">Contact Support</Link></div>
         </div>
       </footer>
     </div>

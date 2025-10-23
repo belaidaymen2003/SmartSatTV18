@@ -103,7 +103,7 @@ export default function Sidebar({ className = '' }: { className?: string }) {
         </div>
 
         <div className="mt-6 border-t border-white/6 pt-4 space-y-1">
-          <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/10 transition-colors">
+          <Link href={`${process.env.CLIENT_URL}`} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/10 transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">BACK TO Client</span>
           </Link>
