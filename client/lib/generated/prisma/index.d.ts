@@ -184,6 +184,21 @@ export const Category: {
 
 export type Category = (typeof Category)[keyof typeof Category]
 
+
+export const ChannelType: {
+  SPORT: 'SPORT',
+  NEWS: 'NEWS',
+  ACTION: 'ACTION',
+  ENTERTAINMENT: 'ENTERTAINMENT',
+  KIDS: 'KIDS',
+  MUSIC: 'MUSIC',
+  LIFESTYLE: 'LIFESTYLE',
+  EDUCATION: 'EDUCATION',
+  OTHER: 'OTHER'
+};
+
+export type ChannelType = (typeof ChannelType)[keyof typeof ChannelType]
+
 }
 
 export type Role = $Enums.Role
@@ -229,6 +244,10 @@ export const Status: typeof $Enums.Status
 export type Category = $Enums.Category
 
 export const Category: typeof $Enums.Category
+
+export type ChannelType = $Enums.ChannelType
+
+export const ChannelType: typeof $Enums.ChannelType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -495,8 +514,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.17.1
-   * Query Engine version: 272a37d34178c2894197e17273bf937f25acdeac
+   * Prisma Client JS version: 6.18.0
+   * Query Engine version: 34b5a692b7bd79939a9a2c3ef97d816e749cda2f
    */
   export type PrismaVersion = {
     client: string
@@ -509,6 +528,7 @@ export namespace Prisma {
    */
 
 
+  export import Bytes = runtime.Bytes
   export import JsonObject = runtime.JsonObject
   export import JsonArray = runtime.JsonArray
   export import JsonValue = runtime.JsonValue
@@ -8857,6 +8877,7 @@ export namespace Prisma {
     logo: string | null
     description: string | null
     category: $Enums.Category | null
+    type: $Enums.ChannelType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -8867,6 +8888,7 @@ export namespace Prisma {
     logo: string | null
     description: string | null
     category: $Enums.Category | null
+    type: $Enums.ChannelType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -8877,6 +8899,7 @@ export namespace Prisma {
     logo: number
     description: number
     category: number
+    type: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -8897,6 +8920,7 @@ export namespace Prisma {
     logo?: true
     description?: true
     category?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8907,6 +8931,7 @@ export namespace Prisma {
     logo?: true
     description?: true
     category?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8917,6 +8942,7 @@ export namespace Prisma {
     logo?: true
     description?: true
     category?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -9014,6 +9040,7 @@ export namespace Prisma {
     logo: string | null
     description: string | null
     category: $Enums.Category
+    type: $Enums.ChannelType
     createdAt: Date
     updatedAt: Date
     _count: IPTVChannelCountAggregateOutputType | null
@@ -9043,6 +9070,7 @@ export namespace Prisma {
     logo?: boolean
     description?: boolean
     category?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     subscriptions?: boolean | IPTVChannel$subscriptionsArgs<ExtArgs>
@@ -9055,6 +9083,7 @@ export namespace Prisma {
     logo?: boolean
     description?: boolean
     category?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["iPTVChannel"]>
@@ -9065,6 +9094,7 @@ export namespace Prisma {
     logo?: boolean
     description?: boolean
     category?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["iPTVChannel"]>
@@ -9075,11 +9105,12 @@ export namespace Prisma {
     logo?: boolean
     description?: boolean
     category?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type IPTVChannelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "logo" | "description" | "category" | "createdAt" | "updatedAt", ExtArgs["result"]["iPTVChannel"]>
+  export type IPTVChannelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "logo" | "description" | "category" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["iPTVChannel"]>
   export type IPTVChannelInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     subscriptions?: boolean | IPTVChannel$subscriptionsArgs<ExtArgs>
     _count?: boolean | IPTVChannelCountOutputTypeDefaultArgs<ExtArgs>
@@ -9098,6 +9129,7 @@ export namespace Prisma {
       logo: string | null
       description: string | null
       category: $Enums.Category
+      type: $Enums.ChannelType
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["iPTVChannel"]>
@@ -9529,6 +9561,7 @@ export namespace Prisma {
     readonly logo: FieldRef<"IPTVChannel", 'String'>
     readonly description: FieldRef<"IPTVChannel", 'String'>
     readonly category: FieldRef<"IPTVChannel", 'Category'>
+    readonly type: FieldRef<"IPTVChannel", 'ChannelType'>
     readonly createdAt: FieldRef<"IPTVChannel", 'DateTime'>
     readonly updatedAt: FieldRef<"IPTVChannel", 'DateTime'>
   }
@@ -12395,6 +12428,7 @@ export namespace Prisma {
     logo: 'logo',
     description: 'description',
     category: 'category',
+    type: 'type',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -12576,6 +12610,20 @@ export namespace Prisma {
    * Reference to a field of type 'Category[]'
    */
   export type ListEnumCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Category[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ChannelType'
+   */
+  export type EnumChannelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelType'>
+    
+
+
+  /**
+   * Reference to a field of type 'ChannelType[]'
+   */
+  export type ListEnumChannelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelType[]'>
     
 
 
@@ -13066,6 +13114,7 @@ export namespace Prisma {
     logo?: StringNullableFilter<"IPTVChannel"> | string | null
     description?: StringNullableFilter<"IPTVChannel"> | string | null
     category?: EnumCategoryFilter<"IPTVChannel"> | $Enums.Category
+    type?: EnumChannelTypeFilter<"IPTVChannel"> | $Enums.ChannelType
     createdAt?: DateTimeFilter<"IPTVChannel"> | Date | string
     updatedAt?: DateTimeFilter<"IPTVChannel"> | Date | string
     subscriptions?: SubscriptionListRelationFilter
@@ -13077,6 +13126,7 @@ export namespace Prisma {
     logo?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     category?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     subscriptions?: SubscriptionOrderByRelationAggregateInput
@@ -13091,6 +13141,7 @@ export namespace Prisma {
     logo?: StringNullableFilter<"IPTVChannel"> | string | null
     description?: StringNullableFilter<"IPTVChannel"> | string | null
     category?: EnumCategoryFilter<"IPTVChannel"> | $Enums.Category
+    type?: EnumChannelTypeFilter<"IPTVChannel"> | $Enums.ChannelType
     createdAt?: DateTimeFilter<"IPTVChannel"> | Date | string
     updatedAt?: DateTimeFilter<"IPTVChannel"> | Date | string
     subscriptions?: SubscriptionListRelationFilter
@@ -13102,6 +13153,7 @@ export namespace Prisma {
     logo?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     category?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: IPTVChannelCountOrderByAggregateInput
@@ -13120,6 +13172,7 @@ export namespace Prisma {
     logo?: StringNullableWithAggregatesFilter<"IPTVChannel"> | string | null
     description?: StringNullableWithAggregatesFilter<"IPTVChannel"> | string | null
     category?: EnumCategoryWithAggregatesFilter<"IPTVChannel"> | $Enums.Category
+    type?: EnumChannelTypeWithAggregatesFilter<"IPTVChannel"> | $Enums.ChannelType
     createdAt?: DateTimeWithAggregatesFilter<"IPTVChannel"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"IPTVChannel"> | Date | string
   }
@@ -13755,6 +13808,7 @@ export namespace Prisma {
     logo?: string | null
     description?: string | null
     category: $Enums.Category
+    type?: $Enums.ChannelType
     createdAt?: Date | string
     updatedAt?: Date | string
     subscriptions?: SubscriptionCreateNestedManyWithoutChannelInput
@@ -13766,6 +13820,7 @@ export namespace Prisma {
     logo?: string | null
     description?: string | null
     category: $Enums.Category
+    type?: $Enums.ChannelType
     createdAt?: Date | string
     updatedAt?: Date | string
     subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutChannelInput
@@ -13776,6 +13831,7 @@ export namespace Prisma {
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+    type?: EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     subscriptions?: SubscriptionUpdateManyWithoutChannelNestedInput
@@ -13787,6 +13843,7 @@ export namespace Prisma {
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+    type?: EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     subscriptions?: SubscriptionUncheckedUpdateManyWithoutChannelNestedInput
@@ -13798,6 +13855,7 @@ export namespace Prisma {
     logo?: string | null
     description?: string | null
     category: $Enums.Category
+    type?: $Enums.ChannelType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -13807,6 +13865,7 @@ export namespace Prisma {
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+    type?: EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13817,6 +13876,7 @@ export namespace Prisma {
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+    type?: EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -14583,6 +14643,13 @@ export namespace Prisma {
     not?: NestedEnumCategoryFilter<$PrismaModel> | $Enums.Category
   }
 
+  export type EnumChannelTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ChannelType | EnumChannelTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ChannelType[] | ListEnumChannelTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ChannelType[] | ListEnumChannelTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumChannelTypeFilter<$PrismaModel> | $Enums.ChannelType
+  }
+
   export type SubscriptionListRelationFilter = {
     every?: SubscriptionWhereInput
     some?: SubscriptionWhereInput
@@ -14599,6 +14666,7 @@ export namespace Prisma {
     logo?: SortOrder
     description?: SortOrder
     category?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -14613,6 +14681,7 @@ export namespace Prisma {
     logo?: SortOrder
     description?: SortOrder
     category?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -14623,6 +14692,7 @@ export namespace Prisma {
     logo?: SortOrder
     description?: SortOrder
     category?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -14639,6 +14709,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCategoryFilter<$PrismaModel>
     _max?: NestedEnumCategoryFilter<$PrismaModel>
+  }
+
+  export type EnumChannelTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ChannelType | EnumChannelTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ChannelType[] | ListEnumChannelTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ChannelType[] | ListEnumChannelTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumChannelTypeWithAggregatesFilter<$PrismaModel> | $Enums.ChannelType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumChannelTypeFilter<$PrismaModel>
+    _max?: NestedEnumChannelTypeFilter<$PrismaModel>
   }
 
   export type EnumDurationPlanFilter<$PrismaModel = never> = {
@@ -15136,6 +15216,10 @@ export namespace Prisma {
     set?: $Enums.Category
   }
 
+  export type EnumChannelTypeFieldUpdateOperationsInput = {
+    set?: $Enums.ChannelType
+  }
+
   export type SubscriptionUpdateManyWithoutChannelNestedInput = {
     create?: XOR<SubscriptionCreateWithoutChannelInput, SubscriptionUncheckedCreateWithoutChannelInput> | SubscriptionCreateWithoutChannelInput[] | SubscriptionUncheckedCreateWithoutChannelInput[]
     connectOrCreate?: SubscriptionCreateOrConnectWithoutChannelInput | SubscriptionCreateOrConnectWithoutChannelInput[]
@@ -15531,6 +15615,13 @@ export namespace Prisma {
     not?: NestedEnumCategoryFilter<$PrismaModel> | $Enums.Category
   }
 
+  export type NestedEnumChannelTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ChannelType | EnumChannelTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ChannelType[] | ListEnumChannelTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ChannelType[] | ListEnumChannelTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumChannelTypeFilter<$PrismaModel> | $Enums.ChannelType
+  }
+
   export type NestedEnumCategoryWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.Category | EnumCategoryFieldRefInput<$PrismaModel>
     in?: $Enums.Category[] | ListEnumCategoryFieldRefInput<$PrismaModel>
@@ -15539,6 +15630,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCategoryFilter<$PrismaModel>
     _max?: NestedEnumCategoryFilter<$PrismaModel>
+  }
+
+  export type NestedEnumChannelTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ChannelType | EnumChannelTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ChannelType[] | ListEnumChannelTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ChannelType[] | ListEnumChannelTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumChannelTypeWithAggregatesFilter<$PrismaModel> | $Enums.ChannelType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumChannelTypeFilter<$PrismaModel>
+    _max?: NestedEnumChannelTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumDurationPlanFilter<$PrismaModel = never> = {
@@ -16234,6 +16335,7 @@ export namespace Prisma {
     logo?: string | null
     description?: string | null
     category: $Enums.Category
+    type?: $Enums.ChannelType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -16244,6 +16346,7 @@ export namespace Prisma {
     logo?: string | null
     description?: string | null
     category: $Enums.Category
+    type?: $Enums.ChannelType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -16300,6 +16403,7 @@ export namespace Prisma {
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+    type?: EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16310,6 +16414,7 @@ export namespace Prisma {
     logo?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     category?: EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+    type?: EnumChannelTypeFieldUpdateOperationsInput | $Enums.ChannelType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
