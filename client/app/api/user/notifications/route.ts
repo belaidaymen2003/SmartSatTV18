@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     const userId = Number(payload.sub)
 
     // Upcoming or recent subscription-related notifications
-    const upcomingSubs = await prisma.subscriptionplan.findMany({
+    const upcomingSubs = await prisma.userSubscription.findMany({
       where: { userId },
       select: {
         id: true,

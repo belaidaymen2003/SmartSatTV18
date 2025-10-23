@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
     // No explicit favorites model in schema. Fallback: return user's videos and apps as 'favorites' preview
     const videos = await prisma.video.findMany({ where: { userId: Number(payload.sub) }, select: { id: true, title: true, thumbnail: true, createdAt: true } })
-    const apps = await prisma.catalogApp.findMany({ where: { userId: Number(payload.sub) }, select: { id: true, name: true, image: true, createdAt: true } })
+    const apps = await prisma.catalogApp.findMany({ where: { downloadedBy:{some:{id: Number(payload.sub)}} }, select: { id: true, name: true, image: true, createdAt: true } })
 
     return NextResponse.json({ favorites: { videos, apps } })
   } catch (error: any) {
