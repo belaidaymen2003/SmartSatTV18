@@ -1,10 +1,10 @@
 {
   "version": 2,
   "builds": [
-    { "src": "prisma/generated/prisma.ts", "use": "@vercel/node" },
-    { "src": "next.config.js", "use": "@vercel/node" }
+    { "src": "next.config.js", "use": "@vercel/node" },
+    { "src": "public", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "next.config.js" }
+    { "src": "/(.*)", "dest": "next.config.js" }
   ]
 }
