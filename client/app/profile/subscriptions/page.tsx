@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Copy, Calendar, Zap, Check, Tv, Radio, AlertCircle, ArrowLeft } from 'lucide-react'
-
+import Header from '../../../components/Layout/Header'
 
 interface UserSubscription {
   id: number
@@ -121,7 +121,7 @@ export default function SubscriptionsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-
+        <Header credits={credits} userEmail={userEmail} />
         <main className="max-w-5xl mx-auto px-4 py-12">
           <p className="text-white/60">Loading subscriptions...</p>
         </main>
@@ -132,6 +132,7 @@ export default function SubscriptionsPage() {
   if (!data) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <Header credits={credits} userEmail={userEmail} />
         <main className="max-w-5xl mx-auto px-4 py-12 text-center">
           <p className="text-white/60">Not authenticated</p>
         </main>
@@ -141,6 +142,7 @@ export default function SubscriptionsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+      <Header credits={credits} userEmail={userEmail} />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back Button */}

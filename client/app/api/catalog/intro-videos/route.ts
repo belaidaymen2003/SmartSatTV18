@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
         createdAt: true,
       },
       orderBy: { createdAt: 'desc' },
-      take: 6
+      take: 1
     })
 
     return NextResponse.json({ videos })

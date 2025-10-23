@@ -3,10 +3,10 @@
 import { useMemo } from 'react'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import Image from 'next/image'
-import logo from '../../public/Logo2.png'
+import logo from '../public/Logo2.png'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import Loading3D from '../../components/Loading3D'
+import Loading3D from '../components/Loading3D'
 import Spinner from '@/components/Spinner'
 
 const Background = React.memo(() => {

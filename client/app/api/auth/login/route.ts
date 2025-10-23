@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-// import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET || ''
@@ -25,16 +25,16 @@ export async function POST(req: NextRequest) {
 
     let match = false
     try {
-      if (user.passwordHash) {
-        match = password === user.passwordHash
-      
+      if (user.passwordHash.startsWith('$2')) {
+        match = await bcrypt.compare(password, user.passwordHash)
+      } else {
         // legacy plaintext password in DB — accept and rehash
+        match = password === user.passwordHash
         if (match) {
           // rehash and store asynchronously
-          const newHash = password
+          const newHash = await bcrypt.hash(password, 10)
           await prisma.user.update({ where: { id: user.id }, data: { passwordHash: newHash } })
-        
-      }
+        }
       }
     } catch (e) {
       // fallback
