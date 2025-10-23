@@ -3,21 +3,20 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-
-import ContentCard, { Content } from '../../../components/Content/ContentCard'
-import ChannelCard from '../../../components/Content/ChannelCard'
-import VideoHero from '../../../components/Content/VideoHero'
-import Loading3D from '../../../components/Loading3D'
-import SectionHeader from '../../../components/UI/SectionHeader'
-import Carousel from '../../../components/UI/Carousel'
-import MagneticButton from '../../../components/UI/MagneticButton'
-import MotionReveal from '../../../components/UI/MotionReveal'
+import Header from '../../components/Layout/Header'
+import ContentCard, { Content } from '../../components/Content/ContentCard'
+import ChannelCard from '../../components/Content/ChannelCard'
+import VideoHero from '../../components/Content/VideoHero'
+import Loading3D from '../../components/Loading3D'
+import SectionHeader from '../../components/UI/SectionHeader'
+import Carousel from '../../components/UI/Carousel'
+import MagneticButton from '../../components/UI/MagneticButton'
+import MotionReveal from '../../components/UI/MotionReveal'
 import {
   Play,
   Star,
   Clock,
 } from 'lucide-react'
-import Link from 'next/link'
 
 interface Channel {
   id: number
@@ -51,9 +50,7 @@ export default function DashboardPage() {
   const [streamingChannels, setStreamingChannels] = useState<Channel[]>([])
   const [iptvChannels, setIptvChannels] = useState<Channel[]>([])
   const [appsContent, setAppsContent] = useState<Content[]>([])
-  const [introVideos, setIntroVideos] = useState<IntroVideo[]>([])
-  // Track pending fetches to show loader until all data is ready
-  const [pendingFetches, setPendingFetches] = useState(4)
+  const [introVideo, setIntroVideo] = useState<IntroVideo | null>(null)
 
   useEffect(() => {
     const storedCredits = localStorage.getItem('userCredits')
@@ -88,8 +85,6 @@ export default function DashboardPage() {
         setStreamingChannels(channels)
       } catch (err) {
         console.error('Error fetching streaming channels:', err)
-      } finally {
-        if (mounted) setPendingFetches((p) => Math.max(0, p - 1))
       }
     })()
     return () => { mounted = false }
@@ -110,8 +105,6 @@ export default function DashboardPage() {
         setIptvChannels(channels)
       } catch (err) {
         console.error('Error fetching IPTV channels:', err)
-      } finally {
-        if (mounted) setPendingFetches((p) => Math.max(0, p - 1))
       }
     })()
     return () => { mounted = false }
@@ -139,8 +132,6 @@ export default function DashboardPage() {
         setAppsContent(mappedApps)
       } catch (err) {
         console.error('Error fetching apps:', err)
-      } finally {
-        if (mounted) setPendingFetches((p) => Math.max(0, p - 1))
       }
     })()
     return () => { mounted = false }
@@ -154,16 +145,20 @@ export default function DashboardPage() {
         const videoJson = await videoRes.json().catch(() => ({}))
         const videos = Array.isArray(videoJson.videos) ? videoJson.videos : []
         if (!mounted) return
-        setIntroVideos(videos)
+        if (videos.length > 0) {
+          setIntroVideo(videos[0])
+        }
       } catch (err) {
         console.error('Error fetching intro videos:', err)
-      } finally {
-        if (mounted) setPendingFetches((p) => Math.max(0, p - 1))
       }
     })()
     return () => { mounted = false }
   }, [])
 
+  useEffect(() => {
+    const t = setTimeout(() => setIsPageLoading(false), 400)
+    return () => clearTimeout(t)
+  }, [])
 
   const handleViewChannelDetails = (channelId: number) => {
     router.push(`/subscription/${channelId}`)
@@ -184,14 +179,9 @@ export default function DashboardPage() {
     router.push(`/applications/${item.id}`)
   }
 
-  // Show loader while any of the main data fetches are pending
-  useEffect(() => {
-    setIsPageLoading(pendingFetches > 0)
-  }, [pendingFetches])
-
   if (isPageLoading) {
     return (
-      <div className="min-h-screen fixed inset-0  z-50 flex items-center justify-center bg-slate-900 text-white">
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
         <Loading3D />
       </div>
     )
@@ -200,11 +190,12 @@ export default function DashboardPage() {
   const featuredChannel = streamingChannels.length > 0 ? streamingChannels[0] : null
 
   return (
-    <div className=" min-h-screen bg-slate-900 text-white">
+    <div className="min-h-screen bg-slate-900 text-white">
+      <Header credits={credits} userEmail={userEmail} />
 
       {/* VIDEO HERO */}
-      {introVideos.length > 0 ? (
-        <VideoHero videos={introVideos} />
+      {introVideo ? (
+        <VideoHero video={introVideo} />
       ) : (
         <section className="relative w-full h-[560px] md:h-[720px] overflow-hidden">
           {featuredChannel?.logo ? (
@@ -261,7 +252,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="Streaming"
               subtitle="Preview streaming channels and plans from the catalog"
-              action={<Link href="/streaming" className="text-sm text-white/60 hover:text-white">View All</Link>}
+              action={<a href="/streaming" className="text-sm text-white/60 hover:text-white">View All</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3500}>
               {streamingChannels.map((channel) => (
@@ -283,7 +274,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="IPTV Subscriptions"
               subtitle="Available IPTV subscription plans and channels"
-              action={<Link href="/iptv" className="text-sm text-white/60 hover:text-white">Explore</Link>}
+              action={<a href="/iptv" className="text-sm text-white/60 hover:text-white">Explore</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3200}>
               {iptvChannels.map((channel) => (
@@ -305,7 +296,7 @@ export default function DashboardPage() {
             <SectionHeader
               title="Available Apps"
               subtitle="Download powerful apps to enhance your experience"
-              action={<Link href="/applications" className="text-sm text-white/60 hover:text-white">View All</Link>}
+              action={<a href="/applications" className="text-sm text-white/60 hover:text-white">View All</a>}
             />
             <Carousel itemWidthPx={260} autoPlayMs={3800}>
               {appsContent.map((item) => (
@@ -329,7 +320,7 @@ export default function DashboardPage() {
               <SectionHeader
                 title="My List"
                 subtitle="Your saved channels and apps"
-                action={<Link href="/profile" className="text-sm text-white/60 hover:text-white">Manage</Link>}
+                action={<a href="/profile" className="text-sm text-white/60 hover:text-white">Manage</a>}
               />
               <Carousel itemWidthPx={224} autoPlayMs={3400}>
                 {[
@@ -357,7 +348,7 @@ export default function DashboardPage() {
       <footer className="border-t border-white/10 mt-12">
         <div className="max-w-7xl mx-auto px-4 py-8 flex items-center justify-between text-sm text-white/60">
           <div>© 2025 SMART SAT TV. All rights reserved.</div>
-          <div>Need help? <Link href="/support" className="underline">Contact Support</Link></div>
+          <div>Need help? <a href="/support" className="underline">Contact Support</a></div>
         </div>
       </footer>
     </div>

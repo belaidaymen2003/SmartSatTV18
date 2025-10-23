@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
+import Header from '../../../components/Layout/Header'
 import {
   Play,
   Star,
@@ -227,6 +228,7 @@ export default function SubscriptionDetailPage() {
   if (contentLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <Header credits={credits} userEmail={userEmail} />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <p className="text-white/60">Loading subscription details...</p>
         </main>
@@ -237,7 +239,7 @@ export default function SubscriptionDetailPage() {
   if (!channel || subscriptions.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      
+        <Header credits={credits} userEmail={userEmail} />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h1 className="text-3xl font-bold text-white mb-2">No subscriptions available</h1>
           <p className="text-white/70 mb-6">This channel has no subscription codes available at the moment.</p>
@@ -249,7 +251,7 @@ export default function SubscriptionDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      
+      <Header credits={credits} userEmail={userEmail} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}

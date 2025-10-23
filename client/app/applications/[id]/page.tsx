@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
-
+import Header from '../../../components/Layout/Header'
 import {
   Download,
   ArrowLeft,
@@ -128,6 +128,7 @@ export default function AppDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <Header credits={credits} userEmail={userEmail} />
         <main className="max-w-6xl mx-auto px-4 py-12 text-center">
           <p className="text-white/60">Loading...</p>
         </main>
@@ -138,6 +139,7 @@ export default function AppDetailPage() {
   if (!app) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+        <Header credits={credits} userEmail={userEmail} />
         <main className="max-w-6xl mx-auto px-4 py-12">
           <button
             onClick={() => router.back()}
@@ -160,6 +162,7 @@ export default function AppDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+      <Header credits={credits} userEmail={userEmail} />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
