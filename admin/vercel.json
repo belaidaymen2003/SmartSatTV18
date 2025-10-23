@@ -5,6 +5,6 @@
     { "src": "next.config.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "next.config.js" }
+    { "src": "/(.*)", "dest": "next.config.js" }
   ]
 }
