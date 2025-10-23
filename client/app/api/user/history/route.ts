@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ history: [] })
     }
 
-    const plans = await prisma.subscriptionplan.findMany({
+    const plans = await prisma.userSubscription.findMany({
       where: { userId: Number(payload.sub) },
       orderBy: { startDate: 'desc' },
       select: {

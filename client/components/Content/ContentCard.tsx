@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Star,
   Play,
@@ -14,31 +14,32 @@ import {
   Clock,
   Heart,
   Info,
-  DownloadCloud
-} from 'lucide-react'
+  DownloadCloud,
+} from "lucide-react";
+import Link from "next/link";
 
 export interface Content {
-  id: number
-  title: string
-  type: 'movie' | 'series' | 'live' | 'gaming' | 'app'
-  price: number
-  rating: number
-  image: string
-  description: string
-  duration?: string
-  genre: string
-  year?: number
-  actors?: string[]
-  director?: string
-  trailer?: string
+  id: number;
+  title: string;
+  type: "movie" | "series" | "live" | "gaming" | "app";
+  price: number;
+  rating: number;
+  image: string;
+  description: string;
+  duration?: string;
+  genre: string;
+  year?: number;
+  actors?: string[];
+  director?: string;
+  trailer?: string;
 }
 
 interface ContentCardProps {
-  content: Content
-  onPurchase: (content: Content) => void
-  onViewDetails: (content: Content) => void
-  userCredits: number
-  isOwned?: boolean
+  content: Content;
+  onPurchase: (content: Content) => void;
+  onViewDetails: (content: Content) => void;
+  userCredits: number;
+  isOwned?: boolean;
 }
 
 export default function ContentCard({
@@ -46,81 +47,98 @@ export default function ContentCard({
   onPurchase,
   onViewDetails,
   userCredits,
-  isOwned = false
+  isOwned = false,
 }: ContentCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false)
-  const [hovering, setHovering] = useState(false)
-  const [avgRating, setAvgRating] = useState<number | null>(null)
-  const [reviewCount, setReviewCount] = useState<number>(0)
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const [avgRating, setAvgRating] = useState<number | null>(null);
+  const [reviewCount, setReviewCount] = useState<number>(0);
 
   // Initialize favorite state from localStorage
   useEffect(() => {
-    const raw = localStorage.getItem('watchlist')
+    const raw = localStorage.getItem("watchlist");
     if (raw) {
       try {
-        const ids: number[] = JSON.parse(raw)
-        setIsFavorite(ids.includes(content.id))
+        const ids: number[] = JSON.parse(raw);
+        setIsFavorite(ids.includes(content.id));
       } catch {}
     }
     const load = () => {
-      const reviewsRaw = localStorage.getItem('reviews')
+      const reviewsRaw = localStorage.getItem("reviews");
       if (reviewsRaw) {
         try {
-          const all: any[] = JSON.parse(reviewsRaw)
-          const list = all.filter(r => r && r.contentId === content.id)
+          const all: any[] = JSON.parse(reviewsRaw);
+          const list = all.filter((r) => r && r.contentId === content.id);
           if (list.length) {
-            const avg = list.reduce((s,r)=> s + Number(r.rating || 0), 0) / list.length
-            setAvgRating(Number(avg.toFixed(1)))
-            setReviewCount(list.length)
+            const avg =
+              list.reduce((s, r) => s + Number(r.rating || 0), 0) / list.length;
+            setAvgRating(Number(avg.toFixed(1)));
+            setReviewCount(list.length);
           } else {
-            setAvgRating(null)
-            setReviewCount(0)
+            setAvgRating(null);
+            setReviewCount(0);
           }
         } catch {
-          setAvgRating(null); setReviewCount(0)
+          setAvgRating(null);
+          setReviewCount(0);
         }
       } else {
-        setAvgRating(null); setReviewCount(0)
+        setAvgRating(null);
+        setReviewCount(0);
       }
-    }
-    load()
-    const onStorage = (e: StorageEvent) => { if (e.key === 'reviews') load() }
-    window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
-  }, [content.id])
+    };
+    load();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "reviews") load();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [content.id]);
 
   const getCategoryIcon = (type: string) => {
     switch (type) {
-      case 'movie': return <Film className="w-4 h-4" />
-      case 'series': return <Tv className="w-4 h-4" />
-      case 'live': return <Radio className="w-4 h-4" />
-      case 'gaming': return <Gamepad2 className="w-4 h-4" />
-      case 'app': return <DownloadCloud className="w-4 h-4" />
-      default: return <Play className="w-4 h-4" />
+      case "movie":
+        return <Film className="w-4 h-4" />;
+      case "series":
+        return <Tv className="w-4 h-4" />;
+      case "live":
+        return <Radio className="w-4 h-4" />;
+      case "gaming":
+        return <Gamepad2 className="w-4 h-4" />;
+      case "app":
+        return <DownloadCloud className="w-4 h-4" />;
+      default:
+        return <Play className="w-4 h-4" />;
     }
-  }
+  };
 
   const handleFavoriteToggle = () => {
     setIsFavorite((prev) => {
-      const next = !prev
-      const raw = localStorage.getItem('watchlist')
-      let ids: number[] = []
+      const next = !prev;
+      const raw = localStorage.getItem("watchlist");
+      let ids: number[] = [];
       if (raw) {
-        try { ids = JSON.parse(raw) } catch { ids = [] }
+        try {
+          ids = JSON.parse(raw);
+        } catch {
+          ids = [];
+        }
       }
-      if (next && !ids.includes(content.id)) ids.push(content.id)
-      if (!next) ids = ids.filter((id) => id !== content.id)
-      localStorage.setItem('watchlist', JSON.stringify(ids))
-      return next
-    })
-  }
+      if (next && !ids.includes(content.id)) ids.push(content.id);
+      if (!next) ids = ids.filter((id) => id !== content.id);
+      localStorage.setItem("watchlist", JSON.stringify(ids));
+      return next;
+    });
+  };
 
-  const isApp = content.type === 'app'
-  const destinationHref = isApp ? `/applications/${content.id}` : `/content/${content.id}`
+  const isApp = content.type === "app";
+  const destinationHref = isApp
+    ? `/applications/${content.id}`
+    : `/content/${content.id}`;
 
   return (
     <article
-      className="glass rounded-2xl overflow-hidden content-card group shadow-2xl hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-shadow duration-300"
+      className="glass w-96 h-96 rounded-2xl overflow-hidden content-card group shadow-2xl hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-shadow duration-300"
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
       aria-labelledby={`content-${content.id}-title`}
@@ -139,11 +157,11 @@ export default function ContentCard({
           />
         ) : (
           <Image
-            src={content.image || '/placeholder-800x450.png'}
+            src={content.image || "/placeholder-800x450.png"}
             alt={content.title}
             fill
             sizes="(max-width: 768px) 100vw, 400px"
-            className="object-cover group-hover:scale-105 transition-transform duration-400"
+            className="object-contain  group-hover:scale-105 transition-transform duration-400"
           />
         )}
 
@@ -157,27 +175,20 @@ export default function ContentCard({
         </div>
 
         {/* Rating */}
-        <div className="absolute top-3 right-3 flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
-          <Star className="w-4 h-4 text-yellow-400" />
-          <span className="font-medium">{avgRating ?? content.rating}</span>
-          {reviewCount > 0 ? <span className="text-white/60">({reviewCount})</span> : null}
-        </div>
 
         {/* Quick Play / View Overlay */}
-        <a
-          href={destinationHref}
-          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          aria-label={`Open ${content.title}`}
-        >
-          <div className="p-4 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors">
-            <Play className="w-10 h-10 text-white" />
-          </div>
-        </a>
       </div>
 
       <div className="p-5 md:p-6">
-        <h3 id={`content-${content.id}-title`} className="text-lg md:text-xl font-semibold text-white mb-1 line-clamp-2">{content.title}</h3>
-        <p className="text-sm text-white/60 mb-3 line-clamp-2">{content.description}</p>
+        <h3
+          id={`content-${content.id}-title`}
+          className="text-lg md:text-xl truncate font-semibold text-white mb-1 line-clamp-2"
+        >
+          {content.title}
+        </h3>
+        <p className="text-sm text-white/60 mb-3 line-clamp-2 truncate">
+          {content.description}
+        </p>
 
         <div className="flex items-center justify-between text-sm text-white/60 mb-4">
           <div className="flex items-center gap-3">
@@ -193,29 +204,16 @@ export default function ContentCard({
               </div>
             )}
           </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleFavoriteToggle}
-              aria-label={isFavorite ? 'Remove from Watchlist' : 'Add to Watchlist'}
-              className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-            >
-              <Heart className={`w-4 h-4 ${isFavorite ? 'text-red-500' : 'text-white'}`} />
-            </button>
-
-            <a
-              href={destinationHref}
-              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium flex items-center gap-2 transition-colors"
-            >
-              <Info className="w-4 h-4" />
-              Details
-            </a>
-          </div>
         </div>
 
         <div className="flex items-center justify-between gap-3">
           {isOwned ? (
-            <a href={destinationHref} className="flex-1 text-center px-4 py-2 rounded-xl bg-green-500/20 text-green-300 font-semibold">Watch</a>
+            <Link
+              href={destinationHref}
+              className="flex-1 text-center px-4 py-2 rounded-xl bg-green-500/20 text-green-300 font-semibold"
+            >
+              Watch
+            </Link>
           ) : isApp ? (
             // For apps we use View to go to the single downloadable app page
             <button
@@ -236,9 +234,14 @@ export default function ContentCard({
             </button>
           )}
 
-          <a href={destinationHref} className="px-3 py-2 rounded-xl bg-white/6 hover:bg-white/12 text-white/90 font-medium">More</a>
+          <Link
+            href={destinationHref}
+            className="px-3 py-2 rounded-xl bg-white/6 hover:bg-white/12 text-white/90 font-medium"
+          >
+            More
+          </Link>
         </div>
       </div>
     </article>
-  )
+  );
 }
