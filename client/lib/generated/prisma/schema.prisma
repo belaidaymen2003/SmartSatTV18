@@ -1,0 +1,319 @@
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//
+enum Role {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  APPROVED
+  BANNED
+}
+
+enum ItemCategory {
+  MOVIE
+  TV_SERIES
+  ANIME
+  CARTOON
+  LIVE_TV
+  STREAMING
+}
+
+enum ItemStatus {
+  VISIBLE
+  HIDDEN
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  HIDDEN
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  HIDDEN
+}
+
+enum Quality {
+  SD
+  HD
+  FullHD
+  K4
+}
+
+enum Auth {
+  CONNECTED
+  DISCONNECTED
+}
+
+// Subscription duration plans
+enum DurationPlan {
+  ONE_MONTH
+  SIX_MONTHS
+  ONE_YEAR
+}
+
+// Subscription status
+enum Status {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  SOLD_OUT
+}
+
+enum Category {
+  IPTV
+  STREAMING
+}
+
+//ss
+model User {
+  id                Int                   @id @default(autoincrement())
+  email             String                @unique
+  username          String                @unique
+  name              String
+  passwordHash      String
+  role              Role                  @default(USER)
+  credits           Int                   @default(0)
+  authLastAt        DateTime?
+  status            UserStatus            @default(APPROVED)
+  video             Video[]
+  auth              Auth                  @default(DISCONNECTED)
+  beinJobs          BeInSportActivation[] @relation("BeInByUser")
+  userSubscriptions UserSubscription[]
+  downloadedApps    UserCatalogApp[]
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  @@index([role, status])
+}
+
+/**
+ * model CatalogItem {
+ * id            Int          @id @default(autoincrement())
+ * title         String
+ * rating        Float        @default(0)
+ * category      ItemCategory
+ * views         Int          @default(0)
+ * status        ItemStatus   @default(VISIBLE)
+ * mediaUrl      String?
+ * quality       Quality?
+ * age           String?
+ * description   String?
+ * runtime       String?
+ * premiereDate  DateTime?
+ * coverUrl      String?
+ * backgroundUrl String?
+ * country       String?
+ * director      String?
+ * actors        String[] // simple string array; switch to relation if needed
+ * createdAt     DateTime     @default(now())
+ * updatedAt     DateTime     @updatedAt
+ * @@index([category, status])
+ * @@index([title])
+ * }
+ */
+model Video {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  thumbnail   String?
+  videoUrl    String // Link to the actual video file or stream
+  price       Float
+  userId      Int?
+  user        User?    @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CatalogApp {
+  id                     Int              @id @default(autoincrement())
+  name                   String
+  description            String
+  downloadLink           String
+  image                  String
+  credit                 Float
+  version                String
+  storageRequired        Int?
+  internetConnection     Boolean          @default(false)
+  deviceOperatingSystems String[]
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  downloadedBy           UserCatalogApp[]
+}
+
+model UserCatalogApp {
+  id          Int        @id @default(autoincrement())
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  app         CatalogApp @relation(fields: [appId], references: [id], onDelete: Cascade)
+  appId       Int
+  purchasedAt DateTime   @default(now())
+
+  @@unique([userId, appId])
+  @@index([userId])
+  @@index([appId])
+}
+
+/**
+ * model Genre {
+ * id        Int         @id @default(autoincrement())
+ * name      String      @unique
+ * items     ItemGenre[]
+ * createdAt DateTime    @default(now())
+ * }
+ */
+
+/**
+ * model ItemGenre {
+ * itemId  Int
+ * genreId Int
+ * item    CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * genre   Genre       @relation(fields: [genreId], references: [id], onDelete: Cascade)
+ * @@id([itemId, genreId])
+ * }
+ */
+
+/**
+ * model Tag {
+ * id        Int       @id @default(autoincrement())
+ * // Examples: "GIFT CARDS", "beIN SPORTS", "Goosat", "CARTE INTERNET"
+ * name      String    @unique
+ * items     ItemTag[]
+ * createdAt DateTime  @default(now())
+ * }
+ */
+/**
+ * model ItemTag {
+ * itemId Int
+ * tagId  Int
+ * item   CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * tag    Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+ * @@id([itemId, tagId])
+ * }
+ */
+
+/**
+ * model Comment {
+ * id         Int           @id @default(autoincrement())
+ * itemId     Int
+ * userId     Int?
+ * authorName String
+ * content    String
+ * status     CommentStatus @default(PENDING)
+ * createdAt  DateTime      @default(now())
+ * updatedAt  DateTime      @updatedAt
+ * item CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * user User?       @relation(fields: [userId], references: [id])
+ * @@index([itemId, status])
+ * }
+ */
+
+/**
+ * model Review {
+ * id         Int          @id @default(autoincrement())
+ * itemId     Int
+ * userId     Int?
+ * authorName String
+ * rating     Float
+ * content    String?
+ * status     ReviewStatus @default(PENDING)
+ * createdAt  DateTime     @default(now())
+ * updatedAt  DateTime     @updatedAt
+ * item CatalogItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+ * user User?       @relation(fields: [userId], references: [id])
+ * @@index([itemId, status])
+ * }
+ */
+
+model Settings {
+  id                 Int      @id @default(1)
+  brandName          String   @default("HOTFLIX")
+  accentColor        String   @default("#f97316")
+  allowRegistrations Boolean  @default(true)
+  maintenanceMode    Boolean  @default(false)
+  updatedAt          DateTime @updatedAt
+}
+
+model BeInSportActivation {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique
+  customerId String
+  months     Int
+  createdBy  Int?
+  createdAt  DateTime @default(now())
+
+  author User? @relation("BeInByUser", fields: [createdBy], references: [id])
+}
+
+enum ChannelType {
+  SPORT
+  NEWS
+  ACTION
+  ENTERTAINMENT
+  KIDS
+  MUSIC
+  LIFESTYLE
+  EDUCATION
+  OTHER
+}
+
+model IPTVChannel {
+  id            Int            @id @default(autoincrement())
+  name          String // Stream URL (.m3u8, etc.)
+  logo          String?
+  description   String?
+  category      Category // Price of subscription
+  type          ChannelType    @default(OTHER)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[] // All users who subscribed
+}
+
+model Subscription {
+  id                Int                @id @default(autoincrement())
+  credit            Float              @default(0)
+  code              String?            @unique
+  channel           IPTVChannel        @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId         Int
+  duration          DurationPlan       @default(ONE_MONTH)
+  status            Status             @default(ACTIVE)
+  userSubscriptions UserSubscription[]
+  createAt          DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([channelId, status])
+}
+
+model UserSubscription {
+  id             Int          @id @default(autoincrement())
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  subscriptionId Int
+  status         Status       @default(ACTIVE)
+  code           String?
+  startDate      DateTime     @default(now())
+  endDate        DateTime
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([userId, subscriptionId])
+  @@index([userId, status])
+}
